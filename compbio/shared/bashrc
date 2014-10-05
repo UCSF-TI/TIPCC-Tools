@@ -1,0 +1,291 @@
+#!/usr/bin/env bash
+
+###################################################################
+# Author: Henrik Bengtsson <hb@biostat.ucsf.edu>
+#
+# Description:
+# Sets up the PATH to use the most recent versions of software
+# installed by different users.
+#
+# Usage:
+# Add the following command to your ~/.bashrc script:
+#   source /compbio/shared/bashrc
+###################################################################
+
+# Setup SHARED_ROOT
+if test -z "${SHARED_ROOT}"; then
+  export SHARED_ROOT=
+  for dd in /compbio/shared /home/henrik; do
+    if test -d ${dd}/shared; then
+      export SHARED_ROOT=${dd}/shared
+      break
+    fi
+  done
+fi
+
+
+
+# Useful functions
+source ${SHARED_ROOT}/bin/includes.bash
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Record original PATH and setup PATH depending on system
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+if test "${PATH_SYSTEM}" == ""; then
+  export PATH_SYSTEM=${PATH}
+fi
+export PATH=${PATH_SYSTEM}
+
+# Added ~/bin/
+if ! test -d "${HOME}/bin"; then
+  mkdir ${HOME}/bin
+fi
+appendPath ${HOME}/bin
+
+export HOST=`uname -n`
+export HOST_SHORT=${HOST/.*/}
+export ARCH=`uname -m`
+export ISCOMPUTENODE=0
+if [[ ${HOST_SHORT} =~ n[0-9]{1,2} ]]; then
+  export ISCOMPUTENODE=1
+fi
+## echo ISCOMPUTENODE=$ISCOMPUTENODE
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# SETUP COMPUTE NODES
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+export CLUSTER_NODES="n0 n1 n2 n3 n4 n5 n6 n7 n8 n9 n10 n11 n12 n13 n14 n15 n17 n18 n19 n20 n21 n22 n23"
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Personalized temporary and scrattch directory
+# (e.g. cleaner /tmp/ directory on cluster)
+# Acknowledged by e.g. R
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+export TMPDIR=/tmp/$USER
+if ! test -d "$TMPDIR"; then
+  mkdir -p "$TMPDIR"
+fi
+
+# Create /scratch/$USER/shared/ (only on compute nodes)
+if test $ISCOMPUTENODE == 1; then
+  export SCRATCHDIR=/scratch/$USER
+  if ! test -d "$SCRATCHDIR"; then
+    mkdir -p "$SCRATCHDIR"
+  fi
+fi
+
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Cluster tools
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+alias ganglia='lynx -accept_all_cookies http://localhost/ganglia/'
+#alias gmem='free -g | echo "      `head -1`"; gsh free -g | egrep -e "Mem"'
+alias gswap='free -g | echo "      `head -1`"; gsh free -g | egrep -e "Swap"'
+alias gmem='gsh vmstatmem'
+alias news='less -FINs +G /home/GenomeData/INSTALLATION_LOG'
+alias topme='top -U ${USER}'
+alias htopme='htop -u ${USER}'
+alias psme='ps -ef | grep ${USER}'
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Misc
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Never use /usr/libexec/openssh/gnome-ssh-askpass
+unset SSH_ASKPASS
+
+# htop (system tools)
+prependPath ${SHARED_SOFTWARE}/htop
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# SHARED SOFTWARE
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+alias lssoftware="ls ${SHARED_SOFTWARE} | grep latest"
+
+# Fix path
+prependPath /opt/local/bin # Python 2.6.5
+prependPath ${SHARED_SOFTWARE}/jdk-latest/bin
+prependPath ${SHARED_SOFTWARE}/bedops-latest/bin
+prependPath ${SHARED_SOFTWARE}/BEDTools-latest/bin
+prependPath ${SHARED_SOFTWARE}/blast-latest
+prependPath ${SHARED_SOFTWARE}/bowtie2-latest
+prependPath ${SHARED_SOFTWARE}/bwa-latest
+prependPath ${SHARED_SOFTWARE}/Control-FREEC-latest
+prependPath ${SHARED_SOFTWARE}/cufflinks-latest
+prependPath ${SHARED_SOFTWARE}/FastQC-latest
+prependPath ${SHARED_SOFTWARE}/GeneTorrent-latest/bin
+prependManPath ${SHARED_SOFTWARE}/GeneTorrent-latest/share/man
+prependPath ${SHARED_SOFTWARE}/HTSeq-latest/scripts
+prependPath ${SHARED_SOFTWARE}/matlab-latest/bin
+prependPath ${SHARED_SOFTWARE}/R-latest/bin
+prependPath ${SHARED_SOFTWARE}/sratoolkit-latest/bin
+prependPath ${SHARED_SOFTWARE}/samtools-latest
+prependPath ${SHARED_SOFTWARE}/samtools-latest/bcftools
+prependPath ${SHARED_SOFTWARE}/tophat-latest
+prependPath ${SHARED_SOFTWARE}/wordspy-latest
+prependPath ${SHARED_ROOT}/bin
+prependPath ${SHARED_ROOT}/local/bin
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Fix git
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Remove alias 'git', iff set
+alias git=foo
+unalias git
+# Add noew git installation
+prependPath /opt/rh/devtoolset-2/root/usr/bin/
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# GENOMIC TOOLS
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+alias igv=${SHARED_SOFTWARE}/IGV-latest/igv.sh
+export PICARD_HOME=${SHARED_SOFTWARE}/picard-tools-latest
+export GATK_HOME=${SHARED_SOFTWARE}/GATK-latest
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Python
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+if test "${PYTHONPATH_SYSTEM}" == ""; then
+  export PYTHONPATH_SYSTEM=${PYTHONPATH}
+fi
+export PYTHONPATH=${PYTHONPATH_SYSTEM}
+
+# Add user-specific Python binaries
+dir=${HOME}/.local/bin
+if ! test -d "${dir}"; then
+  mkdir -p "${dir}"
+fi
+export PYTHONPATH=${dir}:${PYTHONPATH}
+prependPath ${dir}
+
+# Add site-wide Python packages
+export PYTHONPATH=${PYTHONPATH}:/opt/local/lib/python2.6/site-packages
+
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# HTSeq
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+export PYTHONPATH=${PYTHONPATH}:${SHARED_SOFTWARE}/HTSeq-latest/dist/HTSeq-0.5.4p3-py2.6-linux-x86_64.egg
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# R
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+## Setup R_LIBS locally for user and machine type
+# Get the OS type in lower case
+#ostype=`uname -s | tr '[A-Z]' '[a-z]'`
+#export R_LIBS=${HOME}/R/${ostype}/library/
+#if ! test -d "${R_LIBS}"; then
+#  mkdir -p ${R_LIBS}
+#fi
+alias R-2.15.3=${SHARED_SOFTWARE}/R-2.15.3/bin/R
+alias R-3.0.0=${SHARED_SOFTWARE}/R-3.0.0/bin/R
+alias R-3.0.1=${SHARED_SOFTWARE}/R-3.0.1/bin/R
+alias R-3.0.2=${SHARED_SOFTWARE}/R-3.0.2/bin/R
+alias R-3.0.3=${SHARED_SOFTWARE}/R-3.0.3/bin/R
+alias R-3.1.0=${SHARED_SOFTWARE}/R-3.1.0/bin/R
+alias R-3.1.1=${SHARED_SOFTWARE}/R-3.1.1/bin/R
+alias R-latest=${SHARED_SOFTWARE}/R-latest/bin/R
+alias R-patched=${SHARED_SOFTWARE}/R-patched/bin/R
+alias R-devel=${SHARED_SOFTWARE}/R-devel/bin/R
+alias useR=". ${SHARED_ROOT}/bin/useR"
+
+
+function cran() {
+  rver=$(Rscript -e "cat(gsub('-$', '', sprintf('%s-%s', getRversion(), R.version[['status']])))" | tr ' ' _)
+  echo rver=$rver
+  log=.check_CRAN_${rver}.log
+  echo log=$log
+  echo "nohup make cran > $log &"
+  nohup make cran > $log &
+}
+
+function llcran() {
+  pkg=$(grep Package: DESCRIPTION | sed 's/.*:[^a-zA-Z]*//' | sed 's/[^a-zA-Z0-9.]//g')
+  ver=$(grep Version: DESCRIPTION | sed 's/.*:[^0-9]*//' | sed 's/[^a-zA-Z0-9.]//g')
+  echo "Package: ${pkg} v${ver}"
+  dirs=$(ls ../_R-*/* | grep ${pkg}_${ver}.CRAN | sed 's/://g')
+  for dir in ${dirs}; do
+    echo $dir
+    ls -l $dir/checks*/
+    pkgC=$(ls $dir/checks*/tmp | grep .Rcheck | sed 's/.Rcheck//')
+    echo Package being checked: $pkgC
+    if test -n "$1"; then
+      echo Package that gave "$1":
+      ls -l $dir/checks*/$1
+    fi
+    echo
+  done
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Cloud tools
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Dropbox
+prependPath ${SHARED_SOFTWARE}/.dropbox-dist
+prependPath ${SHARED_SOFTWARE}/dropbox-cli
+alias dropbox="python ${SHARED_SOFTWARE}/dropbox-cli/dropbox.py"
+
+# s3cmd (Amazon AWS S3)
+prependPath ${SHARED_SOFTWARE}/s3cmd-latest
+alias s3cmd=${SHARED_SOFTWARE}/s3cmd-latest/s3cmd
+
+# Mirror website
+alias wmirror="wget --no-host-directories --recursive --no-parent --reject='index.html*'"
+
+
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# BUILDS
+#
+# ./configure --prefix=${SHARED_ROOT}/local/
+# make
+# make install
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+export CPPFLAGS="-I${SHARED_ROOT}/local/include $CPPFLAGS"
+export LDFLAGS="-L${SHARED_ROOT}/local/lib $LDFLAGS"
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Default editor for 'svn commit' and others
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+if test "${EDITOR}" = ""; then
+  export EDITOR="emacs -nw"
+fi
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Create aliases 'n0, 'n1', etc. to ssh into corresponding node 
+# preserving the current working directory.
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+export QNODES=`qnodes | grep "^n[0-9][0-9]*"`
+for n in ${QNODES}; do
+  cmd="alias $n='pwd=\$(pwd); ssh -Y -t $n \"cd \$pwd; $SHELL\"'"
+#  echo $cmd
+  eval $cmd
+done
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Convenient ways of listing files
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+alias ll="ls -l"
+
+
+###################################################################
+# HISTORY:
+# 2014-05-05
+# o Added cran().
+# 2012-04-28
+# o Extracted and shared.
+###################################################################

@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+# Argument: node
+QSUB_NODE=
+if test -n "$1"; then
+  QSUB_NODE=$1
+  shift;
+fi
+
+echo QSUB_NODE=$QSUB_NODE
+
+resOpt=
+
+# Default interactive node
+if test "$QSUB_NODE" == "any"; then
+  resOpt=
+elif test -z "$QSUB_NODE"; then
+  resOpt="-l nodes=n6"
+else
+  resOpt="-l nodes=$QSUB_NODE"
+fi
+
+QSUB_CMD="qsub -I $resOpt $*"
+echo "Torque request: $QSUB_CMD"
+$QSUB_CMD
+
+

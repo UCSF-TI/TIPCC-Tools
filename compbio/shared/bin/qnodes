@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+pbsnodes -l free | cut -d ' ' -f 1
+
+
+

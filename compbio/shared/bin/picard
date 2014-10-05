@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+###################################################################
+# Author: Henrik Bengtsson <hb@biostat.ucsf.edu>
+###################################################################
+
+# Useful functions
+source /home/henrik/shared/bin/includes.bash
+
+function picard() {
+  TOOL_PATH=${SHARED_SOFTWARE}/picard-tools-latest
+  cmd=$1
+  shift
+  if test -z "${cmd}"; then
+    echo "Usage: picard <command> ..."
+    echo "Commands:"
+    ls "${TOOL_PATH}/" | sed -e 's/.jar//g'
+    return
+  fi
+  cmd=${cmd}.jar
+  cmd=${cmd/.jar.jar/.jar}
+  java -jar "${TOOL_PATH}/${cmd}" $*
+} # picard()
+
+picard $*
+
+
+###################################################################
+# HISTORY:
+# 2012-04-30
+# o Added picard script.
+###################################################################

@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+###################################################################
+# Author: Henrik Bengtsson <hb@biostat.ucsf.edu>
+###################################################################
+
+# Useful functions
+source /home/henrik/shared/bin/includes.bash
+
+function cghubget() {
+  TOOL_PATH=${SHARED_SOFTWARE}/GeneTorrent-latest/bin
+
+  if test -z "$*"; then
+    echo "Usage: cghubget -v -d <uri>"
+    return
+  fi
+  echo "Downloading from CGHub using GeneTorrent..."
+  confdir="$(dirname `which GeneTorrent`)/../share/GeneTorrent"
+  echo "GeneTorrent configuration directory: $confdir"
+  credfile="${HOME}/.ssh/cghub.key"
+  credfile="${HOME}/.ssh/cghub_public.key"
+  echo "User credential file: ${credfile}"
+  if ! test -f "${credfile}"; then
+    error "CGHub credentical key file missing. Download via https://cghub.ucsc.edu/secure/"
+    return
+  fi
+  cmd="${TOOL_PATH}/GeneTorrent --config-dir ${confdir} --credential-file ${credfile} --max-children 1 -vv $*"
+  echo ${cmd}
+  ${cmd}
+  echo "Downloading from CGHub using GeneTorrent...done"
+} # cghubget()
+
+cghubget $*
+
+###################################################################
+# HISTORY:
+# 2012-12-12
+# o Forot to update usage name.
+# 2012-05-05
+# o Renamed to cgget from cghubget, cf. cgquery.
+# o Now only one download process is used (used to be default 8).
+# 2012-04-30
+# o Added cghubget script.
+###################################################################

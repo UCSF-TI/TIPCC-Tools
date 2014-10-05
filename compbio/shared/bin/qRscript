@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+# Wrap each argument in quotes
+args=
+for arg in "$@"; do
+  args="${args} \"$arg\""
+done
+
+# Find path to Rscript
+Rbin=`which Rscript`
+echo "Rscript: $Rbin"
+
+echo args=$args
+CALL="$Rbin $args"
+echo "# $CALL"
+echo "$CALL" | qsubx -

@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+pathname=$1
+args="$2 $3 $4 $5 $6 $7 $8 $9"
+tags=""
+echo "$args"
+
+#Rver=/usr/local/linux/bin/R-patched
+#Rver=/usr/local/linux/bin/R-2.10.1
+#Rver=/usr/local/linux/bin/R-2.9.0
+Rver=R
+
+name=${pathname/.Rex/}
+name=${name/.R/}
+if test "${tags}" == ""; then
+  tags="${HOST/.*/},`date +%Y%m%d-%H%M%S`"
+fi
+logfile=${name},${tags}.log
+
+
+echo "R       : ${Rver}"
+echo "R script: ${pathname}"
+echo "Log file: ${logfile}"
+echo "Command : nohup ${Rver} --no-save ${args} < ${pathname} > ${logfile}"
+
+echo "R version: "
+${Rver} --version
+
+nohup ${Rver} --no-save ${args} < ${pathname} > ${logfile}
+
+

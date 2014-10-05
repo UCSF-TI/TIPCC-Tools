@@ -1,0 +1,206 @@
+#!/usr/bin/env bash
+###########################################################################
+# Script to download and install the most recent R-devel, R-patched 
+# or R-release versions
+#
+# Usage: One of the following:
+#  installR devel
+#  installR patchd
+#  installR release
+#
+# Henrik Bengtsson, 2014-02-04
+# See also https://portal.hdfccc.ucsf.edu/TIPCC/Wiki/Wiki%20Pages/R.aspx
+###########################################################################
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Reset environment variable (just in case)
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+unset BASH
+unset BASH_ALIASES
+unset BASH_CMDS
+unset BASH_VERSION
+unset COLORS
+unset COLUMNS
+unset CUDA_HOME
+unset CVS_RSH
+unset DIRSTACK
+unset GROUPS
+unset G_BROKEN_FILENAMES
+unset HISTCONTROL
+unset HISTFILE
+unset HISTFILESIZE
+unset HISTSIZE
+unset HOME
+unset HOSTNAME
+unset HOSTTYPE
+unset ID
+unset IFS
+unset INFOPATH
+unset LANG
+unset LD_LIBRARY_PATH
+unset LD_RUN_PATH
+unset LESSOPEN
+unset LIBSUFFIX
+unset LINES
+unset LOADEDMODULES
+unset LOGNAME
+unset LS_COLORS
+unset MACHTYPE
+unset MAIL
+unset MAILCHECK
+unset MANPATH
+unset MOABHOMEDIR
+unset MODULEPATH
+unset MODULESHOME
+unset OLDPWD
+unset OPTERR
+unset OPTIND
+unset OSTYPE
+unset PERL5LIB
+unset PIPESTATUS
+unset PS1
+unset PS2
+unset PS4
+unset PWD
+unset QTDIR
+unset QTINC
+unset QTLIB
+unset SHLVL
+unset SSH_ASKPASS
+unset TERM
+unset USER
+unset colors
+unset prefix
+unset module
+export PATH=/sbin:/usr/bin:/bin
+set
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Prerequisites
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+if ! test "`uname -n`" == "cclc01.som.ucsf.edu"; then
+  echo "ERROR: Installation of R is only supported on the head node: `uname -n`"
+  exit 1
+fi
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Setup
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+opwd=`pwd`
+
+# Root directory where to install R
+root=/home/henrik/shared/software_hb/R
+
+# Arguments
+flavor=$1
+
+# Cleanup?
+if test "${flavor}" = "cleanup"; then
+  echo "Deleting old temporary installation directories:"
+  old=`find ${root} -maxdepth 1 -name *_tmp -type d -mtime -2`
+  for d in ${old}; do
+    echo $d
+    rm -rf $d
+  done
+  exit 0
+fi
+
+# Install "devel" by default.
+if test "${flavor}" = ""; then
+  flavor="devel"
+fi
+
+# Subdirectory
+today=`date +%Y%m%d`
+dirname=${root}/R-${flavor}-${today}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Install (unless already done)
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+if ! test -d ${dirname}; then
+  echo "Installing R-${flavor} to '${dirname}/'"
+
+  # (1a) Download latest R build, iff not already done
+  pathname=${dirname}.tar.gz
+  if ! test -f ${pathname}; then
+    if test "${flavor}" == "devel"; then
+      urlpath=ftp://ftp.stat.math.ethz.ch/Software/R
+    elif test "${flavor}" == "patched"; then
+      urlpath=ftp://ftp.stat.math.ethz.ch/Software/R
+    elif test "${flavor}" == "latest"; then
+      urlpath=http://cran.r-project.org/src/base
+    else
+      urlpath=http://cran.r-project.org/src/base/R-3
+    fi
+    url=${urlpath}/R-${flavor}.tar.gz
+    wget ${url} -O ${pathname}
+  fi
+
+  # (1b) Extract (to temporary)
+  mkdir ${dirname}_tmp
+  tar -xvf ${pathname} -C ${dirname}_tmp
+
+  # (2) Infer version label
+  cd ${dirname}_tmp
+  cd R-* # because could be R-rc when flavor == "patched"
+  label=`cat VERSION | tr '[:upper:]' '[:lower:]'`
+  label=${label/under development (unstable)/devel}
+  label=${label/ /}
+  echo "Installing: R-$label"
+  dirname2=${root}/R-${label}-${today}
+  echo "Installation path: $dirname2"
+
+  # (3) Configure, build, check and install
+  export LDFLAGS="-L/opt/NetCDF/NetCDF-4.3.0/lib"
+  ./configure --enable-R-shlib --prefix=${dirname2}
+  make
+  make check
+  make install
+
+  # (4) Link for completness
+  ln -s ${dirname2} ${dirname}
+
+  # (5) Done
+  cd ${root}
+fi
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Make package library read-only to prevent installing packages into
+# it by mistake; all packages should be installed either to:
+#   (i) a site library, or 
+#  (ii) a user-specific library.
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+libpath=$(${dirname}/bin/Rscript -e "cat(rev(.libPaths())[1])")
+echo R system-wide library path: ${libpath}
+if test -d "${libpath}" & test -w "${libpath}"; then
+  echo Disabled write-permission: ${libath}
+  chmod ugo-w ${libpath}
+fi
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Results
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Display version and capabilites of installed R binaries
+${dirname}/bin/R -e "capabilities()" -e "sessionInfo()"
+
+# Cleanup
+cd ${opwd}
+
+
+###########################################################################
+# HISTORY:
+# 2014-06-12
+# o Now making the system-wide library path read-only.
+# 2014-04-15
+# o Now script also installs 'latest' in addition to 'patched' and 'devel'.
+# 2014-03-02
+# o Now installing to directory reflecting the name of the R version
+#   rather than the name of the download.
+# o ROBUSTNESS: Now asserting that we run on the head node.
+# 2014-02-27
+# o Verified that script installs R properly (iff run on head node).
+# 2014-02-04
+# o Created.
+###########################################################################

@@ -1,0 +1,21 @@
+#!/bin/env bash
+cmd=$*
+echo NODES: $CLUSTER_NODES
+echo COMMAND: $cmd
+
+if test -z "$cmd"; then
+  2>&1 echo "ERROR: Command not specified."
+  exit
+fi
+
+for n in $CLUSTER_NODES; do
+  echo NODE $n:
+  ssh $n "$cmd"
+  echo
+done
+
+echo "DONE"
+
+
+
+

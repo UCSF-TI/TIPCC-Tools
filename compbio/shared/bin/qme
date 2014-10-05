@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+jobs=`qstat -u $USER | grep -v ' C ' | cut -d ' ' -f 1 | grep .cclc01`
+njobs=`echo $jobs | wc -w`
+echo "Username: $USER"
+echo "Number of active jobs: $njobs"
+if test "$#" == "0"; then
+  if test "$njobs" != "0"; then
+    qstat -n -1 -u $USER | grep -v ' C '
+  fi
+else
+  qstat $* $jobs
+fi
+if test "$njobs" != "0"; then
+  echo "Number of active jobs: $njobs"
+fi
+
+
+
+

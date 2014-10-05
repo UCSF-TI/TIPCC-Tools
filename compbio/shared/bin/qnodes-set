@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+export COMPUTE_NODES_UP=`pbsnodes -l free | cut -d ' ' -f 1`
+export COMPUTE_NODES_DOWN=`pbsnodes -l | cut -d ' ' -f 1`
+
+
+
+

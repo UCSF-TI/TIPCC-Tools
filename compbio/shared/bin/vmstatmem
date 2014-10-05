@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+###################################################################
+# Author: Henrik Bengtsson <hb@biostat.ucsf.edu>
+###################################################################
+
+# Useful functions
+source /home/henrik/shared/bin/includes.bash
+
+function vmstatmem() {
+  m=`vmstat -s -S M | grep mem | grep -v inactive | egrep "(active|total)" | sed -e 's/[^0-9]//g'`
+  mt=`echo ${m} | sed -e 's/ .*//g'`
+  mu=`echo ${m} | sed -e 's/.* //g'`
+
+  s=`vmstat -s -S M | grep swap | egrep "(used|total)" | sed -e 's/[^0-9]//g'`
+  st=`echo ${s} | sed -e 's/ .*//g'`
+  su=`echo ${s} | sed -e 's/.* //g'`
+
+  perl -e "printf \"Usage: RAM: %6g MB (%5.2f%%) of %6g MB | SWAP: %6g MB (%5.2f%%) of %6g MB\n\", ${mu}, 100*${mu}/${mt}, ${mt}, ${su}, 100*${su}/${st}, ${st}"
+} # vmstatmem()
+
+vmstatmem $*
+
+###################################################################
+# HISTORY:
+# 2012-05-10
+# o Richard Johnson proposed to use 'vmstat' (instead of 'free').
+# o Created.
+###################################################################
