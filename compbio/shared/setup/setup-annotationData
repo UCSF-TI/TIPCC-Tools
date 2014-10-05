@@ -1,0 +1,65 @@
+#/usr/bin/env bash
+###################################################################
+# Author: Henrik Bengtsson
+#
+# See also /home/GenomeData/INSTALLATION_LOG
+###################################################################
+dest=$HOME/shared/annotationData,raw/
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Local functions
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+function error() {
+  echo "ERROR: $*"
+  exit 1
+}
+
+function lndir() {
+  link="$2";
+  if test "$link" == "."; then
+    link=`basename "$1"`
+  fi
+
+  if ! test -d "$1"; then
+    # Remove any previous link to non-existing target
+    if test -L "$link"; then
+      rm "$link"
+    fi
+    error "Cannot link to '$1'. No such directory."
+    return
+  fi
+
+  # Already linked to?
+  if test -d "$link"; then
+    return
+  fi
+
+  ln -s "$1" "$2"
+} # lndir()
+
+
+# Record the current working directory
+opwd=$(pwd)
+trap 'cd ${opwd}; exit' INT TERM EXIT
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Setup directory
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+mkdir -p $dest
+cd $dest
+
+# Cleanup
+rm -f *-latest
+
+lndir /home/GenomeData/bowtie_indices .
+lndir /home/GenomeData/bwa_indices .
+#lndir /home/jocostello/shared/LG3_Pipeline/resources/bwa_indices/ bwa_indices,b
+lndir /home/GenomeData/UCSC_HG18_Mar_2006 .
+lndir /home/GenomeData/UCSC_HG19_Feb_2009 .
+#lndir /home/jocostello/shared/LG3_Pipeline/resources/UCSC_HG19_Feb_2009 UCSC_HG19_Feb_2009,b
+lndir /home/GenomeData/UCSC_MM9_July_2007 .
+# lndir /home/taylorbs/lwork/Resources/human .
+# lndir /home/taylorbs/lwork/Resources/mouse .
+lndir /home/jocostello/resources/ .

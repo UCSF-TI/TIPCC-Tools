@@ -1,0 +1,25 @@
+######################################################################
+# A BatchJobs launch script template for a Torque/PBS
+#
+# Author: Henrik Bengtsson
+######################################################################
+
+#PBS -N <%= job.name %>
+## merge standard error and output
+#PBS -j oe
+## direct streams to our logfile
+#PBS -o <%= log.file %>
+##PBS -l walltime=<%= resources$walltime %>,nodes=<%= resources$nodes %>,vmem=<%= resources$memory %>M
+
+## Run R:
+## we merge R output with stdout from PBS, which gets then logged via the PBS -o option
+echo "Command: Rscript --verbose \"<%= rscript %>\""
+Rscript --verbose "<%= rscript %>"
+echo "Command: Rscript --verbose \"<%= rscript %>\" ... DONE"
+
+
+######################################################################
+# HISTORY:
+# 2013-12-18
+# o Shared on the cluster.
+######################################################################

@@ -1,0 +1,27 @@
+#/usr/bin/env bash
+###################################################################
+# Author: Henrik Bengtsson
+#
+# Usage:
+# sshall /compbio/shared/setup/setup-current-node
+###################################################################
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# SETUP COMPUTE NODES
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+if test $ISCOMPUTENODE == 1; then
+  # Create /scratch/$USER/shared/
+  if test -d /scratch/$USER/; then 
+    mkdir -p /scratch/$USER/shared/
+
+    # Mirror
+    srcPath=$HOME/shared/
+    destPath=/scratch/$USER/shared/
+
+    echo Synchronizing shared/annotationData/...
+    rsync -aL --progress $srcPath/annotationData $destPath/
+    echo Synchronizing shared/annotationData/...done
+  fi
+fi
+
+

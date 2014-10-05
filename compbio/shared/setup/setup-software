@@ -1,0 +1,322 @@
+#/usr/bin/env bash
+###################################################################
+# Author: Henrik Bengtsson
+#
+# See also /home/GenomeData/INSTALLATION_LOG
+###################################################################
+dest=$HOME/shared/software/
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Local functions
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+function error() {
+  echo "ERROR: $*"
+#  exit 1
+}
+
+function lndir() {
+  link="$2";
+  if test "$link" == "."; then
+    link=`basename "$1"`
+  fi
+
+#  echo ls "$1";
+#  ls "$1"
+  if ! test -d "$1"; then
+    # Remove any previous link to non-existing target
+    if test -L "$link"; then
+      rm "$link"
+    fi
+    error "Cannot link to '$1'. No such directory."
+    return
+  fi
+
+  # Already linked to?
+  if test -d "$link"; then
+    return
+  fi
+  
+  ln -s "$1" "$2" &> /dev/null
+} # lndir()
+
+
+# Record the current working directory
+opwd=$(pwd)
+trap 'cd ${opwd}; exit' INT TERM EXIT
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Permissions
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+chmod ugo+rx /home/henrik/shared/software_hb/*
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Setup software/
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+mkdir -p $dest
+cd $dest
+
+# Cleanup
+rm -f *-latest
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Programming tools
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Java
+lndir /opt/java/jre1.6.0_latest .
+lndir /opt/java/jdk1.6.0_latest .
+lndir /opt/java/jre1.7.0_latest .
+lndir /opt/java/jdk1.7.0_latest .
+lndir jre1.7.0_latest jre-latest
+lndir jdk1.7.0_latest jdk-latest
+
+# Matlab
+lndir /opt/local/MATLAB/R2010b matlab-R2010b
+lndir /opt/local/MATLAB/R2012a matlab-R2012a
+lndir matlab-R2012a matlab-latest
+
+# Python
+# Python 2.6.5 is install under /opt/local/bin
+
+# R 2.11.x
+lndir /opt/local/lib64/R R-2.11.0
+
+# R 2.15.x
+lndir /opt/R/R-2.15.0 .
+lndir /opt/R/R-2.15.1 .
+lndir /opt/R/R-2.15.2 .
+lndir /opt/R/R-2.15.3 .
+
+# R 3.0.x
+lndir /opt/R/R-3.0.0 .
+lndir /opt/R/R-3.0.1 .
+lndir /opt/R/R-3.0.2 .
+lndir /opt/R/R-3.0.3 .
+
+# R 3.1.x
+lndir /opt/R/R-3.1.0 R-3.1.0
+lndir /opt/R/R-3.1.1 R-3.1.1
+
+# R 3.1.x patched
+dir=/home/henrik/shared/software_hb/R/
+what=R-3.1.1patched
+newest=`ls ${dir} | grep ${what}- | sort -ru | head -1`
+lndir ${dir}${newest} .
+rm ${what}
+lndir ${newest} ${what}
+
+# R 3.2.x
+what=R-3.2.0devel
+newest=`ls ${dir} | grep ${what}- | sort -ru | head -1`
+lndir ${dir}/${newest} .
+rm ${what}
+lndir ${newest} ${what}
+
+# R latest, patched and R devel
+## lndir R-3.1.1 R-latest
+lndir R-patched R-latest   # BUG FIX: R-3.1.1 does not build native code /2014-10-01
+lndir R-3.1.1patched R-patched
+lndir R-3.2.0devel R-devel
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Cloud tools
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Dropbox
+lndir /home/henrik/shared/software_hb/.dropbox-dist/ .
+lndir /home/henrik/shared/software_hb/dropbox-cli/ .
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Documentation tools
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+lndir /home/henrik/shared/software_hb/asciidoc-8.6.8/ .
+lndir asciidoc-8.6.8 asciidoc-latest
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Misc. tools
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Grace
+lndir /opt/local/grace grace-unknown
+lndir grace-unknown grace-latest
+
+# htop [http://hisham.hm/htop/]
+lndir /home/henrik/shared/software_hb/htop-1.0.3/ .
+lndir htop-1.0.3 htop
+
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Genomic tools
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# IGV
+lndir /home/henrik/shared/software_hb/IGV_2.1.2 .
+lndir /home/henrik/shared/software_hb/IGV_2.3.31 .
+lndir IGV_2.3.31 IGV-latest
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Sequencing tools
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# ANNOVAR
+#lndir /home/taylorbs/lbin/annovar/ annovar-unknown
+#lndir annovar-unknown annovar-latest
+
+# Atlas2
+lndir /opt/local/bin/Atlas2_v1.0 .
+lndir Atlas2_v1.0 Atlas2-latest
+
+# BEDOPS
+lndir /home/henrik/shared/software_hb/bedops-1.2.2c .
+lndir bedops-1.2.2c bedops-latest
+
+# BEDtools
+#lndir /opt/BEDTools-2.1.5 .
+#lndir /home/taylorbs/lbin/BEDTools-2.10.1 .
+lndir /home/jocostello/tools/BEDTools-Version-2.13.4 .
+lndir /opt/local/bin/BEDTools-Version-2.15.0 .
+lndir BEDTools-Version-2.15.0 BEDTools-latest
+
+# bismark
+lndir /opt/local/bin/bismark_v0.5.4 .
+lndir /opt/local/bin/bismark_v0.7.3 .
+lndir bismark_v0.7.3 bismark-latest
+
+# BLAST
+lndir /opt/local/bin/blast-2.2.26/ .
+lndir blast-2.2.26 blast-latest
+
+# bowtie
+
+# bowtie2
+lndir /opt/local/bin/bowtie2-2.0.0-beta6 .
+lndir /home/henrik/shared/software_hb/bowtie2-2.1.0 .
+lndir bowtie2-2.1.0 bowtie2-latest
+
+# bwa
+#lndir /home/taylorbs/lbin/bwa-0.5.8c .
+lndir /home/jocostello/tools/bwa-0.5.10 .
+lndir /opt/local/bin/bwa-0.6.1 .
+lndir /home/henrik/shared/software_hb/bwa-0.7.5a .
+lndir bwa-0.7.5a bwa-latest
+
+# Control-FREEC
+lndir /home/henrik/shared/software_hb/Control-FREEC-2.5 .
+lndir Control-FREEC-2.5 Control-FREEC-latest
+
+# cufflinks
+lndir /opt/local/bin/cufflinks-1.0.3.Linux_x86_64 .
+lndir /opt/local/bin/cufflinks-1.3.0.Linux_x86_64 .
+lndir cufflinks-1.3.0.Linux_x86_64 cufflinks-latest
+
+# FastQC [http://www.bioinformatics.babraham.ac.uk/projects/fastqc/]
+lndir /home/henrik/shared/software_hb/FastQC-0.10.1 .
+lndir /home/henrik/shared/software_hb/FastQC-0.11.2 .
+lndir FastQC-0.11.2 FastQC-latest
+
+# fastx_toolkit
+#lndir /home/taylorbs/lbin/fastx_toolkit fastx_toolkit-0.13
+#lndir /usr/local/bin fastx_toolkit-0.13.2
+#lndir fastx_toolkit-0.13.2 fastx_toolkit-latest
+
+# GATK
+#lndir /home/taylorbs/lbin/GATK/GenomeAnalysisTK-1.0.5315 .
+#lndir /home/taylorbs/lbin/GATK/GenomeAnalysisTK-1.0.5506 .
+lndir /home/jocostello/tools/GenomeAnalysisTK-1.1-37-ge63d9d8 .
+lndir /home/jocostello/tools/GenomeAnalysisTK-1.2-21-g6804ab6 .
+lndir /home/jocostello/shared/LG3_Pipeline/tools/GenomeAnalysisTK-1.5-12-gd0056d6 .
+lndir /home/henrik/shared/software_hb/GenomeAnalysisTK-1.6-2-gc2b74ec .
+lndir /home/henrik/shared/software_hb/GenomeAnalysisTK-3.0-0 .
+lndir GenomeAnalysisTK-3.0-0 GATK-latest
+
+# GeneTorrent
+lndir /home/henrik/shared/software_hb/GeneTorrent-3.0.2 .
+lndir /home/henrik/shared/software_hb/GeneTorrent-3.8.5a-94 .
+lndir GeneTorrent-3.0.2 GeneTorrent-latest
+#lndir GeneTorrent-3.8.5a-94 GeneTorrent-latest
+
+# HTSeq
+lndir /home/tokuyasu/shared/software/HTSeq-0.5.4p3 .
+lndir /home/henrik/shared/software_hb/HTSeq-0.6.1 .
+lndir HTSeq-0.5.4p3 HTSeq-latest
+#lndir HTSeq-0.6.1 HTSeq-latest
+
+# muTect
+lndir /home/jocostello/tools/muTect muTect-r27783 .
+lndir muTect-r27783 muTect-latest
+
+# Picard
+lndir /opt/local/picard-tools-1.39 .
+#lndir /home/taylorbs/lbin/picard-tools-1.43 .
+lndir /home/jocostello/tools/picard-tools-1.51 .
+#lndir /home/taylorbs/lbin/picard-tools-1.62 .
+lndir /home/jocostello/tools/picard-tools-1.64 .
+lndir /home/henrik/shared/software_hb/picard-tools-1.67 .
+lndir picard-tools-1.67 picard-tools-latest
+
+# RNAstructure
+lndir /opt/local/RNAstructure RNAstructure-unknown
+lndir RNAstructure-unknown RNAstructure-latest
+
+# s3cmd
+lndir /home/henrik/shared/software_hb/s3cmd-1.5.0-alpha3 .
+lndir /home/henrik/shared/software_hb/s3cmd-1.5.0-alpha3 s3cmd-latest
+
+
+# samtools
+#lndir /home/taylorbs/lbin/samtools-0.1.9 .
+lndir /home/jocostello/tools/samtools-0.1.12a .
+lndir /home/jocostello/tools/samtools-0.1.17 .
+lndir /home/jocostello/tools/samtools-0.1.18 .
+lndir /opt/SAMtools/SAMTools-0.1.18 .
+lndir /home/henrik/shared/software_hb/samtools-0.1.19 .
+lndir /home/henrik/shared/software_hb/samtools-0.1.19-patched .
+lndir samtools-0.1.19 samtools-latest
+
+# snpEff
+lndir /home/jocostello/tools/snpEff_v2_0_2 .
+lndir snpEff_v2_0_2 snpEff-latest
+
+# SNVMix2
+lndir /opt/local/SNVMix2-0.11.8-r3 .
+lndir SNVMix2-0.11.8-r3 SNVMix2-latest
+
+# SRA Toolkit [http://trace.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?view=software]
+lndir /home/henrik/shared/software_hb/sratoolkit.2.3.4-2-centos_linux64 .
+lndir /home/henrik/shared/software_hb/sratoolkit.2.4.1-centos_linux64 .
+lndir sratoolkit.2.4.1-centos_linux64 sratoolkit-latest
+
+# tophat
+#lndir /home/taylorbs/lbin/tophat-1.1.1.Linux_x86_64 .
+lndir /opt/local/bin/tophat-1.3.0.Linux_x86_64 .
+lndir /opt/local/bin/tophat-1.3.1.Linux_x86_64 .
+lndir /opt/local/bin/tophat-1.4.0.Linux_x86_64 .
+#lndir /home/taylorbs/lbin/tophat-1.4.1.Linux_x86_64 .
+lndir /opt/local/bin/tophat-2.0.3.Linux_x86_64/ .
+lndir /home/henrik/shared/software_hb/tophat-2.0.9.Linux_x86_64 .
+lndir /home/henrik/shared/software_hb/tophat-2.0.10.Linux_x86_64 .
+lndir tophat-2.0.10.Linux_x86_64 tophat-latest
+
+# VarScan
+lndir /opt/local/VarScan VarScan-v2.2.3
+lndir VarScan-v2.2.3 VarScan-latest
+
+# Vienna RNA
+lndir /opt/local/share/ViennaRNA ViennaRNA-unknown
+lndir ViennaRNA-unknown ViennaRNA-latest
+
+# WordSpy [http://cic.cs.wustl.edu/wordspy/dltemp.htm]
+lndir /opt/local/bin/wordspy1.5 .
+lndir wordspy1.5 wordspy-latest
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# CBC utilities
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ln -fs $SHARED_SOFTWARE/asciidoc-latest/a2x.py $SHARED_BIN/a2x
+ln -fs $SHARED_SOFTWARE/asciidoc-latest/asciidoc.py $SHARED_BIN/asciidoc
+
+
