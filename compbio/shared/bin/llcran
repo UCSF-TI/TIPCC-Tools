@@ -15,7 +15,7 @@ function llcran() {
   echo "Package: ${pkg} v${ver}"
   dirs=$(ls ../_R-*/* | grep ${pkg}_${ver}.CRAN | sed 's/://g')
   for dir in ${dirs}; do
-    echo $dir
+    echo $dir/checks/
     ll $dir/checks/
     pkgC=$(ls $dir/checks/tmp | grep .Rcheck | sed 's/.Rcheck//')
     echo Package being checked: $pkgC

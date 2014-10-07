@@ -86,7 +86,6 @@ alias ganglia='lynx -accept_all_cookies http://localhost/ganglia/'
 #alias gmem='free -g | echo "      `head -1`"; gsh free -g | egrep -e "Mem"'
 alias gswap='free -g | echo "      `head -1`"; gsh free -g | egrep -e "Swap"'
 alias gmem='gsh vmstatmem'
-alias news='less -FINs +G /home/GenomeData/INSTALLATION_LOG'
 alias topme='top -U ${USER}'
 alias htopme='htop -u ${USER}'
 alias psme='ps -ef | grep ${USER}'
@@ -105,8 +104,6 @@ prependPath ${SHARED_SOFTWARE}/htop
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # SHARED SOFTWARE
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-alias lssoftware="ls ${SHARED_SOFTWARE} | grep latest"
-
 # Fix path
 prependPath /opt/local/bin # Python 2.6.5
 prependPath ${SHARED_SOFTWARE}/jdk-latest/bin
@@ -214,7 +211,7 @@ function llcran() {
   echo "Package: ${pkg} v${ver}"
   dirs=$(ls ../_R-*/* | grep ${pkg}_${ver}.CRAN | sed 's/://g')
   for dir in ${dirs}; do
-    echo $dir
+    echo $dir/checks/
     ls -l $dir/checks*/
     pkgC=$(ls $dir/checks*/tmp | grep .Rcheck | sed 's/.Rcheck//')
     echo Package being checked: $pkgC
@@ -280,6 +277,7 @@ done
 # Convenient ways of listing files
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 alias ll="ls -l"
+alias lll="ls -la"
 
 
 ###################################################################
