@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
 
-versions="2.15.3 3.0.3 3.1.0 3.1.0patched 3.2.0devel"
-versions="3.0.3 3.1.0 3.1.0patched 3.2.0devel"
-for ver in ${versions}; do
+versions="3.0.3 3.1.1 3.1.1patched 3.2.0devel"
+versions="3.0.3 3.1.1patched 3.2.0devel"
+for rver in ${versions}; do
   echo "-------------------------------------------------------------"
-  echo "R version: ${ver}"
-  . useR ${ver}
+  echo "R version: ${rver}"
+  . useR ${rver}
   echo
-  echo "nohup make cran > .check_CRAN_${R_CMD}.log &"
-  nohup make cran > .check_CRAN_${R_CMD}.log &
+  log=.check_CRAN_${rver}.log;
+  echo "nohup make cran > $log &"
+  nohup make cran > $log &
   echo
   echo
 done
