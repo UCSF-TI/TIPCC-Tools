@@ -1,0 +1,131 @@
+#!/usr/bin/env bash
+#!/usr/bin/env bash
+### CRAN tools
+###
+### Usage:
+###  crantools [options] <command>
+###
+### Commands:
+###  check  : Check package and all of its reverse dependencies
+###  status : Display check status
+###  error  : Browse packages with an ERROR status
+###  warn   : Browse packages with a WARNING status
+###  note   : Browse packages with a NOTE status
+###
+### Example:
+###  crantools check
+
+cmd=help
+what=
+rversion=
+while (( "$#" )); do
+  ## Commands
+  if test $1 == "--help" || test $1 == "-h"; then
+    cmd=help
+  fi
+
+  if test $1 == "--rversion" || test $1 == "-r"; then
+    shift
+    rversion=$1
+  fi
+
+  if test $1 == "info"; then
+    cmd=info
+  fi
+
+  if test $1 == "list"; then
+    cmd=list
+  fi
+
+  if test $1 == "check"; then
+    cmd=check
+  fi
+
+  if test $1 == "status"; then
+    cmd=status
+  fi
+
+  if test $1 == "results"; then
+    cmd=results
+  fi
+
+  if test $1 == "error"; then
+    what=errors
+    cmd=results
+  fi
+
+  if test $1 == "warn"; then
+    what=warnings
+    cmd=results
+  fi
+
+  if test $1 == "note"; then
+    what=notes
+    cmd=results
+  fi
+
+  shift
+done
+
+pkg=$(grep Package: DESCRIPTION | sed 's/.*:[^a-zA-Z]*//' | sed 's/[^a-zA-Z0-9.]//g');
+ver=$(grep Version: DESCRIPTION | sed 's/.*:[^0-9]*//' | sed 's/[^a-zA-Z0-9.]//g');
+rver=$(Rscript -e "cat(gsub('-$', '', sprintf('%s%s', getRversion(), tolower(R.version[['status']]))))")
+
+# All available results
+if test "$rversion" = ""; then
+  path="../_R-*"
+else
+  path="../_R-*$rversion*"
+fi
+dirs="$(ls ${path}/* | grep ${pkg}_${ver}.CRAN | sed 's/://g')"
+
+
+if test $cmd == "help"; then
+  grep "^###" $0 | grep -v "^####" | cut -b 5-
+elif test $cmd == "info"; then
+  echo "Package: ${pkg} v${ver}"
+  echo "R version: ${rver}"
+  echo "Results:"
+  echo "${dirs}"
+elif test $cmd == "check"; then
+  echo "** Launching full check:"
+  useR
+  cran
+elif test $cmd == "list"; then
+  echo "Results:"
+  echo "$dirs"
+elif test $cmd == "status"; then
+  for dir in ${dirs}; do
+    d=$dir/checks/
+    echo "Directory: $d"
+    ls --color=auto -l $d
+    pkgC="$(ls $dir/checks*/tmp | grep .Rcheck | sed 's/.Rcheck//')"
+    if test "${pkgC}" = ""; then
+      pkgC="<done>"
+    fi
+    echo
+  done
+elif test $cmd == "results"; then
+  for dir in ${dirs}; do
+    dir=$dir/checks
+    if test "$what" = "errors"; then
+      files="$dir/ERROR.log"
+    elif test "$what" = "warnings"; then
+      files="$dir/WARNING.log"
+    elif test "$what" = "notes"; then
+      files="$dir/NOTE*.log"
+    elif test "$what" = ""; then
+      files="$dir/ERROR.log $dir/WARNING.log $dir/NOTE*.log"
+    fi
+    more $files
+  done
+fi
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# HISTORY:
+# 2014-10-07
+# o Created by Henrik Bengtsson.
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
