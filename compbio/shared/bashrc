@@ -196,34 +196,6 @@ alias R-devel=${SHARED_SOFTWARE}/R-devel/bin/R
 alias useR=". ${SHARED_ROOT}/bin/useR"
 
 
-function cran() {
-  rver=$(Rscript -e "cat(gsub('-$', '', sprintf('%s-%s', getRversion(), R.version[['status']])))" | tr ' ' _)
-  echo rver=$rver
-  log=.check_CRAN_${rver}.log
-  echo log=$log
-  echo "nohup make cran > $log &"
-  nohup make cran > $log &
-}
-
-function llcran() {
-  pkg=$(grep Package: DESCRIPTION | sed 's/.*:[^a-zA-Z]*//' | sed 's/[^a-zA-Z0-9.]//g')
-  ver=$(grep Version: DESCRIPTION | sed 's/.*:[^0-9]*//' | sed 's/[^a-zA-Z0-9.]//g')
-  echo "Package: ${pkg} v${ver}"
-  dirs=$(ls ../_R-*/* | grep ${pkg}_${ver}.CRAN | sed 's/://g')
-  for dir in ${dirs}; do
-    echo $dir/checks/
-    ls -l $dir/checks*/
-    pkgC=$(ls $dir/checks*/tmp | grep .Rcheck | sed 's/.Rcheck//')
-    echo Package being checked: $pkgC
-    if test -n "$1"; then
-      echo Package that gave "$1":
-      ls -l $dir/checks*/$1
-    fi
-    echo
-  done
-}
-
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Cloud tools
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

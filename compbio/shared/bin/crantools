@@ -89,8 +89,12 @@ elif test $cmd == "info"; then
   echo "${dirs}"
 elif test $cmd == "check"; then
   echo "** Launching full check:"
-  useR
-  cran
+  echo "Package: ${pkg} v${ver}"
+  echo "R version: ${rver}"
+  log=.check_CRAN_${rver}.log
+  echo "Log file: $log"
+  echo "nohup make cran > $log &"
+  nohup make cran > $log &
 elif test $cmd == "list"; then
   echo "Results:"
   echo "$dirs"
