@@ -5,7 +5,7 @@
 # See also /home/GenomeData/INSTALLATION_LOG
 ###################################################################
 dest=$SHARED_SOFTWARE
-SRC_HB=/home/henrik/shared/software_hb
+SRC_CBC=$SHARED_ROOT/software_cbc
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -52,7 +52,7 @@ trap 'cd ${opwd}; exit' INT TERM EXIT
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 chmod ugo+rx $SHARED_ROOT
 chmod ugo+rx $SHARED_ROOT/*
-chmod ugo+rx $SRC_HB/*
+chmod ugo+rx $SRC_CBC/*
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Setup software/
@@ -103,12 +103,13 @@ lndir /opt/R/R-3.1.0 R-3.1.0
 lndir /opt/R/R-3.1.1 R-3.1.1
 
 # R 3.1.x patched
-dir=$SRC_HB/R/
+dir=$SRC_CBC/R/
 what=R-3.1.1patched
 newest=`ls ${dir} | grep ${what}- | sort -ru | head -1`
 lndir ${dir}${newest} .
 rm ${what}
 lndir ${newest} ${what}
+lndir R-patched ${what}
 
 # R 3.2.x
 what=R-3.2.0devel
@@ -116,6 +117,7 @@ newest=`ls ${dir} | grep ${what}- | sort -ru | head -1`
 lndir ${dir}/${newest} .
 rm ${what}
 lndir ${newest} ${what}
+lndir R-devel ${what}
 
 # R latest, patched and R devel
 ## lndir R-3.1.1 R-latest
@@ -128,14 +130,14 @@ lndir R-3.2.0devel R-devel
 # Cloud tools
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Dropbox
-lndir $SRC_HB/.dropbox-dist/ .
-lndir $SRC_HB/dropbox-cli/ .
+lndir $SRC_CBC/.dropbox-dist/ .
+lndir $SRC_CBC/dropbox-cli/ .
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Documentation tools
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-lndir $SRC_HB/asciidoc-8.6.8/ .
+lndir $SRC_CBC/asciidoc-8.6.8/ .
 lndir asciidoc-8.6.8 asciidoc-latest
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -146,7 +148,7 @@ lndir /opt/local/grace grace-unknown
 lndir grace-unknown grace-latest
 
 # htop [http://hisham.hm/htop/]
-lndir $SRC_HB/htop-1.0.3/ .
+lndir $SRC_CBC/htop-1.0.3/ .
 lndir htop-1.0.3 htop
 
 
@@ -155,8 +157,8 @@ lndir htop-1.0.3 htop
 # Genomic tools
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # IGV
-lndir $SRC_HB/IGV_2.1.2 .
-lndir $SRC_HB/IGV_2.3.31 .
+lndir $SRC_CBC/IGV_2.1.2 .
+lndir $SRC_CBC/IGV_2.3.31 .
 lndir IGV_2.3.31 IGV-latest
 
 
@@ -172,7 +174,7 @@ lndir /opt/local/bin/Atlas2_v1.0 .
 lndir Atlas2_v1.0 Atlas2-latest
 
 # BEDOPS
-lndir $SRC_HB/bedops-1.2.2c .
+lndir $SRC_CBC/bedops-1.2.2c .
 lndir bedops-1.2.2c bedops-latest
 
 # BEDtools
@@ -195,18 +197,18 @@ lndir blast-2.2.26 blast-latest
 
 # bowtie2
 lndir /opt/local/bin/bowtie2-2.0.0-beta6 .
-lndir $SRC_HB/bowtie2-2.1.0 .
+lndir $SRC_CBC/bowtie2-2.1.0 .
 lndir bowtie2-2.1.0 bowtie2-latest
 
 # bwa
 #lndir /home/taylorbs/lbin/bwa-0.5.8c .
 lndir /home/jocostello/tools/bwa-0.5.10 .
 lndir /opt/local/bin/bwa-0.6.1 .
-lndir $SRC_HB/bwa-0.7.5a .
+lndir $SRC_CBC/bwa-0.7.5a .
 lndir bwa-0.7.5a bwa-latest
 
 # Control-FREEC
-lndir $SRC_HB/Control-FREEC-2.5 .
+lndir $SRC_CBC/Control-FREEC-2.5 .
 lndir Control-FREEC-2.5 Control-FREEC-latest
 
 # cufflinks
@@ -215,8 +217,8 @@ lndir /opt/local/bin/cufflinks-1.3.0.Linux_x86_64 .
 lndir cufflinks-1.3.0.Linux_x86_64 cufflinks-latest
 
 # FastQC [http://www.bioinformatics.babraham.ac.uk/projects/fastqc/]
-lndir $SRC_HB/FastQC-0.10.1 .
-lndir $SRC_HB/FastQC-0.11.2 .
+lndir $SRC_CBC/FastQC-0.10.1 .
+lndir $SRC_CBC/FastQC-0.11.2 .
 lndir FastQC-0.11.2 FastQC-latest
 
 # fastx_toolkit
@@ -230,19 +232,19 @@ lndir FastQC-0.11.2 FastQC-latest
 lndir /home/jocostello/tools/GenomeAnalysisTK-1.1-37-ge63d9d8 .
 lndir /home/jocostello/tools/GenomeAnalysisTK-1.2-21-g6804ab6 .
 lndir /home/jocostello/shared/LG3_Pipeline/tools/GenomeAnalysisTK-1.5-12-gd0056d6 .
-lndir $SRC_HB/GenomeAnalysisTK-1.6-2-gc2b74ec .
-lndir $SRC_HB/GenomeAnalysisTK-3.0-0 .
+lndir $SRC_CBC/GenomeAnalysisTK-1.6-2-gc2b74ec .
+lndir $SRC_CBC/GenomeAnalysisTK-3.0-0 .
 lndir GenomeAnalysisTK-3.0-0 GATK-latest
 
 # GeneTorrent
-lndir $SRC_HB/GeneTorrent-3.0.2 .
-lndir $SRC_HB/GeneTorrent-3.8.5a-94 .
+lndir $SRC_CBC/GeneTorrent-3.0.2 .
+lndir $SRC_CBC/GeneTorrent-3.8.5a-94 .
 lndir GeneTorrent-3.0.2 GeneTorrent-latest
 #lndir GeneTorrent-3.8.5a-94 GeneTorrent-latest
 
 # HTSeq
 lndir /home/tokuyasu/shared/software/HTSeq-0.5.4p3 .
-lndir $SRC_HB/HTSeq-0.6.1 .
+lndir $SRC_CBC/HTSeq-0.6.1 .
 lndir HTSeq-0.5.4p3 HTSeq-latest
 #lndir HTSeq-0.6.1 HTSeq-latest
 
@@ -256,7 +258,7 @@ lndir /opt/local/picard-tools-1.39 .
 lndir /home/jocostello/tools/picard-tools-1.51 .
 #lndir /home/taylorbs/lbin/picard-tools-1.62 .
 lndir /home/jocostello/tools/picard-tools-1.64 .
-lndir $SRC_HB/picard-tools-1.67 .
+lndir $SRC_CBC/picard-tools-1.67 .
 lndir picard-tools-1.67 picard-tools-latest
 
 # RNAstructure
@@ -264,8 +266,8 @@ lndir /opt/local/RNAstructure RNAstructure-unknown
 lndir RNAstructure-unknown RNAstructure-latest
 
 # s3cmd
-lndir $SRC_HB/s3cmd-1.5.0-alpha3 .
-lndir $SRC_HB/s3cmd-1.5.0-alpha3 s3cmd-latest
+lndir $SRC_CBC/s3cmd-1.5.0-alpha3 .
+lndir $SRC_CBC/s3cmd-1.5.0-alpha3 s3cmd-latest
 
 
 # samtools
@@ -274,8 +276,8 @@ lndir /home/jocostello/tools/samtools-0.1.12a .
 lndir /home/jocostello/tools/samtools-0.1.17 .
 lndir /home/jocostello/tools/samtools-0.1.18 .
 lndir /opt/SAMtools/SAMTools-0.1.18 .
-lndir $SRC_HB/samtools-0.1.19 .
-lndir $SRC_HB/samtools-0.1.19-patched .
+lndir $SRC_CBC/samtools-0.1.19 .
+lndir $SRC_CBC/samtools-0.1.19-patched .
 lndir samtools-0.1.19 samtools-latest
 
 # snpEff
@@ -287,8 +289,8 @@ lndir /opt/local/SNVMix2-0.11.8-r3 .
 lndir SNVMix2-0.11.8-r3 SNVMix2-latest
 
 # SRA Toolkit [http://trace.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?view=software]
-lndir $SRC_HB/sratoolkit.2.3.4-2-centos_linux64 .
-lndir $SRC_HB/sratoolkit.2.4.1-centos_linux64 .
+lndir $SRC_CBC/sratoolkit.2.3.4-2-centos_linux64 .
+lndir $SRC_CBC/sratoolkit.2.4.1-centos_linux64 .
 lndir sratoolkit.2.4.1-centos_linux64 sratoolkit-latest
 
 # tophat
@@ -298,8 +300,8 @@ lndir /opt/local/bin/tophat-1.3.1.Linux_x86_64 .
 lndir /opt/local/bin/tophat-1.4.0.Linux_x86_64 .
 #lndir /home/taylorbs/lbin/tophat-1.4.1.Linux_x86_64 .
 lndir /opt/local/bin/tophat-2.0.3.Linux_x86_64/ .
-lndir $SRC_HB/tophat-2.0.9.Linux_x86_64 .
-lndir $SRC_HB/tophat-2.0.10.Linux_x86_64 .
+lndir $SRC_CBC/tophat-2.0.9.Linux_x86_64 .
+lndir $SRC_CBC/tophat-2.0.10.Linux_x86_64 .
 lndir tophat-2.0.10.Linux_x86_64 tophat-latest
 
 # VarScan

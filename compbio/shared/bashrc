@@ -9,20 +9,20 @@
 #
 # Usage:
 # Add the following command to your ~/.bashrc script:
-#   source /compbio/shared/bashrc
+#   source /home/shared/cbc/bashrc
 ###################################################################
 
 # Setup SHARED_ROOT
 if test -z "${SHARED_ROOT}"; then
   export SHARED_ROOT=
-  for dd in /compbio/shared /home/henrik; do
-    if test -d ${dd}/shared; then
-      export SHARED_ROOT=${dd}/shared
+  for dd in /home/shared/cbc /home/shared/compbio /cbc/shared /compbio/shared /home/henrik/shared; do
+    if test -d ${dd}; then
+      export SHARED_ROOT=${dd}
       break
     fi
   done
 fi
-
+## echo SHARED_ROOT=${SHARED_ROOT}
 
 
 # Useful functions

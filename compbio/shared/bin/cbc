@@ -17,10 +17,10 @@
 ###
 ### How to install:
 ### Add the following to your ~/.bashrc script:
-###  source /compbio/shared/bashrc
+###  source ${SHARED_ROOT}/bashrc
 
 if test -z "$SHARED_SOFTWARE"; then
-  source /compbio/shared/bashrc
+  source /home/shared/compbio/bashrc
 fi
 
 cmd=help
@@ -56,7 +56,7 @@ for arg in $*; do
 done
 
 if test $cmd == "help"; then
-  grep "^###" $0 | grep -v "^####" | cut -b 5-
+  grep "^###" $0 | grep -v "^####" | cut -b 5- | sed -e "s#\${SHARED_ROOT}#$SHARED_ROOT#g"
 elif test $cmd == "software"; then
   echo "** Software in $SHARED_SOFTWARE/:"
   ls $SHARED_SOFTWARE | grep -v "~$"

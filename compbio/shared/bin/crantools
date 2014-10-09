@@ -6,11 +6,12 @@
 ###  crantools [options] <command>
 ###
 ### Commands:
-###  check  : Check package and all of its reverse dependencies
-###  status : Display check status
-###  error  : Browse packages with an ERROR status
-###  warn   : Browse packages with a WARNING status
-###  note   : Browse packages with a NOTE status
+###  info    : Displays current R and package setup
+###  list    : Lists currently running and completed checks
+###  check   : Check package and all of its reverse dependencies
+###  status  : Display check status
+###  results : Displays check result log files
+###  summary : Displays summary text useful for CRAN submission
 ###
 ### Example:
 ###  crantools check
@@ -62,6 +63,10 @@ while (( "$#" )); do
   if test $1 == "note"; then
     what=notes
     cmd=results
+  fi
+
+  if test $1 == "summary"; then
+    cmd=summary
   fi
 
   shift
@@ -122,6 +127,12 @@ elif test $cmd == "results"; then
       files="$dir/ERROR.log $dir/WARNING.log $dir/NOTE*.log"
     fi
     more $files
+  done
+elif test $cmd == "summary"; then
+  for dir in ${dirs}; do
+    echo ------------------------------------------------------------------
+    more $dir/R.utils,EmailToCRAN.txt
+    echo
   done
 fi
 
