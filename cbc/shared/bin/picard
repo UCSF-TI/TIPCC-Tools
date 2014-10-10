@@ -5,7 +5,7 @@
 ###################################################################
 
 # Useful functions
-source /home/henrik/shared/bin/includes.bash
+source /compbio/shared/bin/includes.bash
 
 function picard() {
   TOOL_PATH=${SHARED_SOFTWARE}/picard-tools-latest

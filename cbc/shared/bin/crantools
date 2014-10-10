@@ -131,7 +131,7 @@ elif test $cmd == "results"; then
 elif test $cmd == "summary"; then
   for dir in ${dirs}; do
     echo ------------------------------------------------------------------
-    more $dir/R.utils,EmailToCRAN.txt
+    more $dir/$pkg,EmailToCRAN.txt
     echo
   done
 fi

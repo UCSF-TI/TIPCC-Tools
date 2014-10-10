@@ -9,7 +9,6 @@
 #  installR release
 #
 # Henrik Bengtsson, 2014-02-04
-# See also https://portal.hdfccc.ucsf.edu/TIPCC/Wiki/Wiki%20Pages/R.aspx
 ###########################################################################
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Reset environment variable (just in case)
@@ -89,7 +88,7 @@ fi
 opwd=`pwd`
 
 # Root directory where to install R
-root=/home/henrik/shared/software_hb/R
+root=/home/shared/compbio/software_cbc/R
 
 # Arguments
 flavor=$1
