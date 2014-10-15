@@ -19,6 +19,7 @@
 cmd=help
 what=
 rversion=
+force=false
 while (( "$#" )); do
   ## Commands
   if test $1 == "--help" || test $1 == "-h"; then
@@ -28,6 +29,11 @@ while (( "$#" )); do
   if test $1 == "--rversion" || test $1 == "-r"; then
     shift
     rversion=$1
+  fi
+
+  if test $1 == "--force" || test $1 == "-f"; then
+    shift
+    force=true
   fi
 
   if test $1 == "info"; then
@@ -74,7 +80,12 @@ done
 
 pkg=$(grep Package: DESCRIPTION | sed 's/.*:[^a-zA-Z]*//' | sed 's/[^a-zA-Z0-9.]//g');
 ver=$(grep Version: DESCRIPTION | sed 's/.*:[^0-9]*//' | sed 's/[^a-zA-Z0-9.]//g');
-rver=$(Rscript -e "cat(gsub('-$', '', sprintf('%s%s', getRversion(), tolower(R.version[['status']]))))")
+##rver=$(Rscript -e "cat(gsub('-$', '', sprintf('%s%s', getRversion(), tolower(R.version[['status']]))))")
+
+rver_status=$(Rscript -e "status <- tolower(R.version[['status']]); if (regexpr('unstable', status) != -1L) status <- 'devel'; cat(status)")
+rver_xyz=$(Rscript -e "cat(as.character(getRversion()))")
+rver=${rver_xyz}${rver_status}
+root_path=../_R-${rver}
 
 # All available results
 if test "$rversion" = ""; then
@@ -82,7 +93,8 @@ if test "$rversion" = ""; then
 else
   path="../_R-*$rversion*"
 fi
-dirs="$(ls ${path}/* | grep ${pkg}_${ver}.CRAN | sed 's/://g')"
+subdir=${pkg}_${ver}.CRAN
+dirs="$(ls ${path}/* | grep ${subdir} | sed 's/://g')"
 
 
 if test $cmd == "help"; then
@@ -98,6 +110,15 @@ elif test $cmd == "check"; then
   echo "R version: ${rver}"
   log=".check_CRAN_${rver}.log"
   echo "Log file: $log"
+  if test -d "$root_path/$subdir/checks/tmp" || test -f "$root_path/$subdir/$pkg,EmailToCRAN.txt"; then
+    if $force == "true"; then
+      rm -f "$root_path/$subdir/$pkg,EmailToCRAN.txt"
+      echo "Forcing"
+    else
+      echo "** ERROR: Another check process is already running."
+      exit 1
+    fi
+  fi
   echo "nohup make cran > $log &"
   nohup make cran > "$log" &
 elif test $cmd == "list"; then
@@ -141,6 +162,8 @@ fi
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # HISTORY:
+# 2014-10-15
+# o Added 'crantools --force check'.
 # 2014-10-07
 # o Created by Henrik Bengtsson.
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
