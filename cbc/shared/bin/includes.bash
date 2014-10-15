@@ -115,11 +115,14 @@ function rsync_xfer() {
 if test -n "${SHARED_ROOT}"; then
   export SHARED_BIN=${SHARED_ROOT}/bin
   export SHARED_SOFTWARE=${SHARED_ROOT}/software
+  export SHARED_SOFTWARE_FROZEN=${SHARED_ROOT}/software_frozen
 fi
 
 
 ###################################################################
 # HISTORY:
+# 2014-10-13
+# o Added SHARED_SOFTWARE_FROZEN.
 # 2014-01-07
 # o Added setPrompt().
 # 2012-04-30

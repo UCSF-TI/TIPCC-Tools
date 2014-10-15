@@ -96,10 +96,10 @@ elif test $cmd == "check"; then
   echo "** Launching full check:"
   echo "Package: ${pkg} v${ver}"
   echo "R version: ${rver}"
-  log=.check_CRAN_${rver}.log
+  log=".check_CRAN_${rver}.log"
   echo "Log file: $log"
   echo "nohup make cran > $log &"
-  nohup make cran > $log &
+  nohup make cran > "$log" &
 elif test $cmd == "list"; then
   echo "Results:"
   echo "$dirs"
@@ -110,7 +110,9 @@ elif test $cmd == "status"; then
     ls --color=auto -l $d
     pkgC="$(ls $dir/checks*/tmp | grep .Rcheck | sed 's/.Rcheck//')"
     if test "${pkgC}" = ""; then
-      pkgC="<done>"
+      echo "Status: DONE"
+    else
+      echo "Status: Checking '${pkgC}'"
     fi
     echo
   done
