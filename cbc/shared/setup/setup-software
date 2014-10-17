@@ -96,7 +96,8 @@ lndir /opt/R/R-2.15.3 .
 lndir /opt/R/R-3.0.0 .
 lndir /opt/R/R-3.0.1 .
 lndir /opt/R/R-3.0.2 .
-lndir /opt/R/R-3.0.3 .
+## lndir /opt/R/R-3.0.3 .                  # BROKEN: Uses invalid directives when
+lndir $SRC_CBC/R/R-3.0.3-20141016 R-3.0.3  # building packages with native code.
 
 # R 3.1.x
 lndir /opt/R/R-3.1.0 R-3.1.0
