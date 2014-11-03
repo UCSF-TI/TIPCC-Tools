@@ -102,23 +102,23 @@ lndir $SRC_CBC/R/R-3.0.3-20141016 R-3.0.3  # building packages with native code.
 # R 3.1.x
 lndir /opt/R/R-3.1.0 R-3.1.0
 lndir /opt/R/R-3.1.1 R-3.1.1
+lndir $SRC_CBC/R/R-3.1.2-20141102 R-3.1.2
 
 # R 3.1.x patched
 dir=$SRC_CBC/R/
-what=R-3.1.1patched
+what=R-3.1.2patched
 newest=`ls ${dir} | grep ${what}- | sort -ru | head -1`
 lndir ${dir}${newest} .
 rm -f ${what}
 lndir ${newest} ${what}
-ls -l | grep R-
 
-# R 3.1.x rc
-dir=$SRC_CBC/R/
-what=R-3.1.2rc
-newest=`ls ${dir} | grep ${what}- | sort -ru | head -1`
-lndir ${dir}${newest} .
-rm -f ${what}
-lndir ${newest} ${what}
+## # R 3.1.x rc
+## dir=$SRC_CBC/R/
+## what=R-3.1.2rc
+## newest=`ls ${dir} | grep ${what}- | sort -ru | head -1`
+## lndir ${dir}${newest} .
+## rm -f ${what}
+## lndir ${newest} ${what}
 
 # R 3.2.x
 what=R-3.2.0devel
@@ -129,15 +129,11 @@ lndir ${newest} ${what}
 lndir R-devel ${what}
 
 # R latest, patched and R devel
-lndir R-3.1.1patched R-patched
+lndir R-3.1.2patched R-patched
 lndir R-3.2.0devel R-devel
 # BUG FIX: /opt/bin/R-3.1.1 does not build native code /2014-10-01
-## lndir R-3.1.1 R-latest
-if test -f R-3.1.2; then
-  lndir R-3.1.2patched R-latest
-else
-  lndir R-3.1.2rc R-latest
-fi
+lndir R-3.1.2 R-latest
+lndir R-3.1.2patched R-latest
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Cloud tools
