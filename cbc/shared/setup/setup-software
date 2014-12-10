@@ -67,6 +67,15 @@ rm -f *-latest
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Programming tools
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# git flow
+lndir $SRC_CBC/gitflow-0.4.2 .
+lndir gitflow-0.4.2 gitflow-latest
+
+# valgrind
+## lndir /usr/bin/valgrind valgrind-3.8.1 
+lndir $SRC_CBC/valgrind-3.10.0 .
+lndir valgrind-3.10.0 valgrind-latest
+
 # Java
 lndir /opt/java/jre1.6.0_latest .
 lndir /opt/java/jdk1.6.0_latest .
@@ -97,7 +106,7 @@ lndir /opt/R/R-3.0.0 .
 lndir /opt/R/R-3.0.1 .
 lndir /opt/R/R-3.0.2 .
 ## lndir /opt/R/R-3.0.3 .                  # BROKEN: Uses invalid directives when
-lndir $SRC_CBC/R/R-3.0.3-20141016 R-3.0.3  # building packages with native code.
+lndir $SRC_CBC/R/R-3.0.3-20141129 R-3.0.3  # building packages with native code.
 
 # R 3.1.x
 lndir /opt/R/R-3.1.0 R-3.1.0

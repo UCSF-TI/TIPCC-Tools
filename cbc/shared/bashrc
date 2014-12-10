@@ -15,7 +15,7 @@
 # Setup SHARED_ROOT
 if test -z "${SHARED_ROOT}"; then
   export SHARED_ROOT=
-  for dd in /home/shared/cbc /home/shared/compbio /cbc/shared /compbio/shared /home/henrik/shared; do
+  for dd in /home/shared/cbc; do
     if test -d ${dd}; then
       export SHARED_ROOT=${dd}
       break
@@ -124,6 +124,7 @@ prependPath ${SHARED_SOFTWARE}/sratoolkit-latest/bin
 prependPath ${SHARED_SOFTWARE}/samtools-latest
 prependPath ${SHARED_SOFTWARE}/samtools-latest/bcftools
 prependPath ${SHARED_SOFTWARE}/tophat-latest
+prependPath ${SHARED_SOFTWARE}/valgrind-latest/coregrind
 prependPath ${SHARED_SOFTWARE}/wordspy-latest
 prependPath ${SHARED_ROOT}/bin
 prependPath ${SHARED_ROOT}/local/bin
@@ -137,7 +138,8 @@ alias git=foo
 unalias git
 # Add  git installation
 ## prependPath /opt/rh/devtoolset-2/root/usr/bin/
-prependPath /opt/Git/Git-latest/bin/
+prependPath /opt/Git/Git-latest/bin
+prependPath ${SHARED_SOFTWARE}/gitflow-0.4.2/bin
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -251,6 +253,39 @@ done
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 alias ll="ls -l"
 alias lll="ls -la"
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Create users ~/public_html, iff missing
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+if ! test -d "${HOME}/public_html"; then
+  mkdir "${HOME}/public_html"
+  t=${HOME}/public_html/README.txt
+  echo "The content in your ~/public_html/ directory can be accessed" > ${t}
+  echo "via the web using address http://cclc01.som.ucsf.edu/~${USER}/." >> ${t}
+  echo "You can use this to setup your own internal webpage and/or" >> ${t}
+  echo "result files (e.g. HTML, PDF) from jobs easily accessible." >> ${t}
+  echo "" >> ${t}
+  echo "SECURITY: To access your web content from outside the UCSF" >> ${t}
+  echo "login via the UCSF VPN, e.g. http://cbc.ucsf.edu/vpn/" >> ${t}
+  chmod go-rwx ${t}
+
+  t=${HOME}/public_html/index.html
+  echo "<html>" > ${t}
+  echo "<head>" >> ${t}
+  echo " <title>${USER}</title>" >> ${t}
+  echo "</head>" >> ${t}
+  echo "<body>" >> ${t}
+  echo "<h1>${USER}</h1>" >> ${t}
+  echo "Hello world!" >> ${t}
+  echo "</body>" >> ${t}
+  echo "</html>" >> ${t}
+fi
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# LG3 Exome Pipeline
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+export LG3_HOME=/home/henrik/projects/CostelloJ_2014-LG3_ExomePipeline/pbs
 
 
 ###################################################################
