@@ -15,6 +15,8 @@
 ### Example:
 ###  crantools check
 
+LS_OPTS=--color=auto
+
 cmd=help
 what=
 rversion=
@@ -127,7 +129,7 @@ elif test $cmd == "status"; then
   for dir in ${dirs}; do
     d=$dir/checks/
     echo "Directory: $d"
-    ls --color=auto -l $d
+    ls ${LS_OPTS} -l $d
     pkgC="$(ls $dir/checks*/tmp | grep .Rcheck | sed 's/.Rcheck//')"
     if test "${pkgC}" = ""; then
       echo "Status: DONE"
