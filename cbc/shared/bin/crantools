@@ -77,8 +77,8 @@ while (( "$#" )); do
   shift
 done
 
-pkg=$(grep Package: DESCRIPTION | sed 's/.*:[^a-zA-Z]*//' | sed 's/[^a-zA-Z0-9.]//g');
-ver=$(grep Version: DESCRIPTION | sed 's/.*:[^0-9]*//' | sed 's/[^a-zA-Z0-9.]//g');
+pkg=$(grep Package: DESCRIPTION | sed 's/.*:[^a-zA-Z]*//' | sed 's/[^a-zA-Z0-9.-]//g');
+ver=$(grep Version: DESCRIPTION | sed 's/.*:[^0-9]*//' | sed 's/[^a-zA-Z0-9.-]//g');
 ##rver=$(Rscript -e "cat(gsub('-$', '', sprintf('%s%s', getRversion(), tolower(R.version[['status']]))))")
 
 rver_status=$(Rscript -e "status <- tolower(R.version[['status']]); if (regexpr('unstable', status) != -1L) status <- 'devel'; cat(status)")
