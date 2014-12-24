@@ -11,6 +11,7 @@
 ###  -h | --help      : Display this help
 ###  -s | --software  : List software shared by CBC
 ###  -u | --utils     : List command-line utilities created by CBC
+###  -m | --motd      : Display the "message of the day" again
 ###
 ### Example:
 ###  cbc -s
@@ -53,6 +54,10 @@ for arg in $*; do
   if test $arg == "--try" || test $arg == "-t"; then
     cmd=try
   fi
+
+  if test $arg == "--motd" || test $arg == "-m"; then
+    cmd=motd
+  fi
 done
 
 if test $cmd == "help"; then
@@ -74,11 +79,15 @@ elif test $cmd == "functions"; then
 elif test $cmd == "envvars"; then
   echo "** Environment variable set by $SHARED_ROOT/bashrc:"
   grep "^export" $SHARED_ROOT/bashrc | cut -b 8- | cut -d = -f 1 | sort -u
+elif test $cmd == "motd"; then
+  cat /etc/motd
 fi
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # HISTORY:
+# 2014-12-23
+# o Added --motd
 # 2014-10-06
 # o Added --functions
 # 2014-10-05
