@@ -143,6 +143,12 @@ prependPath ${SHARED_SOFTWARE}/gitflow-0.4.2/bin
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Development, e.g. gcc
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+prependPath /opt/llvm/llvm-3.5.0/bin/
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # GENOMIC TOOLS
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 alias igv=${SHARED_SOFTWARE}/IGV-latest/igv.sh

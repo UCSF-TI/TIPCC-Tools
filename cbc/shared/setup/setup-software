@@ -111,6 +111,7 @@ lndir $SRC_CBC/R/R-3.0.3-20141129 R-3.0.3  # building packages with native code.
 # R 3.1.x
 lndir /opt/R/R-3.1.0 R-3.1.0
 lndir /opt/R/R-3.1.1 R-3.1.1
+lndir $SRC_CBC/R/R-3.1.1patched-20140712 R-3.1.1patched
 lndir $SRC_CBC/R/R-3.1.2-20141102 R-3.1.2
 
 # R 3.1.x patched

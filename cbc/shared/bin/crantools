@@ -20,6 +20,7 @@ LS_OPTS=--color=auto
 cmd=help
 what=
 rversion=
+ver=
 force=false
 while (( "$#" )); do
   ## Commands
@@ -30,6 +31,11 @@ while (( "$#" )); do
   if test $1 == "--rversion" || test $1 == "-r"; then
     shift
     rversion=$1
+  fi
+
+  if test $1 == "--pkgver" || test $1 == "-v"; then
+    shift
+    ver=$1
   fi
 
   if test $1 == "--force" || test $1 == "-f"; then
@@ -76,12 +82,19 @@ while (( "$#" )); do
     cmd=summary
   fi
 
+  if test $1 == "debug"; then
+    cmd=debug
+  fi
+
   shift
 done
 
 pkg=$(grep Package: DESCRIPTION | sed 's/.*:[^a-zA-Z]*//' | sed 's/[^a-zA-Z0-9.-]//g');
-ver=$(grep Version: DESCRIPTION | sed 's/.*:[^0-9]*//' | sed 's/[^a-zA-Z0-9.-]//g');
-##rver=$(Rscript -e "cat(gsub('-$', '', sprintf('%s%s', getRversion(), tolower(R.version[['status']]))))")
+
+if test "$ver" = ""; then
+  ver=$(grep Version: DESCRIPTION | sed 's/.*:[^0-9]*//' | sed 's/[^a-zA-Z0-9.-]//g');
+  ##rver=$(Rscript -e "cat(gsub('-$', '', sprintf('%s%s', getRversion(), tolower(R.version[['status']]))))")
+fi
 
 rver_status=$(Rscript -e "status <- tolower(R.version[['status']]); if (regexpr('unstable', status) != -1L) status <- 'devel'; cat(status)")
 rver_xyz=$(Rscript -e "cat(as.character(getRversion()))")
@@ -100,6 +113,13 @@ dirs="$(ls ${path}/* | grep ${subdir} | sed 's/://g')"
 
 if test $cmd == "help"; then
   grep "^###" $0 | grep -v "^####" | cut -b 5-
+elif test $cmd == "debug"; then
+  echo "Package: ${pkg} v${ver}"
+  echo "R version: ${rver}"
+  echo "Variables:"
+  echo "- path: ${path}"
+  echo "- subdir: ${subdir}"
+  echo "- dirs: ${dirs}"
 elif test $cmd == "info"; then
   echo "Package: ${pkg} v${ver}"
   echo "R version: ${rver}"
@@ -163,6 +183,8 @@ fi
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # HISTORY:
+# 2015-01-06
+# o Added 'crantools debug'.
 # 2014-10-15
 # o Added 'crantools --force check'.
 # 2014-10-07
