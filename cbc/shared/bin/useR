@@ -1,8 +1,25 @@
 #!/usr/bin/env bash
 #
 
-# Wrap each argument in quotes
-version=$1
+## Parse command-line options
+version=
+verbose=false
+while (( "$#" )); do
+  if test $1 == "--verbose" || test $1 == "-v"; then
+    shift
+    verbose=true
+  else
+    version=$1
+  fi
+  shift
+done
+
+
+if test "${verbose}" == "true"; then
+  echo "Parsed command-line options:"
+  echo "  version: $version"
+  echo "  verbose: $verbose"
+fi
 
 pathT=/compbio/shared/software
 # Full (without ambigous ones without version number!)
@@ -15,8 +32,7 @@ if test -z "$version"; then
   echo
   echo "Known versions: $knownVersions"
   echo
-  echo "IMPORTANT: This script must be executed in the same shell in"
-  echo "order to have an effect.  Hence the initial period above."
+  echo "IMPORTANT: This script must be executed in the same shell in order to have an effect.  Hence the initial period above."
 else
   pathnameT="$pathT/R-$version"
   if ! test -d "$pathnameT"; then
@@ -26,13 +42,15 @@ else
     path0=$PATH
     path1=`echo $PATH | sed -e "s/R-[^/]*/R-$version/g;"`
     export PATH="$path1"
-    echo $PATH
     R_CMD=R-$version
-    echo "Environment variable 'R_CMD' set to '${R_CMD}'"
+    if test "${verbose}" = "true"; then
+      echo $PATH
+      echo "Environment variable 'R_CMD' set to '${R_CMD}'"
+      echo 
+    fi
   fi
 fi
-echo 
-echo Currently using:
+echo Now using:
 which R
-R --version | head -3
+R --version | head -3 | grep -v Copyright
 
