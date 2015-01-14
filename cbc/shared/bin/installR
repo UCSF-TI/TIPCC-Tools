@@ -152,6 +152,7 @@ if ! test -d ${dirname}; then
 
   # (3) Configure, build, check and install
   export LDFLAGS="-L/opt/NetCDF/NetCDF-4.3.0/lib"
+  export LDFLAGS="${LDFLAGS} -L/opt/gcc/gcc-4.8.4/lib64"
   ./configure --enable-R-shlib --prefix=${dirname2}
   make
   make check

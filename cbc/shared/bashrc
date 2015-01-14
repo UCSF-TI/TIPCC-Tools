@@ -195,7 +195,7 @@ fi
 # building package that needs libgfortran.
 # FIXME: Should this be configured already when building R, i.e.
 #        in /home/shared/cbc/bin/installR? /HB 2015-01-10
-dir=/opt/gcc/gcc-4.9.2/lib64
+dir=/opt/gcc/gcc-4.8.4/lib64
 if test -d "${dir}"; then
   export PKG_LIBS="${PKG_LIBS} -L${dir}"
 fi
