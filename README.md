@@ -1,12 +1,14 @@
-# Sysadm-cluster
+# TIPCC scripts and configuration 
 
-Repository mainly used for submitted issues related to sysadm related
-tasks on the CC cluster for the CBC group.
+This repository holds scripts and settings for the TIPCC cluster.  It is maintained by the [UCSF Computation Biology Core](http://cbc.ucsf.edu) group.
 
-## Computation Biology Core (CBC) bash toolkit
-
-Type
+## Computation Biology Core (CBC) toolkit
+To get access to the CBC toolkit, all of CBC's shared software installations and more, just add:
+```bash
+source /home/shared/cbc/bashrc
+```
+to the end of your `~/.bashrc` file.  Next time you log in, you should be able to type
 ```
 cbc -h
 ```
-on the command line for help.
+on the command line and you'll see what's available for you.
