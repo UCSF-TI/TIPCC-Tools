@@ -7,9 +7,9 @@ if test -d "${HOME}/public_html"; then
   # (a) ~/
   perms=$(ls -l /home | grep -E " ${USER}\$" | cut -d ' ' -f 1)
   if test "$(echo $perms | cut -c 8)" != "r"; then
-    mwarn "Your personal website is not accessible due to lack of read permissions of your home directory ($perms). To fix this, do: chmod o+rx ~" 
+    mwarn "Your personal website is not accessible due to lack of read permissions of your home directory ($perms). To fix this, do: chmod o+rx ~ ~/public_html/" 
   elif test "$(echo $perms | cut -c 10)" != "x"; then
-    mwarn "Your personal website is not accessible due to lack of read permissions of your home directory ($perms). To fix this, do: chmod o+rx ~" 
+    mwarn "Your personal website is not accessible due to lack of read permissions of your home directory ($perms). To fix this, do: chmod o+rx ~ ~/public_html/" 
   else
     # (b) ~/public_html/
     perms=$(ls -l $HOME | grep -E " public_html\$" | cut -d ' ' -f 1)

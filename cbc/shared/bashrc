@@ -279,6 +279,8 @@ alias lll="ls -la"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Personal public_html
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Only on head node
+if test $ISCOMPUTENODE == 0; then
 # Create users ~/public_html, iff missing
 ## if ! test -d "${HOME}/public_html"; then
 ##   mkdir "${HOME}/public_html"
@@ -304,9 +306,10 @@ alias lll="ls -la"
 ##   echo "</html>" >> ${t}
 ## fi
 
-# Check file permissions
-if test -d "${HOME}/public_html"; then
-  check-public_html
+  # Check file permissions
+  if test -d "${HOME}/public_html"; then
+    check-public_html
+  fi
 fi
 
 
