@@ -277,8 +277,9 @@ alias lll="ls -la"
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Create users ~/public_html, iff missing
+# Personal public_html
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Create users ~/public_html, iff missing
 ## if ! test -d "${HOME}/public_html"; then
 ##   mkdir "${HOME}/public_html"
 ##   t=${HOME}/public_html/README.txt
@@ -302,6 +303,12 @@ alias lll="ls -la"
 ##   echo "</body>" >> ${t}
 ##   echo "</html>" >> ${t}
 ## fi
+
+# Check file permissions
+if test -d "${HOME}/public_html"; then
+  check-public_html
+fi
+
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # LG3 Exome Pipeline

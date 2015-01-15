@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+# Script that checks file permissions for ~/public_html/ and suggests
+# required modifications if not proper.
+
+if test -d "${HOME}/public_html"; then
+  # (a) ~/
+  perms=$(ls -l /home | grep -E " ${USER}\$" | cut -d ' ' -f 1)
+  if test "$(echo $perms | cut -c 8)" != "r"; then
+    mwarn "Your personal website is not accessible due to lack of read permissions of your home directory ($perms). To fix this, do: chmod o+rx ~" 
+  elif test "$(echo $perms | cut -c 10)" != "x"; then
+    mwarn "Your personal website is not accessible due to lack of read permissions of your home directory ($perms). To fix this, do: chmod o+rx ~" 
+  else
+    # (b) ~/public_html/
+    perms=$(ls -l $HOME | grep -E " public_html\$" | cut -d ' ' -f 1)
+    if test "$(echo $perms | cut -c 8)" != "r"; then
+      mwarn "Your personal website is not accessible due to lack of read permissions of your ~/public_html/ ($perms). To fix this, do: chmod o+rx ~/public_html/" 
+    elif test "$(echo $perms | cut -c 10)" != "x"; then
+      mwarn "Your personal website is not accessible due to lack of read permissions of your ~/public_html/ ($perms). To fix this, do: chmod o+rx ~/public_html/" 
+    else
+     # (c) ~/public_html/index.html
+     if test -f "${HOME}/public_html/index.html"; then
+       perms=$(ls -l $HOME/public_html | grep -E " index.html\$" | cut -d ' ' -f 1)
+       if test "$(echo $perms | cut -c 8)" != "r"; then
+         mwarn "Your personal website is not accessible due to lack of read permissions of your ~/public_html/index.html ($perms). To fix this, do: chmod o+rx ~/public_html/index.html" 
+       fi
+     fi
+    fi
+  fi
+else
+  mwarn "You don't have a personal website because you don't have a ~/public_html/ directory. To fix this, do: mkdir ~/public_html/; chmod o+rx ~ ~/public_html/"
+fi
