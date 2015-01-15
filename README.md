@@ -11,4 +11,4 @@ to the end of your `~/.bashrc` file on your TIPCC account.  Next time you log in
 ```
 cbc -h
 ```
-on the command line and you'll see what's available for you.
+on the command line and you'll see all the things that have been made available for you.
