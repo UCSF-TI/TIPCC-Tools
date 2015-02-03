@@ -113,9 +113,21 @@ function rsync_xfer() {
 # Useful system variables
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 if test -n "${SHARED_ROOT}"; then
+  mkdir -p "${SHARED_ROOT}"
   export SHARED_BIN=${SHARED_ROOT}/bin
+  mkdir -p "${SHARED_BIN}"
+  export SHARED_LOCAL=${SHARED_ROOT}/local
+  mkdir -p "${SHARED_LOCAL}"
+
   export SHARED_SOFTWARE=${SHARED_ROOT}/software
+  mkdir -p "${SHARED_SOFTWARE}"
   export SHARED_SOFTWARE_FROZEN=${SHARED_ROOT}/software_frozen
+  mkdir -p "${SHARED_SOFTWARE_FROZEN}"
+
+  # GNU compiler variables
+  export SHARED_PREFIX=${SHARED_LOCAL}
+#  export SHARED_PKG_CONFIG_PATH=${SHARED_PREFIX}/lib/pkgconfig
+  export PKG_CONFIG_PATH=${SHARED_PREFIX}/lib/pkgconfig:${SHARED_PREFIX}/lib64/pkgconfig
 fi
 
 

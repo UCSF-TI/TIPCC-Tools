@@ -143,6 +143,12 @@ prependPath ${SHARED_SOFTWARE}/gitflow-0.4.2/bin
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Ruby
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+prependPath ${SHARED_SOFTWARE}_cbc/bin
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Development, e.g. gcc
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 prependPath /opt/llvm/llvm-3.5.0/bin/
@@ -317,8 +323,14 @@ fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # LG3 Exome Pipeline
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-export LG3_HOME=/home/henrik/projects/CostelloJ_2014-LG3_ExomePipeline/pbs
+export LG3_HOME=/home/henrik/projects/CostelloJ_2014-LG3-Exome-Pipeline/pbs
 
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Odds and ends
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# gource - https://code.google.com/p/gource/
+alias gource="LD_LIBRARY_PATH=$SHARED_LOCAL/lib64 gource"
 
 ###################################################################
 # HISTORY:
