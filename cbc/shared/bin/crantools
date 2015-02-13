@@ -5,12 +5,13 @@
 ###  crantools [options] <command>
 ###
 ### Commands:
-###  info    : Displays current R and package setup
-###  list    : Lists currently running and completed checks
-###  check   : Check package and all of its reverse dependencies
-###  status  : Display check status
-###  results : Displays check result log files
-###  summary : Displays summary text useful for CRAN submission
+###  info     : Displays current R and package setup
+###  list     : Lists currently running and completed checks
+###  check    : Check package and all of its reverse dependencies
+###  status   : Display check status
+###  results  : Displays check result log files
+###  summary  : Displays summary text useful for CRAN submission
+###  versions : List R versions for which summaries exist
 ###
 ### Example:
 ###  crantools check
@@ -21,6 +22,7 @@ cmd=help
 what=
 rversion=
 ver=
+repos=
 force=false
 while (( "$#" )); do
   ## Commands
@@ -36,6 +38,11 @@ while (( "$#" )); do
   if test $1 == "--pkgver" || test $1 == "-v"; then
     shift
     ver=$1
+  fi
+
+  if test $1 == "--github"; then
+    shift
+    repos=$1
   fi
 
   if test $1 == "--force" || test $1 == "-f"; then
@@ -82,12 +89,44 @@ while (( "$#" )); do
     cmd=summary
   fi
 
+  if test $1 == "versions"; then
+    cmd=versions
+  fi
+
   if test $1 == "debug"; then
     cmd=debug
   fi
 
   shift
 done
+
+opwd=$(pwd)
+
+# GitHub repository?
+if test "$repos"; then
+  echo "Downloading, building and checking R package on GitHub..."
+  echo "  URL: $repos"
+  branch=${repos/*@/}
+  if test "$branch" == "$repos"; then
+    branch="master"
+  else
+    repos=${repos/@*/}
+  fi
+  echo "  Repository: $repos"
+  echo "  Branch: $branch"
+  pkg=$(basename $repos)
+  echo "  Package: $pkg"
+
+  CI_ROOT=~/CI
+  mkdir -p ${CI_ROOT}
+  cd ${CI_ROOT}
+  r-ci.sh $repos $branch
+  echo $(pwd)
+  cd $repos/builds/$branch/$pkg
+  echo $(pwd)
+  echo "Downloading, building and checking R package on GitHub...DONE"
+fi
+
 
 pkg=$(grep Package: DESCRIPTION | sed 's/.*:[^a-zA-Z]*//' | sed 's/[^a-zA-Z0-9.-]//g');
 
@@ -178,7 +217,14 @@ elif test $cmd == "summary"; then
     more $dir/$pkg,EmailToCRAN.txt
     echo
   done
+elif test $cmd == "versions"; then
+    for dir in ${dirs}; do
+    grep "^* R " $dir/$pkg,EmailToCRAN.txt | grep -F "Platform: "
+  done
 fi
+
+
+cd ${opwd}
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

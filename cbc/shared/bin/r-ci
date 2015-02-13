@@ -13,10 +13,19 @@ mkdir -p $path
 OPWD=$(pwd)
 cd $path
 
-git clone --depth=50 --branch=$branch git://github.com/$repos.git
-
 pkg=$(basename $repos)
-cd $pkg
+
+if test -d $pkg; then
+    cd $pkg
+    git checkout $branch
+    git pull
+else 
+    git clone --depth=50 --branch=$branch git://github.com/$repos.git
+    cd $pkg
+fi
+
+commit=$(git log -1 | head -1 | sed -e 's/.* //' | cut -c 1-7)
+echo "Git commit: $commit"
 
 # env:
 #   global:
@@ -40,7 +49,6 @@ $RENV install_r R.oo
 # script:
 $RENV run_build
 $RENV run_check
-make cran
 
 # after_success:
 
