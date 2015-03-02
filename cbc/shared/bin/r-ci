@@ -45,6 +45,11 @@ chmod 755 $RENV
 
 # install:
 $RENV install_r R.oo
+if test -f "Makefile"; then
+  if test "`grep "^deps:" Makefile`" != ""; then
+    make deps
+  fi
+fi
 
 # script:
 $RENV run_build
