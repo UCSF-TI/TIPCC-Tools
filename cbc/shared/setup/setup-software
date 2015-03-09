@@ -113,6 +113,7 @@ lndir /opt/R/R-3.1.0 R-3.1.0
 lndir /opt/R/R-3.1.1 R-3.1.1
 lndir $SRC_CBC/R/R-3.1.1patched-20140712 R-3.1.1patched
 lndir $SRC_CBC/R/R-3.1.2-20141102 R-3.1.2
+lndir $SRC_CBC/R/R-3.1.3-20150309 R-3.1.3
 
 # R 3.1.x patched
 dir=$SRC_CBC/R/
@@ -143,7 +144,7 @@ lndir R-3.1.2patched R-patched
 lndir R-3.2.0devel R-devel
 # BUG FIX: /opt/bin/R-3.1.1 does not build native code /2014-10-01
 # lndir R-3.1.2 R-latest
-lndir R-3.1.2patched R-latest
+lndir R-3.1.3 R-latest
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Cloud tools
