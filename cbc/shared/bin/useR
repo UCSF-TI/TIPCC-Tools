@@ -21,7 +21,7 @@ if test "${verbose}" == "true"; then
   echo "  verbose: $verbose"
 fi
 
-pathT=/compbio/shared/software
+pathT=/cbc/shared/software
 # Full (without ambigous ones without version number!)
 knownVersions=$(ls $pathT | grep "R[-][0-9]+" | cut -c 3- | tr '\n' ' ')
 # Same but without specific date version

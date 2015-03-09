@@ -5,7 +5,7 @@
 ###################################################################
 
 # Useful functions
-source /compbio/shared/bin/includes.bash
+source /cbc/shared/bin/includes.bash
 
 function cghubget() {
   TOOL_PATH=${SHARED_SOFTWARE}/GeneTorrent-latest/bin

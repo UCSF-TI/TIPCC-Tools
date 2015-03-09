@@ -21,7 +21,7 @@
 ###  source ${SHARED_ROOT}/bashrc
 
 if test -z "$SHARED_SOFTWARE"; then
-  source /home/shared/compbio/bashrc
+  source /home/shared/cbc/bashrc
 fi
 
 cmd=help

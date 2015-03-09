@@ -3,7 +3,7 @@
 # Author: Henrik Bengtsson
 #
 # Usage:
-# sshall /home/shared/compbio/setup/setup-current-node
+# sshall /home/shared/cbc/setup/setup-current-node
 ###################################################################
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

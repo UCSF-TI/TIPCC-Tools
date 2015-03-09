@@ -5,7 +5,7 @@
 ###################################################################
 
 # Useful functions
-source /compbio/shared/bin/includes.bash
+source /cbc/shared/bin/includes.bash
 
 function vmstatmem() {
   m=`vmstat -s -S M | grep mem | grep -v inactive | egrep "(active|total)" | sed -e 's/[^0-9]//g'`
