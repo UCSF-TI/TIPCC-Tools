@@ -90,7 +90,8 @@ lndir /opt/local/MATLAB/R2012a matlab-R2012a
 lndir matlab-R2012a matlab-latest
 
 # Python
-# Python 2.6.5 is install under /opt/local/bin
+# Python 2.6.8 is install under /opt/local/bin
+lndir /opt/Python/Python-2.7.4 .
 
 # R 2.11.x
 lndir /opt/local/lib64/R R-2.11.0
