@@ -151,8 +151,25 @@ if ! test -d ${dirname}; then
   echo "Installation path: $dirname2"
 
   # (3) Configure, build, check and install
-  export LDFLAGS="-L/opt/NetCDF/NetCDF-4.3.0/lib"
-  export LDFLAGS="${LDFLAGS} -L/opt/gcc/gcc-4.8.4/lib64"
+  export CFLAGS=""
+  export LDFLAGS=""
+  export LD_LIBRARY_PATH=""
+
+  p="/opt/NetCDF/NetCDF-4.3.0"
+  export CFLAGS="${CFLAGS} -I$p/include"
+  export LDFLAGS="${LDFLAGS} -L$p/lib"
+  export LD_LIBRARY_PATH="${LD_LIBRARY_PATH} $p"
+
+  p="/opt/gcc/gcc-4.8.4"
+  export CFLAGS="${CFLAGS} -I$p/include"
+  export LDFLAGS="${LDFLAGS} -L$p/lib64"
+  export LD_LIBRARY_PATH="${LD_LIBRARY_PATH} $p"
+
+  p="/opt/tools"
+  export CFLAGS="${CFLAGS} -I$p/include"
+  export LDFLAGS="${LDFLAGS} -L$p/lib"
+  export LD_LIBRARY_PATH="${LD_LIBRARY_PATH} $p"
+
   ./configure --enable-R-shlib --prefix=${dirname2}
   make
   make check
