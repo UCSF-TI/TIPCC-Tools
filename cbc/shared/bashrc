@@ -105,7 +105,6 @@ prependPath ${SHARED_SOFTWARE}/htop
 # SHARED SOFTWARE
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Fix path
-prependPath /opt/local/bin # Python 2.6.5
 prependPath ${SHARED_SOFTWARE}/jdk-latest/bin
 prependPath ${SHARED_SOFTWARE}/bedops-latest/bin
 prependPath ${SHARED_SOFTWARE}/BEDTools-latest/bin
@@ -165,7 +164,12 @@ export GATK_HOME=${SHARED_SOFTWARE}/GATK-latest
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Python
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+##prependPath /opt/local/bin # Python 2.6.5
 prependPath ${SHARED_SOFTWARE}/Python-2.7.4/bin
+# Anaconda [https://store.continuum.io/cshop/anaconda/],
+# which includes Python
+prependPath /home/shared/cbc/software_cbc/anaconda/bin
+
 
 PYTHON_VERSION=$(python -c 'import sys; print("%s.%s" % (sys.version_info[0], sys.version_info[1]));')
 PYTHON_HOME=$(which python)
@@ -292,6 +296,28 @@ done
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 alias ll="ls -l"
 alias lll="ls -la"
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Validate ssh file permissions
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+path=${HOME}/.ssh
+if test -d ${path}; then
+  perms=$(ls -al ${HOME} | grep -F .ssh | cut -c 1-10)
+  permsGO=$(echo $perms | cut -c 5-10)
+  if test "${permsGO}" != "------"; then
+    echo >&2 "WARNING: SSH is incorrectly configured. Your ${path}/ directory must not be accessible by 'group' or 'other' ($perms). To fix this, do: chmod go-rwx ${path}/"
+  fi
+
+  path=${HOME}/.ssh/authorized_keys
+  if test -f ${path}; then
+    perms=$(ls -l ${path} | cut -c 1-10)
+    permsGO=$(echo $perms | cut -c 5-10)
+    if test "${permsGO}" != "------"; then
+      echo >&2 "WARNING: SSH is incorrectly configured. Your ${path} file must not be accessible by 'group' or 'other' ($perms). To fix this, do: chmod go-rwx ${path}"
+    fi
+  fi
+fi
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
