@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 QSUB_PWD=$(pwd)
-QSUB_JOBNAME=${USER}_$(date +%Y%m%d-%H%M%S)
+QSUB_JOBNAME=$(date +%Y%m%d-%H%M%S)_${USER}
 
 QSUB_CMD="qsub -j oe -d $QSUB_PWD -N $QSUB_JOBNAME $*"
 echo $QSUB_CMD
