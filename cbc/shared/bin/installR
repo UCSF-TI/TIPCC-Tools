@@ -88,7 +88,11 @@ fi
 opwd=`pwd`
 
 # Root directory where to install R
-root=/home/shared/cbc/software_cbc/R
+root=${INSTALLR_ROOT}
+if test "${root}" = ""; then
+  root=/home/shared/cbc/software_cbc/R
+fi
+mkdir -p ${root}
 
 # Arguments
 flavor=$1
@@ -151,25 +155,36 @@ if ! test -d ${dirname}; then
   echo "Installation path: $dirname2"
 
   # (3) Configure, build, check and install
+  export PATH="/bin:/usr/bin"
+  ## export PATH="/sbin:${PATH}"  # not needed(?)
+  
   export CFLAGS=""
   export LDFLAGS=""
   export LD_LIBRARY_PATH=""
 
   p="/opt/NetCDF/NetCDF-4.3.0"
+  export PATH="${PATH}:$p/bin"
   export CFLAGS="${CFLAGS} -I$p/include"
   export LDFLAGS="${LDFLAGS} -L$p/lib"
   export LD_LIBRARY_PATH="${LD_LIBRARY_PATH} $p"
 
   p="/opt/gcc/gcc-4.8.4"
+  export PATH="${PATH}:$p/bin"
   export CFLAGS="${CFLAGS} -I$p/include"
   export LDFLAGS="${LDFLAGS} -L$p/lib64"
   export LD_LIBRARY_PATH="${LD_LIBRARY_PATH} $p"
 
-  p="/opt/tools"
-  export CFLAGS="${CFLAGS} -I$p/include"
-  export LDFLAGS="${LDFLAGS} -L$p/lib"
-  export LD_LIBRARY_PATH="${LD_LIBRARY_PATH} $p"
+  p="/opt/tools"  # bzlib2 etc
+#  export PATH="${PATH}:$p/bin"
+#  export CFLAGS="${CFLAGS} -I$p/include"
+#  export LDFLAGS="${LDFLAGS} -L$p/lib"
+#  export LD_LIBRARY_PATH="${LD_LIBRARY_PATH} $p"
 
+  echo PATH=$PATH
+  echo CFLAGS=$CFLAGS
+  echo LDFLAGS=$LDFLAGS
+  echo LD_LIBRARY_PATH=$LD_LIBRARY_PATH
+  
   ./configure --enable-R-shlib --prefix=${dirname2}
   make
   make check

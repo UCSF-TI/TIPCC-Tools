@@ -123,28 +123,23 @@ lndir ${dir}${newest} .
 rm -f ${what}
 lndir ${newest} ${what}
 
-## # R 3.1.x rc
-## dir=$SRC_CBC/R/
-## what=R-3.1.2rc
-## newest=`ls ${dir} | grep ${what}- | sort -ru | head -1`
-## lndir ${dir}${newest} .
-## rm -f ${what}
-## lndir ${newest} ${what}
+# R 3.2.0
+## lndir /opt/R/R-3.2.0 .                 # BROKEN: Uses invalid directives when
+lndir $SRC_CBC/R/R-3.2.0-20150421 R-3.2.0 # building packages with native code.
 
-# R 3.2.x
-what=R-3.2.0devel
-newest=`ls ${dir} | grep ${what}- | sort -ru | head -1`
-lndir ${dir}/${newest} .
-rm ${what}
-lndir ${newest} ${what}
-lndir R-devel ${what}
+# R 3.3.x
+#what=R-3.3.0devel
+#newest=`ls ${dir} | grep ${what}- | sort -ru | head -1`
+#lndir ${dir}/${newest} .
+#rm ${what}
+#lndir ${newest} ${what}
+#lndir R-devel ${what}
 
 # R latest, patched and R devel
-lndir R-3.1.3patched R-patched
-lndir R-3.2.0devel R-devel
-# BUG FIX: /opt/bin/R-3.1.1 does not build native code /2014-10-01
-# lndir R-3.1.2 R-latest
-lndir R-3.1.3 R-latest
+lndir R-3.2.0 R-latest
+lndir R-3.2.0 R-patched
+lndir R-3.2.0 R-devel
+#lndir R-3.2.0devel R-devel
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Cloud tools
