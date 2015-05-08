@@ -225,7 +225,8 @@ lndir bwa-0.7.12 bwa-latest
 
 # Control-FREEC
 lndir $SRC_CBC/Control-FREEC-2.5 .
-lndir Control-FREEC-2.5 Control-FREEC-latest
+lndir $SRC_CBC/Control-FREEC-7.2-3 .
+lndir Control-FREEC-7.2-3 Control-FREEC-latest
 
 # cufflinks
 lndir /opt/local/bin/cufflinks-1.0.3.Linux_x86_64 .

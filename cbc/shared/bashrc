@@ -111,7 +111,7 @@ prependPath ${SHARED_SOFTWARE}/BEDTools-latest/bin
 prependPath ${SHARED_SOFTWARE}/blast-latest
 prependPath ${SHARED_SOFTWARE}/bowtie2-latest
 prependPath ${SHARED_SOFTWARE}/bwa-latest
-prependPath ${SHARED_SOFTWARE}/Control-FREEC-latest
+prependPath ${SHARED_SOFTWARE}/Control-FREEC-latest/bin
 prependPath ${SHARED_SOFTWARE}/cufflinks-latest
 prependPath ${SHARED_SOFTWARE}/FastQC-latest
 prependPath ${SHARED_SOFTWARE}/GeneTorrent-latest/bin
@@ -196,12 +196,6 @@ fi
 export PYTHONPATH=${PYTHONPATH}:${PYTHON_SITE}
 
 
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# HTSeq
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-export PYTHONPATH=${PYTHONPATH}:${SHARED_SOFTWARE}/HTSeq-latest/dist/HTSeq-0.5.4p3-py2.6-linux-x86_64.egg
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # R
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -227,6 +221,13 @@ fi
 #if ! test -d "${R_LIBS}"; then
 #  mkdir -p ${R_LIBS}
 #fi
+
+## WORKAROUND: Some packages are hard/fail to install
+## in R 3.2.0, e.g. 'png'.  For now, HB shares his
+## installation via a CBC site-wide library
+export R_LIBS_SITE=/home/shared/cbc/R/site-library/x86_64-unknown-linux-gnu-library/%v
+
+
 alias R-2.15.3=${SHARED_SOFTWARE}/R-2.15.3/bin/R
 alias R-3.0.0=${SHARED_SOFTWARE}/R-3.0.0/bin/R
 alias R-3.0.1=${SHARED_SOFTWARE}/R-3.0.1/bin/R
