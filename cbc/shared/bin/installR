@@ -5,7 +5,7 @@
 #
 # Usage: One of the following:
 #  installR devel
-#  installR patchd
+#  installR patched
 #  installR release
 #
 # Henrik Bengtsson, 2014-02-04
@@ -155,39 +155,48 @@ if ! test -d ${dirname}; then
   echo "Installation path: $dirname2"
 
   # (3) Configure, build, check and install
-  export PATH="/bin:/usr/bin"
-  ## export PATH="/sbin:${PATH}"  # not needed(?)
-  
+  export PATH=""
   export CFLAGS=""
   export LDFLAGS=""
   export LD_LIBRARY_PATH=""
-
+  config_args=""
+  
+  p="/opt/tools"  # bzlib2, libcurl, etc.
+  export PATH="${PATH}:$p/bin"
+  export CFLAGS="${CFLAGS} -Wl,-rpath=$p/lib"
+  export LDFLAGS="${LDFLAGS} -L$p/lib"
+  config_args="${config_args} --with-system-bzlib=no"
+  config_args="${config_args} --with-system-pcre=no"
+  
   p="/opt/NetCDF/NetCDF-4.3.0"
   export PATH="${PATH}:$p/bin"
-  export CFLAGS="${CFLAGS} -I$p/include"
+  export CFLAGS="${CFLAGS} -Wl,-rpath=$p/lib"
   export LDFLAGS="${LDFLAGS} -L$p/lib"
-  export LD_LIBRARY_PATH="${LD_LIBRARY_PATH} $p"
 
   p="/opt/gcc/gcc-4.8.4"
   export PATH="${PATH}:$p/bin"
-  export CFLAGS="${CFLAGS} -I$p/include"
-  export LDFLAGS="${LDFLAGS} -L$p/lib64"
-  export LD_LIBRARY_PATH="${LD_LIBRARY_PATH} $p"
-
-  p="/opt/tools"  # bzlib2 etc
-#  export PATH="${PATH}:$p/bin"
+  export CFLAGS="${CFLAGS} -Wl,-rpath=$p/lib64"
 #  export CFLAGS="${CFLAGS} -I$p/include"
-#  export LDFLAGS="${LDFLAGS} -L$p/lib"
-#  export LD_LIBRARY_PATH="${LD_LIBRARY_PATH} $p"
+  export LDFLAGS="${LDFLAGS} -L$p/lib64"
+
+  ## Append system binaries
+  export PATH="${PATH}:/bin:/usr/bin"
+
+  ## Cleanup (drop first character)
+  export PATH="${PATH:1}"
+  export CFLAGS="${CFLAGS:1}"
+  export LDFLAGS="${LDFLAGS:1}"
+  export config_args="${config_args:1}"
 
   echo PATH=$PATH
   echo CFLAGS=$CFLAGS
   echo LDFLAGS=$LDFLAGS
-  echo LD_LIBRARY_PATH=$LD_LIBRARY_PATH
+  echo config_args=${config_args}
   
-  ./configure --enable-R-shlib --prefix=${dirname2}
-  make
-  make check
+  ./configure --enable-R-shlib ${config_args} --prefix=${dirname2}
+
+  make -j 4
+  make -j 4 check
   make install
 
   # (4) Link for completness
@@ -223,6 +232,8 @@ cd ${opwd}
 
 ###########################################################################
 # HISTORY:
+# 2014-05-12
+# o Now installing R 3.2.0 patched with libcurl support.
 # 2014-06-12
 # o Now making the system-wide library path read-only.
 # 2014-04-15

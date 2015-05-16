@@ -7,7 +7,7 @@
 # [1] https://github.com/tudo-r/BatchJobs/wiki/Configuration
 ######################################################################
 
-cluster.functions <- makeClusterFunctionsTorque("/home/henrik/shared/R/.BatchJobs,torque.tmpl")
+cluster.functions <- makeClusterFunctionsTorque("/home/shared/cbc/R/.BatchJobs,torque.tmpl")
 
 # PATCH: http://goo.gl/YuYqoi
 cluster.functions$listJobs = function(conf, reg) {
