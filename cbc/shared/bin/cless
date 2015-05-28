@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+file=
+
+sed_cmds=
+cmd=less
+for arg in $*; do
+  ## Commands
+  if test $arg == "--help" || test $arg == "-h"; then
+    cmd=help
+  elif test $arg == "--delims"; then
+    sed_cmds="$sed_cmds -e s/\t/\x1B[1;45m<TAB>\x1B[m/g"
+    sed_cmds="$sed_cmds -e s/\x20/\x1B[1;43m<SPACE>\x1B[m/g"
+    sed_cmds="$sed_cmds -e s/,/\x1C[1;43m<COMMA>\x1B[m/g"
+  elif test $arg == "--tabs" || test $arg == "-t"; then
+    sed_cmds="$sed_cmds -e s/\t/\x1B[1;45m<TAB>\x1B[m/g"
+  elif test $arg == "--space" || test $arg == "-s"; then
+    sed_cmds="$sed_cmds -e s/\x20/\x1B[1;43m<SPACE>\x1B[m/g"
+  elif test $arg == "--comma" || test $arg == "-c"; then
+    sed_cmds="$sed_cmds -e s/,/\x1C[1;43m<COMMA>\x1B[m/g"
+  elif test $arg == "--debug" || test $arg == "-d"; then
+    cmd=debug
+  else
+    file=$arg
+  fi
+done
+
+if test $cmd == "debug"; then
+  printf "\n\nPARSED ARGUMENTS:\n"
+  echo sed_cmds: $sed_cmds
+  printf "\n\n"
+  
+  for attrib in $(seq 0 12); do
+    for color in $(seq 30 37) $(seq 40 47) $(seq 90 97); do
+      printf %b " $attrib $color: \x1B[$attrib;${color}mhi, dudes\x1B[m\n"
+    done
+  done
+fi
+
+if test $cmd == "less"; then
+  echo sed_cmds: $sed_cmds
+  cat $file | sed -E $sed_cmds | less -R
+fi
+
+##printf "TEST: \033[0;43m<TAB>\033[m\n"
+
