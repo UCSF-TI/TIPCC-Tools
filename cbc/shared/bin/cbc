@@ -6,6 +6,7 @@
 ###
 ### Commands:
 ###  -a | --aliases   : List aliases shared by CBC
+###  -c | --cluster   : Display current cluster status
 ###  -e | --envvars   : List environment variables set by CBC
 ###  -f | --functions : List shell functions created by CBC
 ###  -h | --help      : Display this help
@@ -31,6 +32,10 @@ for arg in $*; do
     cmd=help
   fi
 
+  if test $arg == "--cluster" || test $arg == "-c"; then
+    cmd=cluster-status
+  fi
+  
   if test $arg == "--software" || test $arg == "-s"; then
     cmd=software
   fi
@@ -61,7 +66,11 @@ for arg in $*; do
 done
 
 if test $cmd == "help"; then
-  grep "^###" $0 | grep -v "^####" | cut -b 5- | sed -e "s#\${SHARED_ROOT}#$SHARED_ROOT#g"
+    grep "^###" $0 | grep -v "^####" | cut -b 5- | sed -e "s#\${SHARED_ROOT}#$SHARED_ROOT#g"
+elif test $cmd == "cluster-status"; then
+  echo "** Cluster status:"
+  bpstat
+  echo "There are `qstat | grep -E "^[0-9]+" | wc -l` cluster jobs of which `qme | grep -E "^[0-9]+" | wc -l` are yours (see 'qstat' and 'qme')"
 elif test $cmd == "software"; then
   echo "** Software in $SHARED_SOFTWARE/:"
   ls $SHARED_SOFTWARE | grep -v "~$"
@@ -86,6 +95,8 @@ fi
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # HISTORY:
+# 2015-06-24
+# o Added --cluster
 # 2014-12-23
 # o Added --motd
 # 2014-10-06
