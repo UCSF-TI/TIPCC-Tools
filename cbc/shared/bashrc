@@ -148,12 +148,6 @@ prependPath ${SHARED_SOFTWARE}_cbc/bin
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Development, e.g. gcc
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-prependPath /opt/llvm/llvm-3.5.0/bin/
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # GENOMIC TOOLS
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 alias igv=${SHARED_SOFTWARE}/IGV-latest/igv.sh
@@ -194,6 +188,12 @@ else
   PYTHON_SITE=$(dirname $(dirname $PYTHON_HOME))/lib/python${PYTHON_VERSION}
 fi
 export PYTHONPATH=${PYTHONPATH}:${PYTHON_SITE}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Development, e.g. gcc
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+prependPath /opt/llvm/llvm-3.5.0/bin/
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
