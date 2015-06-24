@@ -67,6 +67,15 @@ rm -f *-latest
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Programming tools
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# GCC
+lndir /opt/gcc/gcc-4.8.1 .
+lndir /opt/gcc/gcc-4.8.4 .
+lndir /opt/gcc/gcc-4.9.2 .
+lndir /opt/gcc/gcc-5.1.0 .
+
+# LLVM
+lndir /opt/llvm/llvm-3.5.0 .
+
 # git flow
 lndir $SRC_CBC/gitflow-0.4.2 .
 lndir gitflow-0.4.2 gitflow-latest
@@ -81,8 +90,10 @@ lndir /opt/java/jre1.6.0_latest .
 lndir /opt/java/jdk1.6.0_latest .
 lndir /opt/java/jre1.7.0_latest .
 lndir /opt/java/jdk1.7.0_latest .
-lndir jre1.7.0_latest jre-latest
-lndir jdk1.7.0_latest jdk-latest
+lndir /opt/java/jre1.8.0_latest .
+lndir /opt/java/jdk1.8.0_latest .
+lndir jre1.8.0_latest jre-latest
+lndir jdk1.8.0_latest jdk-latest
 
 # Matlab
 lndir /opt/local/MATLAB/R2010b matlab-R2010b
@@ -118,10 +129,11 @@ lndir $SRC_CBC/R/R-3.1.3-20150309 R-3.1.3
 # R 3.2.x
 ## lndir /opt/R/R-3.2.0 .                 # BROKEN: Uses invalid directives when
 lndir $SRC_CBC/R/R-3.2.0-20150421 R-3.2.0 # building packages with native code.
+lndir $SRC_CBC/R/R-3.2.1-20150618 R-3.2.1 # building packages with native code.
 
 # R 3.2.x patched
 dir=$SRC_CBC/R/
-what=R-3.2.0patched
+what=R-3.2.1patched
 newest=`ls ${dir} | grep ${what}- | sort -ru | head -1`
 lndir ${dir}${newest} .
 rm -f ${what}
@@ -137,8 +149,8 @@ lndir ${newest} ${what}
 #lndir R-devel ${what}
 
 # R latest, patched and R devel
-lndir R-3.2.0 R-latest
-lndir R-3.2.0patched R-patched
+lndir R-3.2.1 R-latest
+lndir R-3.2.1patched R-patched
 lndir R-3.2.0 R-devel
 
 
