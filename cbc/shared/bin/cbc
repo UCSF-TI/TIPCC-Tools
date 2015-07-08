@@ -10,9 +10,9 @@
 ###  -e | --envvars   : List environment variables set by CBC
 ###  -f | --functions : List shell functions created by CBC
 ###  -h | --help      : Display this help
+###  -m | --motd      : Display the "message of the day" again
 ###  -s | --software  : List software shared by CBC
 ###  -u | --utils     : List command-line utilities created by CBC
-###  -m | --motd      : Display the "message of the day" again
 ###
 ### Example:
 ###  cbc -s
