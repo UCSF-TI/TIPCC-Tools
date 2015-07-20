@@ -4,10 +4,14 @@
 ## Parse command-line options
 version=
 verbose=false
+asan=false
 while (( "$#" )); do
   if test $1 == "--verbose" || test $1 == "-v"; then
     shift
     verbose=true
+  elif test $1 == "--asan"; then
+    shift
+    asan=true
   else
     version=$1
   fi
@@ -43,6 +47,19 @@ else
     path1=`echo $PATH | sed -e "s/R-[^/]*/R-$version/g;"`
     export PATH="$path1"
     R_CMD=R-$version
+    unalias R
+    unalias Rscript
+    if test "${asan}" = "true"; then
+      echo "Using ASAN/UBSAN:"
+      echo GCC_HOME=${GCC_HOME}
+      echo ASAN_OPTIONS=${ASAN_OPTIONS}
+      echo ASAN_SYMBOLIZER_PATH=${ASAN_SYMBOLIZER_PATH}
+      LD_PRELOAD="${GCC_HOME}/lib64/libubsan.so:${GCC_HOME}/lib64/libasan.so:${LD_PRELOAD}"
+      echo LD_PRELOAD=${LD_PRELOAD}
+      alias R="LD_PRELOAD=${LD_PRELOAD} $(which R)"
+      alias Rscript="LD_PRELOAD=${LD_PRELOAD} $(which Rscript)"
+      echo
+    fi
     if test "${verbose}" = "true"; then
       echo $PATH
       echo "Environment variable 'R_CMD' set to '${R_CMD}'"
@@ -52,5 +69,6 @@ else
 fi
 echo Now using:
 which R
+which Rscript
 R --version | head -3 | grep -v Copyright
 

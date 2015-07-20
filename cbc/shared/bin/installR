@@ -96,6 +96,7 @@ mkdir -p ${root}
 
 # Arguments
 flavor=$1
+debug=$2
 
 # Cleanup?
 if test "${flavor}" = "cleanup"; then
@@ -113,9 +114,13 @@ if test "${flavor}" = ""; then
   flavor="devel"
 fi
 
+
 # Subdirectory
 today=`date +%Y%m%d`
 dirname=${root}/R-${flavor}-${today}
+if test "${debug}" = "debug"; then
+  dirname=${dirname}-debug
+fi
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -173,7 +178,7 @@ if ! test -d ${dirname}; then
   export CFLAGS="${CFLAGS} -Wl,-rpath=$p/lib"
   export LDFLAGS="${LDFLAGS} -L$p/lib"
 
-  p="/opt/gcc/gcc-4.8.4"
+  p="/opt/gcc/gcc-4.9.2"
   export PATH="${PATH}:$p/bin"
   export CFLAGS="${CFLAGS} -Wl,-rpath=$p/lib64"
 #  export CFLAGS="${CFLAGS} -I$p/include"
@@ -182,6 +187,14 @@ if ! test -d ${dirname}; then
   ## Append system binaries
   export PATH="${PATH}:/bin:/usr/bin"
 
+  # Developers version?
+  if test "${debug}" = "debug"; then
+    echo "Compiling and linking with ASAN and UBSAN"
+    export CC="gcc -std=gnu99 -fsanitize=undefined,address"
+    export CFLAGS="${CFLAGS} -fno-omit-frame-pointer"
+    export ASAN_OPTIONS='detect_leaks=1'
+  fi
+  
   ## Cleanup (drop first character)
   export PATH="${PATH:1}"
   export CFLAGS="${CFLAGS:1}"
@@ -191,6 +204,7 @@ if ! test -d ${dirname}; then
   echo PATH=$PATH
   echo CFLAGS=$CFLAGS
   echo LDFLAGS=$LDFLAGS
+  echo ASAN_OPTIONS=$ASAN_OPTIONS
   echo config_args=${config_args}
   
   ./configure --enable-R-shlib ${config_args} --prefix=${dirname2}
