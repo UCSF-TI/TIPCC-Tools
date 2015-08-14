@@ -6,7 +6,7 @@
 # Usage: One of the following:
 #  installR devel
 #  installR patched
-#  installR release
+#  installR latest
 #
 # Henrik Bengtsson, 2014-02-04
 ###########################################################################
@@ -112,6 +112,8 @@ fi
 # Install "devel" by default.
 if test "${flavor}" = ""; then
   flavor="devel"
+elif test "${flavor}" = "release"; then
+  flavor="latest"
 fi
 
 
