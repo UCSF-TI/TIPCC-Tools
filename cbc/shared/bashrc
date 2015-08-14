@@ -226,10 +226,9 @@ fi
 #  mkdir -p ${R_LIBS}
 #fi
 
-## WORKAROUND: Some packages are hard/fail to install
-## in R 3.2.0, e.g. 'png'.  For now, HB shares his
-## installation via a CBC site-wide library
-export R_LIBS_SITE=/home/shared/cbc/R/site-library/x86_64-unknown-linux-gnu-library/%v
+## WORKAROUND: Some packages are hard/fail to install in R 3.2.0, e.g. 'png'.
+## These are shared by CBC.
+export R_LIBS_SITE=/home/shared/cbc/R/site-library/%p-library/%v
 
 
 alias R-2.15.3=${SHARED_SOFTWARE}/R-2.15.3/bin/R
