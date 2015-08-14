@@ -47,8 +47,8 @@ else
     path1=`echo $PATH | sed -e "s/R-[^/]*/R-$version/g;"`
     export PATH="$path1"
     R_CMD=R-$version
-    unalias R
-    unalias Rscript
+    unalias R 2> /dev/null
+    unalias Rscript 2> /dev/null
     if test "${asan}" = "true"; then
       echo "Using ASAN/UBSAN:"
       echo GCC_HOME=${GCC_HOME}
