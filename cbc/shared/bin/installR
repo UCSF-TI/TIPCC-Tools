@@ -7,8 +7,9 @@
 #  installR devel
 #  installR patched
 #  installR latest
+#  installR /path/to/R-3.1.2.tar.gz
 #
-# Henrik Bengtsson, 2014-02-04
+# Henrik Bengtsson, 2015-09-18
 ###########################################################################
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Reset environment variable (just in case)
@@ -116,6 +117,14 @@ elif test "${flavor}" = "release"; then
   flavor="latest"
 fi
 
+# Install from file?
+pathname=
+if test -f "${flavor}"; then
+  pathname=${flavor}
+  echo "Installing from file: ${pathname}"
+  flavor=$(basename ${pathname})
+fi
+
 
 # Subdirectory
 today=`date +%Y%m%d`
@@ -132,21 +141,28 @@ if ! test -d ${dirname}; then
   echo "Installing R-${flavor} to '${dirname}/'"
 
   # (1a) Download latest R build, iff not already done
-  pathname=${dirname}.tar.gz
-  if ! test -f ${pathname}; then
-    if test "${flavor}" == "devel"; then
-      urlpath=ftp://ftp.stat.math.ethz.ch/Software/R
-    elif test "${flavor}" == "patched"; then
-      urlpath=ftp://ftp.stat.math.ethz.ch/Software/R
-    elif test "${flavor}" == "latest"; then
-      urlpath=http://cran.r-project.org/src/base
-    else
-      urlpath=http://cran.r-project.org/src/base/R-3
+  if test -z "${pathname}"; then
+    pathname=${dirname}.tar.gz
+    if ! test -f ${pathname}; then
+      if test "${flavor}" == "devel"; then
+        urlpath=ftp://ftp.stat.math.ethz.ch/Software/R
+      elif test "${flavor}" == "patched"; then
+        urlpath=ftp://ftp.stat.math.ethz.ch/Software/R
+      elif test "${flavor}" == "latest"; then
+        urlpath=http://cran.r-project.org/src/base
+      else
+        urlpath=http://cran.r-project.org/src/base/R-3
+      fi
+      url=${urlpath}/R-${flavor}.tar.gz
+      wget ${url} -O ${pathname}
     fi
-    url=${urlpath}/R-${flavor}.tar.gz
-    wget ${url} -O ${pathname}
   fi
 
+  if ! test -f ${pathname}; then
+    echo "ERROR: Failed to locate installation file: ${pathname}"
+    exit 1
+  fi
+  
   # (1b) Extract (to temporary)
   mkdir ${dirname}_tmp
   tar -xvf ${pathname} -C ${dirname}_tmp
