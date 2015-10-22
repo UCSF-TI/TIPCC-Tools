@@ -81,6 +81,35 @@ function prependManPath() {
 } # prependManPath()
 
 
+function assertUserOnlyPermissions() {
+  path=$1
+
+  ## Nothing to do?
+  if ! test -e ${path}; then return; fi
+
+  d=$(dirname ${path})
+  f=$(basename ${path})
+  
+  ## Permissions already correct?
+  perms=$(ls -al ${d} | grep -F $f | cut -c 1-10)
+  permsGO=$(echo $perms | cut -c 5-10)
+  if test "${permsGO}" == "------"; then return; fi
+  
+  ## Fix permissions
+  chmod go-rwx ${path}
+
+  ## Assert fix
+  permsT=$(ls -al ${d} | grep -F $f | cut -c 1-10)
+  permsGO=$(echo $permsT | cut -c 5-10)
+  if test "${permsGO}" != "------"; then
+    echo >&2 "SECURITY ERROR: Detected that ${path} was acessible by others (ugo=$perms). Tried to reset permissions (chmod go-rwx ${path}), but failed. They are still accessible by others; ugo=${permsT}"
+    return
+  fi
+  
+  echo >&2 "SECURITY WARNING: Detected that ${path} was acessible by others (ugo=$perms). Reset permssions (chmod go-rwx ${path}) such only you can access it. New permissions: ugo=${permsT}"
+}
+
+
 # Command prompt
 function setPrompt() {
   export PS1="$1"
