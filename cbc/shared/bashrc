@@ -242,6 +242,7 @@ alias R-3.1.2=${SHARED_SOFTWARE}/R-3.1.2/bin/R
 alias R-3.1.3=${SHARED_SOFTWARE}/R-3.1.3/bin/R
 alias R-3.2.0=${SHARED_SOFTWARE}/R-3.2.0/bin/R
 alias R-3.2.1=${SHARED_SOFTWARE}/R-3.2.1/bin/R
+alias R-3.2.2=${SHARED_SOFTWARE}/R-3.2.2/bin/R
 alias R-latest=${SHARED_SOFTWARE}/R-latest/bin/R
 alias R-patched=${SHARED_SOFTWARE}/R-patched/bin/R
 alias R-devel=${SHARED_SOFTWARE}/R-devel/bin/R
@@ -304,26 +305,14 @@ alias ll="ls -l"
 alias lll="ls -la"
 
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Validate ssh file permissions
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-path=${HOME}/.ssh
-if test -d ${path}; then
-  perms=$(ls -al ${HOME} | grep -F .ssh | cut -c 1-10)
-  permsGO=$(echo $perms | cut -c 5-10)
-  if test "${permsGO}" != "------"; then
-    echo >&2 "WARNING: SSH is incorrectly configured. Your ${path}/ directory must not be accessible by 'group' or 'other' ($perms). To fix this, do: chmod go-rwx ${path}/"
-  fi
 
-  path=${HOME}/.ssh/authorized_keys
-  if test -f ${path}; then
-    perms=$(ls -l ${path} | cut -c 1-10)
-    permsGO=$(echo $perms | cut -c 5-10)
-    if test "${permsGO}" != "------"; then
-      echo >&2 "WARNING: SSH is incorrectly configured. Your ${path} file must not be accessible by 'group' or 'other' ($perms). To fix this, do: chmod go-rwx ${path}"
-    fi
-  fi
-fi
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# SECURITY: Assert file permissions
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+assertUserOnlyPermissions ${HOME}/.ssh
+assertUserOnlyPermissions ${HOME}/.ssh/authorized_keys
+assertUserOnlyPermissions ${HOME}/.netrc
+assertUserOnlyPermissions ${HOME}/cron-bin/ucsf_mail_fetch_keep
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
