@@ -183,13 +183,32 @@ if ! test -d ${dirname}; then
   export LDFLAGS=""
   export LD_LIBRARY_PATH=""
   config_args=""
+
+  ## Build the shared/dynamic library 'libR'
+  ## config_args="${config_args} --enable-R-shlib"
   
-  p="/opt/tools"  # bzlib2, libcurl, etc.
+##  export CPICFLAGS='-fpic'
+##  export CXX1XPICFLAGS='-fpic'
+##  export CXXPICFLAGS='-fpic'
+##  export FCPICFLAGS='-fpic'
+##  export FPICFLAGS='-fpic'
+  
+  p=/home/shared/cbc/local
   export PATH="${PATH}:$p/bin"
+#  export CFLAGS="${CFLAGS} -I$p/include"
   export CFLAGS="${CFLAGS} -Wl,-rpath=$p/lib"
   export LDFLAGS="${LDFLAGS} -L$p/lib"
+  
+#  p="/opt/tools"  # bzlib2, libcurl, etc.
+#  export PATH="${PATH}:$p/bin"
+#  export CFLAGS="${CFLAGS} -Wl,-rpath=$p/lib"
+#  export LDFLAGS="${LDFLAGS} -L$p/lib"
+
+  ## These config options may not be supported
+  ## in R devel /HB 2015-10-23
   config_args="${config_args} --with-system-bzlib=no"
   config_args="${config_args} --with-system-pcre=no"
+  config_args="${config_args} --with-system-zlib=no"
   
   p="/opt/NetCDF/NetCDF-4.3.0"
   export PATH="${PATH}:$p/bin"
@@ -224,8 +243,10 @@ if ! test -d ${dirname}; then
   echo LDFLAGS=$LDFLAGS
   echo ASAN_OPTIONS=$ASAN_OPTIONS
   echo config_args=${config_args}
+
+  ldconfig -p
   
-  ./configure --enable-R-shlib ${config_args} --prefix=${dirname2}
+  ./configure ${config_args} --prefix=${dirname2}
 
   make -j 4
   make -j 4 check
