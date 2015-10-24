@@ -152,17 +152,17 @@ lndir ${newest} ${what}
 
 
 # R 3.3.x
-#what=R-3.3.0devel
-#newest=`ls ${dir} | grep ${what}- | sort -ru | head -1`
-#lndir ${dir}/${newest} .
-#rm ${what}
-#lndir ${newest} ${what}
-#lndir R-devel ${what}
+what=R-3.3.0devel
+newest=`ls ${dir} | grep ${what}- | sort -ru | head -1`
+lndir ${dir}/${newest} .
+rm ${what}
+lndir ${newest} ${what}
+lndir R-devel ${what}
 
 # R latest, patched and R devel
 lndir R-3.2.2 R-latest
 lndir R-3.2.2patched R-patched
-lndir R-3.2.2 R-devel
+lndir R-3.3.0devel R-devel
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
