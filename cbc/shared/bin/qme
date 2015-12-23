@@ -16,7 +16,7 @@ nodes=$(echo $nodes) ## Paste to one string
 nnodes=$(echo $nodes | wc -w)
 
 ## Count
-njobs=$(echo $jobs | wc -w)
+njobs=$(echo "$jobs" | grep -v '^$' | wc -l)
 rjobs=$(echo "$jobs" | grep ' R ' | wc -l)
 qjobs=$(echo "$jobs" | grep ' Q ' | wc -l)
 
