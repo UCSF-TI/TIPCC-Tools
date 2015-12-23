@@ -121,7 +121,7 @@ prependPath ${SHARED_SOFTWARE}/matlab-latest/bin
 prependPath ${SHARED_SOFTWARE}/R-latest/bin
 prependPath ${SHARED_SOFTWARE}/sratoolkit-latest/bin
 prependPath ${SHARED_SOFTWARE}/samtools-latest
-prependPath ${SHARED_SOFTWARE}/samtools-latest/bcftools
+prependPath ${SHARED_SOFTWARE}/bcftools-latest
 prependPath ${SHARED_SOFTWARE}/tophat-latest
 prependPath ${SHARED_SOFTWARE}/valgrind-latest/coregrind
 prependPath ${SHARED_SOFTWARE}/wordspy-latest
