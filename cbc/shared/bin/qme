@@ -1,11 +1,19 @@
 #!/usr/bin/env bash
-#jobs=`qstat -u $USER | grep -v ' C ' | grep -v ' E ' | cut -d ' ' -f 1 | grep .cclc01`
-jobs=$(qstat -n -1 -u $USER | grep $USER | grep -v ' C ' | grep -v ' E ')
-## jobs=$(echo "$jobs" | sed 's/.cclc01.som.ucsf//g')
 
+## Collect
+jobs=$(qstat -n -1 -u $USER | grep $USER | grep -v ' C ' | grep -v ' E ')
+
+## Prune
+jobs=$(echo "$jobs" | sed 's/.cclc01.som.ucsf[ ]*/ /g')
+jobs=$(echo "$jobs" | sed "s/batch[ ]*/ /g")
+jobs=$(echo "$jobs" | sed "s/$USER[ ]*/ /g")
+
+## Count
 njobs=$(echo "$jobs" | wc -l)
 rjobs=$(echo "$jobs" | grep ' R ' | wc -l)
 qjobs=$(echo "$jobs" | grep ' Q ' | wc -l)
+
+## Report
 echo "Username: $USER"
 echo "Number of jobs: $njobs ($rjobs running, $qjobs queued)"
 
