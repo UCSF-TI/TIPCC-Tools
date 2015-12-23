@@ -1,17 +1,26 @@
 #!/usr/bin/env bash
-jobs=`qstat -u $USER | grep -v ' C ' | cut -d ' ' -f 1 | grep .cclc01`
-njobs=`echo $jobs | wc -w`
+#jobs=`qstat -u $USER | grep -v ' C ' | grep -v ' E ' | cut -d ' ' -f 1 | grep .cclc01`
+jobs=$(qstat -n -1 -u $USER | grep $USER | grep -v ' C ' | grep -v ' E ')
+## jobs=$(echo "$jobs" | sed 's/.cclc01.som.ucsf//g')
+
+njobs=$(echo "$jobs" | wc -l)
+rjobs=$(echo "$jobs" | grep ' R ' | wc -l)
+qjobs=$(echo "$jobs" | grep ' Q ' | wc -l)
 echo "Username: $USER"
-echo "Number of active jobs: $njobs"
+echo "Number of jobs: $njobs ($rjobs running, $qjobs queued)"
+
 if test "$#" == "0"; then
   if test "$njobs" != "0"; then
-    qstat -n -1 -u $USER | grep -v ' C '
+    echo "$jobs"
   fi
 else
-  qstat $* $jobs
+  tjobs=$(echo "$jobs" | cut -d '.' -f 1)
+  echo "qstat $* $jobs"
+  qstat $* $tjobs
 fi
+
 if test "$njobs" != "0"; then
-  echo "Number of active jobs: $njobs"
+  echo "Number of jobs: $njobs ($rjobs running, $qjobs queued)"
 fi
 
 
