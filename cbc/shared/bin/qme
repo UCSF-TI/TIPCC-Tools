@@ -8,14 +8,25 @@ jobs=$(echo "$jobs" | sed 's/.cclc01.som.ucsf[ ]*/ /g')
 jobs=$(echo "$jobs" | sed "s/batch[ ]*/ /g")
 jobs=$(echo "$jobs" | sed "s/$USER[ ]*/ /g")
 
+## Identify nodes
+nodes=$(echo "$jobs" | sed 's|/.*||g' | sed -E 's/.*[ ]+//g' | sort -u)
+nodes=$(echo "$nodes" | sort -n -t n -k 2)  ## Sort mixed numerals
+nodes=$(echo $nodes) ## Paste to one string
+
 ## Count
 njobs=$(echo "$jobs" | wc -l)
 rjobs=$(echo "$jobs" | grep ' R ' | wc -l)
 qjobs=$(echo "$jobs" | grep ' Q ' | wc -l)
 
+## Jobs stats
+stats="Number of jobs: $njobs ($rjobs running, $qjobs queued)"
+
 ## Report
 echo "Username: $USER"
-echo "Number of jobs: $njobs ($rjobs running, $qjobs queued)"
+if test "$njobs" != "0"; then
+    echo "Nodes used: $nodes"
+    echo $stats
+fi
 
 if test "$#" == "0"; then
   if test "$njobs" != "0"; then
@@ -27,9 +38,8 @@ else
   qstat $* $tjobs
 fi
 
-if test "$njobs" != "0"; then
-  echo "Number of jobs: $njobs ($rjobs running, $qjobs queued)"
-fi
+echo "Nodes used: $nodes"
+echo $stats
 
 
 
