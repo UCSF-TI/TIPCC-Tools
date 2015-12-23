@@ -11,6 +11,7 @@ jobs=$(echo "$jobs" | sed "s/$USER[ ]*/ /g")
 ## Identify nodes
 nodes=$(echo "$jobs" | sed 's|/.*||g' | sed -E 's/.*[ ]+//g' | sort -u)
 nodes=$(echo "$nodes" | sort -n -t n -k 2)  ## Sort mixed numerals
+nnodes=$(echo "$nodes" | wc -l)
 nodes=$(echo $nodes) ## Paste to one string
 
 ## Count
@@ -24,7 +25,7 @@ stats="Number of jobs: $njobs ($rjobs running, $qjobs queued)"
 ## Report
 echo "Username: $USER"
 if test "$njobs" != "0"; then
-    echo "Nodes used: $nodes"
+    echo "Nodes used ($nnodes): $nodes"
     echo $stats
 fi
 
@@ -38,7 +39,7 @@ else
   qstat $* $tjobs
 fi
 
-echo "Nodes used: $nodes"
+echo "Nodes used ($nnodes): $nodes"
 echo $stats
 
 
