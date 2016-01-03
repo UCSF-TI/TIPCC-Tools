@@ -209,7 +209,11 @@ elif test $cmd == "results"; then
     elif test "$what" = ""; then
       files="$dir/ERROR.log $dir/WARNING.log $dir/NOTE*.log"
     fi
-    more $files
+    for file in $files; do
+      if test -f $file; then
+        more $file
+      fi
+    done
   done
 elif test $cmd == "summary"; then
   for dir in ${dirs}; do
