@@ -1,0 +1,43 @@
+#!/bin/env bash
+### CBC Cleanup Tools (temporary disk usage on nodes)
+###
+### Usage:
+###  clean_tmp [options]
+###
+### Options:
+###  --help    : Display this help
+###  --usage   : Lists the total usage under \$TMPDIR (=$TMPDIR) on all nodes
+###  --cleanup : Removes all your files (recursively) under \$TMPDIR (=$TMPDIR) on all nodes
+
+path=$(dirname $0)
+
+## Parse command-line options
+cmd=help
+while (( "$#" )); do
+  ## Commands
+  if test $1 == "--help" || test $1 == "-h"; then
+    cmd=help
+  elif test $1 == "--usage" || test $1 == "-u"; then
+    cmd=usage
+  elif test $1 == "--cleanup" || test $1 == "-c"; then
+    cmd=cleanup
+  else
+    echo "ERROR: Unknown option: $1"
+    exit 1
+  fi
+
+  shift
+done
+
+
+if test $cmd == "help"; then
+  grep "^###" $0 | grep -v "^####" | cut -b 5-
+elif test $cmd == "usage"; then
+  echo "Listing total disk usage under \$TMPDIR (=$TMPDIR) on each of the computer nodes ..."
+  $path/scannodes "du -h '$TMPDIR'"
+  echo "Listing total disk usage under \$TMPDIR (=$TMPDIR) on each of the computer nodes ... DONE"
+elif test $cmd == "cleanup"; then
+  echo "Cleaning up all your files under \$TMPDIR (=$TMPDIR) on each of the computer nodes ..."
+  $path/scannodes "rm -rf '$TMPDIR/*'"
+  echo "Cleaning up all your files under \$TMPDIR (=$TMPDIR) on each of the computer nodes ... DONE"
+fi

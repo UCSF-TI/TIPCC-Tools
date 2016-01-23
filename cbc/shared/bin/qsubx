@@ -2,7 +2,7 @@
 QSUB_PWD=$(pwd)
 QSUB_JOBNAME=$(date +%Y%m%d-%H%M%S)
 
-QSUB_CMD="qsub -j oe -d $QSUB_PWD -N $QSUB_JOBNAME $*"
+QSUB_CMD="qsub -j oe -d $QSUB_PWD -N $QSUB_JOBNAME $QSUB_OPTS $*"
 echo $QSUB_CMD
 $QSUB_CMD
 
