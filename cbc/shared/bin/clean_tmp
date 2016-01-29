@@ -2,14 +2,15 @@
 ### CBC Cleanup Tools (temporary disk usage on nodes)
 ###
 ### Usage:
-###  clean_tmp [options]
+###  clean_tmp <option> [tmppath]
 ###
 ### Options:
 ###  --help    : Display this help
-###  --usage   : Lists the total usage under \$TMPDIR (=$TMPDIR) on all nodes
-###  --cleanup : Removes all your files (recursively) under \$TMPDIR (=$TMPDIR) on all nodes
+###  --usage   : Lists the total usage under tmppath (default is /tmp/) on all nodes
+###  --cleanup : Removes all your files (recursively) under tmppath (default is /tmp/) on all nodes
 
 path=$(dirname $0)
+tmppath=/tmp
 
 ## Parse command-line options
 cmd=help
@@ -22,22 +23,48 @@ while (( "$#" )); do
   elif test $1 == "--cleanup" || test $1 == "-c"; then
     cmd=cleanup
   else
-    echo "ERROR: Unknown option: $1"
-    exit 1
+    tmppath=$1
   fi
 
   shift
 done
 
 
+## Sanity check
 if test $cmd == "help"; then
-  grep "^###" $0 | grep -v "^####" | cut -b 5-
-elif test $cmd == "usage"; then
-  echo "Listing total disk usage under \$TMPDIR (=$TMPDIR) on each of the computer nodes ..."
-  $path/scannodes "du -h '$TMPDIR'"
-  echo "Listing total disk usage under \$TMPDIR (=$TMPDIR) on each of the computer nodes ... DONE"
-elif test $cmd == "cleanup"; then
-  echo "Cleaning up all your files under \$TMPDIR (=$TMPDIR) on each of the computer nodes ..."
-  $path/scannodes "rm -rf '$TMPDIR/*'"
-  echo "Cleaning up all your files under \$TMPDIR (=$TMPDIR) on each of the computer nodes ... DONE"
+    grep "^###" $0 | grep -v "^####" | cut -b 5-
+    exit 0
+fi
+
+
+## Assert directory exists
+if ! test -d "$tmppath"; then
+  echo "No such directory: $tmppath"
+  exit 1
+fi
+
+if test $cmd == "usage"; then
+  echo "Listing total disk usage under $tmppath on each of the computer nodes ..."
+  echo "Current machine: $HOST"  
+  du -h '$tmppath'
+  $path/scannodes "du -h '$tmppath'"
+  echo "Listing total disk usage under $tmppath on each of the computer nodes ... DONE"
+  exit 0
+fi
+
+
+## Protect against deleting the wrong directory
+if [[ $tmppath != /tmp ]]; then
+  echo "UNSAFE PATH: Won't delete because it does not start with '/tmp': $tmppath"
+  exit 1
+fi
+
+if test $cmd == "cleanup"; then
+  echo "Cleaning up all your files under $tmppath on each of the computer nodes ..."
+  echo "Current machine: $HOST"  
+  rm -rf $tmppath/*
+  rm -rf $tmppath/.*
+  mkdir -p /tmp/$USER
+  $path/scannodes "rm -rf '$tmppath/*' '$tmppath/.*'; mkdir -p '/tmp/$USER'"
+  echo "Cleaning up all your files under $tmppath on each of the computer nodes ... DONE"
 fi
