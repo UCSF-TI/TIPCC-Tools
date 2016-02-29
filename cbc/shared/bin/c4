@@ -1,0 +1,132 @@
+#!/usr/bin/env bash
+### Computational Biology Core (http://cbc.ucsf.edu) C4 Toolkit
+###
+### Usage:
+###  c4 <command> [options]
+###
+### Commands:
+###
+### Example:
+###  c4 status
+###
+### How to install:
+### Add the following to your ~/.bashrc script:
+###  source ${SHARED_ROOT}/bashrc
+
+if test -z "$SHARED_SOFTWARE"; then
+  source /home/shared/cbc/bashrc
+fi
+
+cmd=$1
+if test "$cmd" == ""; then
+    cmd="help"
+fi
+
+shift
+
+dryrun=
+nodes=
+for opt in $*; do
+    if test "$opt" == "--nodes"; then
+      shift
+      nodes=$1
+      shift
+    elif test "$opt" == "--dry-run"; then
+      shift
+      dryrun=TRUE
+    fi
+done
+
+HEAD_NODE="cclc01.som.ucsf.edu"
+CLUSTER_NODES=$(bpstat -l | tail -n +2 | cut -c 1-4 | sed -e 's/ //g')
+CLUSTER_NODES_UP=$(bpstat -l | tail -n +2 | grep -F up | cut -c 1-4 | sed -e 's/ //g')
+CLUSTER_NODES_DOWN=$(bpstat -l | tail -n +2 | grep -F up | cut -c 1-4 | sed -e 's/ //g')
+
+if test "$nodes" == ""; then
+    for n in $CLUSTER_NODES_UP; do nodes="$nodes n$n"; done
+fi
+
+if test $cmd == "help"; then
+    grep "^###" $0 | grep -v "^####" | cut -b 5- | sed -e "s#\${SHARED_ROOT}#$SHARED_ROOT#g"
+elif test $cmd == "status"; then
+  echo "** Cluster status:"
+  bpstat
+  echo "There are `qstat | grep -E "^[0-9]+" | wc -l` cluster jobs of which `qme | grep -E "^[0-9]+" | wc -l` are yours (see 'qstat' and 'qme')"
+elif test $cmd == "nodes"; then
+    echo "Cluster nodes (that are up): $(echo $CLUSTER_NODES_UP)"
+elif test $cmd == "apply"; then
+    echo "Nodes to be called: $(echo $nodes)"
+    node_cmd="$*"
+    echo "Command applied to each node: '$node_cmd'"
+    if test -z "$node_cmd"; then
+      echo "ERROR: Missing command to be called on each node"
+      exit -1
+    fi
+    for node in $nodes; do
+	echo NODE $node:
+	call="ssh $node $node_cmd"
+	echo $call
+	if test -z "$dryrun"; then $call; fi
+	echo
+    done
+elif test $cmd == "sync-to-scratch"; then
+    srcdir=/home/$USER/cluster/scratch/
+    destdir=/scratch/$USER/
+
+    if test $HOST == "HEAD_NODE"; then
+	echo "ERROR: Trying to sync $srcdir to local disk on the head node."
+	exit 1
+    fi
+
+    if test ! -d "$srcdir"; then
+	echo "WARNING: Cannot sync $srcdir to $destdir on local disk on compute node $HOST, because source directory does not exist. Skipping."
+	exit 1
+    fi
+
+    mkdir -p $destdir
+
+    xopts=
+    if test -n "$dryrun"; then xopts="$xopts --dry-run"; fi
+    
+    call="rsync -vLropgtD --delete --exclude='*~' --exclude='*.bak' --exclude='*.log' --exclude='*.out' --exclude='*.err' --exclude='*.logs/' --exclude='*.HIDE*/' --exclude=downloads/ --exclude=.async/ $xopts $srcdir $destdir"
+    echo "Node: $HOST"
+    echo "Command: $call"
+    $call
+elif test $cmd == "software"; then
+  echo "** Software in $SHARED_SOFTWARE/:"
+  ls $SHARED_SOFTWARE | grep -v "~$"
+elif test $cmd == "utils"; then
+  echo "** Command-line utilities in $SHARED_BIN/:"
+  ls $SHARED_BIN | grep -v "~$"
+elif test $cmd == "aliases"; then
+  echo "** Aliases set by $SHARED_ROOT/bashrc:"
+  grep "^alias" $SHARED_ROOT/bashrc | grep -v "alias git" | sort -u
+elif test $cmd == "functions"; then
+  echo "** Functions defined in bashrc and bin/* in $SHARED_ROOT/:"
+  cat $SHARED_ROOT/bashrc $SHARED_BIN/* | grep "^function" | sed 's/ {//g' | sort -u
+  echo
+  echo "To see a function definition, use type <fcn>, e.g. type timestamp"
+elif test $cmd == "envvars"; then
+  echo "** Environment variable set by $SHARED_ROOT/bashrc:"
+  grep "^export" $SHARED_ROOT/bashrc | cut -b 8- | cut -d = -f 1 | sort -u
+elif test $cmd == "motd"; then
+  cat /etc/motd
+fi
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# HISTORY:
+# 2015-06-24
+# o Added --cluster
+# 2014-12-23
+# o Added --motd
+# 2014-10-06
+# o Added --functions
+# 2014-10-05
+# o Created by Henrik Bengtsson.
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+
+
+
