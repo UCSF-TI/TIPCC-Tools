@@ -104,6 +104,16 @@ lndir matlab-R2012a matlab-latest
 # Python 2.6.8 is install under /opt/local/bin
 lndir /opt/Python/Python-2.7.4 .
 
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# R
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Cleanup up broken R links
+# (typically happens when old patched/devel versions are removed)
+for ff in $SHARED_SOFTWARE/R-*; do
+  if [ -L "$ff" ] && ! [ -e "$ff" ]; then rm -- "$ff"; fi;
+done
+
 # R 2.11.x
 lndir /opt/local/lib64/R R-2.11.0
 lndir $SRC_CBC/R/R-2.11.1-20150918 R-2.11.1
@@ -142,10 +152,11 @@ lndir $SRC_CBC/R/R-3.1.3-20150309 R-3.1.3
 lndir $SRC_CBC/R/R-3.2.1-20150618 R-3.2.1
 lndir $SRC_CBC/R/R-3.2.2-20150814 R-3.2.2
 lndir $SRC_CBC/R/R-3.2.3-20151210 R-3.2.3
+lndir $SRC_CBC/R/R-3.2.4-20160310 R-3.2.4
 
 # R 3.2.x patched
 dir=$SRC_CBC/R/
-what=R-3.2.3patched
+what=R-3.2.4patched
 newest=`ls ${dir} | grep ${what}- | sort -ru | head -1`
 lndir ${dir}${newest} .
 rm -f ${what}
@@ -160,8 +171,8 @@ rm -f ${what}
 lndir ${newest} ${what}
 
 # R latest, patched and R devel
-lndir R-3.2.3 R-latest
-lndir R-3.2.3patched R-patched
+lndir R-3.2.4 R-latest
+lndir R-3.2.4patched R-patched
 lndir R-3.3.0devel R-devel
 
 
@@ -198,7 +209,13 @@ lndir htop-1.0.3 htop
 # IGV
 lndir $SRC_CBC/IGV_2.1.2 .
 lndir $SRC_CBC/IGV_2.3.31 .
-lndir IGV_2.3.31 IGV-latest
+lndir $SRC_CBC/IGV_2.3.68 .
+lndir IGV_2.3.68 IGV-latest
+
+
+# IGVTools
+lndir $SRC_CBC/IGVTools-2.3.68 .
+lndir IGVTools-2.3.68 IGVTools-latest
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -283,12 +300,14 @@ lndir GenomeAnalysisTK-3.4-46 GATK-latest
 lndir $SRC_CBC/GeneTorrent-3.0.2 .
 lndir $SRC_CBC/GeneTorrent-3.8.5a-94 .
 lndir GeneTorrent-3.0.2 GeneTorrent-latest
+## Why is this commented away? /HB 2016-03-11
 #lndir GeneTorrent-3.8.5a-94 GeneTorrent-latest
 
 # HTSeq
-lndir /home/tokuyasu/shared/software/HTSeq-0.5.4p3 .
+lndir $SRC_CBC/HTSeq-0.5.4p3 .
 lndir $SRC_CBC/HTSeq-0.6.1 .
 lndir HTSeq-0.5.4p3 HTSeq-latest
+## Why is this commented away? /HB 2016-03-11
 #lndir HTSeq-0.6.1 HTSeq-latest
 
 # muTect
