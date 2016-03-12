@@ -155,6 +155,9 @@ prependPath ${SHARED_SOFTWARE}_cbc/bin
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # GENOMIC TOOLS
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+prependPath ${SHARED_SOFTWARE}/IGVTools-latest
+prependPath ${SHARED_SOFTWARE}/IGV-latest
+
 alias igv=${SHARED_SOFTWARE}/IGV-latest/igv.sh
 export PICARD_HOME=${SHARED_SOFTWARE}/picard-tools-latest
 export GATK_HOME=${SHARED_SOFTWARE}/GATK-latest
