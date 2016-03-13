@@ -51,6 +51,9 @@ for opt in $*; do
 	shift
 	users=$(echo $1 | sed 's/,/ /g')
 	shift
+    elif test "$opt" == "--me"; then
+	users=$USER
+	shift
     elif test "$opt" == "--full"; then
         shift
         full=TRUE
@@ -71,6 +74,10 @@ elif test $cmd == "nodes"; then
 elif test $cmd == "users"; then
     echo "Cluster users: $(echo $users)"
 elif test $cmd == "head"; then
+    if test $HOST != $HEAD_NODE; then
+	echo "ERROR: c4 head is only supported on the head node ($HEAD_NODE): $HOST"
+	exit 1
+    fi
     for user in $users; do
         echo $user:
 	res=$(ps uax | bpstat -P | grep -E "^  " | grep $user | grep -v "grep $user" | grep -v -E "^[ ]+root")
