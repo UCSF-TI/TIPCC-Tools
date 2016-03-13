@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-0;136;0c### Computational Biology Core (http://cbc.ucsf.edu) C4 Toolkit
+### Computational Biology Core (http://cbc.ucsf.edu) C4 Toolkit
 ###
 ### Usage:
 ###  c4 <command> [options]
