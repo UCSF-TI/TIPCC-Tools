@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### Computational Biology Core (http://cbc.ucsf.edu) C4 Toolkit
+0;136;0c### Computational Biology Core (http://cbc.ucsf.edu) C4 Toolkit
 ###
 ### Usage:
 ###  c4 <command> [options]
@@ -9,6 +9,7 @@
 ### Example:
 ###  c4 status     - Cluster status
 ###  c4 nodes      - List nodes that are up
+###  c4 nodes      - List all users
 ###  c4 head_usage - List users' usage of headnode
 ###
 ### How to install:
@@ -39,7 +40,7 @@ nodes=
 for n in $CLUSTER_NODES_UP; do nodes="$nodes n$n"; done
 
 ## Identify all users on the cluster
-users=$(cat /etc/passwd | grep -F "/home/" | grep -E "(@|inactive)" | cut -d':' -f1)
+users=$(cat /etc/passwd | grep -F "/home/" | grep -E "(@|inactive)" | cut -d':' -f1 | sort -u)
 
 for opt in $*; do
     if test "$opt" == "--nodes"; then
@@ -67,12 +68,14 @@ elif test $cmd == "status"; then
   echo "There are `qstat | grep -E "^[0-9]+" | wc -l` cluster jobs of which `qme | grep -E "^[0-9]+" | wc -l` are yours (see 'qstat' and 'qme')"
 elif test $cmd == "nodes"; then
     echo "Cluster nodes (that are up): $(echo $CLUSTER_NODES_UP)"
+elif test $cmd == "users"; then
+    echo "Cluster users: $(echo $users)"
 elif test $cmd == "head"; then
     for user in $users; do
         echo $user:
 	res=$(ps uax | bpstat -P | grep -E "^  " | grep $user | grep -v "grep $user" | grep -v -E "^[ ]+root")
 	if test "$full" == "FALSE"; then
-	    res=$(printf '%s\n' "${res[@]}" | grep -v -E "(ssh|top|watch|qstat|bash|SCREEN|screen|bpstat|tmux|c4)")
+	    res=$(printf '%s\n' "${res[@]}" | grep -v -E "(ssh|top|watch|qstat|bash|zsh|git|SCREEN|screen|bpstat|tmux|c4|less|qsub|emacs|vim)")
 	fi
 	if test "${res[@]}" != ""; then printf '%s\n' "${res[@]}"; fi
     done    
