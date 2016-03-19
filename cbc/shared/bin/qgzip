@@ -3,8 +3,9 @@
 ### qgzip [gzip options] [file] ...
 ###
 ### EXAMPLES:
-### qgzip *.txt
-### qgzip -9 *.txt
+### qgzip *.sam
+### qgzip -9 /path/to/*.fastq
+### qgzip -d /path/to/*.fastq.gz
 ###
 ### AUTHOR:
 ### Henrik Bengtsson, 2016
@@ -24,7 +25,7 @@ for arg in $*; do
   elif [[ $arg == "--dryrun" ]]; then
     qcmd_options="$qcmd_options --dryrun"
   else
-   options=($options "$arg")
+   options="$options $arg"
    shift
   fi
 done
@@ -32,5 +33,5 @@ done
 if [[ $action == "help" ]]; then
   grep "^###" $0 | grep -v "^####" | cut -b 5-
 else
-  qcmd ${qcmd_options} --exec gzip ${options[@]}
+  qcmd ${qcmd_options} --exec gzip ${options}
 fi
