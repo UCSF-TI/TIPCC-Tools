@@ -32,7 +32,7 @@ for arg in $*; do
       action=submit
       state=1
     else
-      qsub_options=($qsub_options "$arg")
+      qsub_options="$qsub_options $arg"
     fi
     shift
   elif [[ $state == 1 ]]; then
@@ -40,7 +40,7 @@ for arg in $*; do
     state=2
     shift
   elif [[ $state == 2 ]]; then
-    cmd_options=($cmd_options "$arg")
+    cmd_options="$cmd_options $arg"
    shift
   fi
 done
@@ -56,10 +56,10 @@ elif [[ $state == 1 || $state == 2 ]]; then
   if [[ $verbose == "TRUE" ]]; then
     echo "VERBOSE OUTPUT:"
     echo "qsub_defaults: $qsub_defaults"
-    echo "qsub_options: ${qsub_options[@]}"
+    echo "qsub_options: ${qsub_options}"
     echo "cmd: $cmd"
-    echo "cmd_options: ${cmd_options[@]}"
-    echo "Manual call: echo \"$cmd ${cmd_options[@]}\" | qsub $qsub_defaults ${qsub_options[@]} -"
+    echo "cmd_options: ${cmd_options}"
+    echo "Manual call: echo \"$cmd ${cmd_options}\" | qsub $qsub_defaults ${qsub_options} -"
     echo
   fi
   
@@ -68,10 +68,10 @@ elif [[ $state == 1 || $state == 2 ]]; then
     exit
   fi
 
-  echo "echo \"$cmd ${cmd_options[@]}\" | qsub $qsub_defaults ${qsub_options[@]} -"
+  echo "echo \"$cmd ${cmd_options}\" | qsub $qsub_defaults ${qsub_options} -"
   if [[ $dryrun == "TRUE" ]]; then
     echo "Nothing evaulated (--dryrun)"
   else
-    echo "$cmd ${cmd_options[@]}" | qsub $qsub_defaults ${qsub_options[@]} -
+    echo "$cmd ${cmd_options}" | qsub $qsub_defaults ${qsub_options} -
   fi
 fi
