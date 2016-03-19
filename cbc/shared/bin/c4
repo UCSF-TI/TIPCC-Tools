@@ -7,10 +7,11 @@
 ### Commands:
 ###
 ### Example:
-###  c4 status     - Cluster status
-###  c4 nodes      - List nodes that are up
-###  c4 nodes      - List all users
-###  c4 head_usage - List users' usage of headnode
+###  c4 status      - Cluster status
+###  c4 nodes       - List nodes that are up
+###  c4 nodes       - List all users
+###  c4 head        - List users' usage of headnode
+###  c4 large_files - List large files
 ###
 ### How to install:
 ### Add the following to your ~/.bashrc script:
@@ -33,14 +34,18 @@ CLUSTER_NODES_UP=$(bpstat -l | tail -n +2 | grep -F up | cut -c 1-4 | sed -e 's/
 CLUSTER_NODES_DOWN=$(bpstat -l | tail -n +2 | grep -F up | cut -c 1-4 | sed -e 's/ //g')
 
 dryrun=FALSE
+all=FALSE
 full=FALSE
+clean=FALSE
+class=
+action=
 
 ## All nodes that are up
 nodes=
 for n in $CLUSTER_NODES_UP; do nodes="$nodes n$n"; done
 
 ## Identify all users on the cluster
-users=$(cat /etc/passwd | grep -F "/home/" | grep -E "(@|inactive)" | cut -d':' -f1 | sort -u)
+users=($(cat /etc/passwd | grep -F "/home/" | grep -E "(@|inactive)" | cut -d':' -f1 | sort -u))
 
 for opt in $*; do
     if test "$opt" == "--nodes"; then
@@ -49,10 +54,24 @@ for opt in $*; do
         shift
     elif test "$opt" == "--users"; then
 	shift
-	users=$(echo $1 | sed 's/,/ /g')
+	users=($(echo $1 | sed 's/,/ /g'))
 	shift
     elif test "$opt" == "--me"; then
-	users=$USER
+	users=($USER)
+	shift
+    elif test "$opt" == "--all"; then
+	all=TRUE
+	shift
+    elif test "$opt" == "--clean"; then
+	clean=TRUE
+	shift
+    elif test "$opt" == "--class"; then
+        shift
+        class=$1
+	shift
+    elif test "$opt" == "--action"; then
+        shift
+        action=$1
 	shift
     elif test "$opt" == "--full"; then
         shift
@@ -72,20 +91,64 @@ elif test $cmd == "status"; then
 elif test $cmd == "nodes"; then
     echo "Cluster nodes (that are up): $(echo $CLUSTER_NODES_UP)"
 elif test $cmd == "users"; then
-    echo "Cluster users: $(echo $users)"
+    if test $clean == "TRUE"; then
+      echo "${users[@]}"
+    else
+      echo "Cluster users: [n=${#users[@]}] ${users[@]}"
+    fi
 elif test $cmd == "head"; then
     if test $HOST != $HEAD_NODE; then
 	echo "ERROR: c4 head is only supported on the head node ($HEAD_NODE): $HOST"
 	exit 1
     fi
-    for user in $users; do
+    for user in ${users[@]}; do
         echo $user:
 	res=$(ps uax | bpstat -P | grep -E "^  " | grep $user | grep -v "grep $user" | grep -v -E "^[ ]+root")
 	if test "$full" == "FALSE"; then
-	    res=$(printf '%s\n' "${res[@]}" | grep -v -E "(ssh|top|watch|qstat|bash|zsh|git|SCREEN|screen|bpstat|tmux|c4|less|qsub|emacs|vim)")
+	    res=$(printf '%s\n' "${res[@]}" | grep -v -E "(ssh|top|watch|qstat|bash|zsh|tcsh|git|SCREEN|screen|bpstat|tmux|c4|less|qsub|emacs|vim)")
 	fi
 	if test "${res[@]}" != ""; then printf '%s\n' "${res[@]}"; fi
     done    
+elif test $cmd == "large_files"; then
+    if test ${#users[@]} -gt 1 && test "$all" == "FALSE"; then
+	echo "ERROR: Did you forget --me?  If you wish to apply for multiple users, please confirm by specifying --all"
+	exit 1
+	exit
+    fi
+    echo "Cluster users: [n=${#users[@]}] ${users[@]}"
+
+    exts=()
+    if test "$class" == "htseq"; then
+	exts=("pileup" "mpileup" "fastq" "fq" "sam")
+    elif test "$class" == "text"; then
+	exts=("txt")
+    else
+	echo "ERROR: --class <class> is missing."
+	exit 1
+    fi
+
+    minsize=50000k
+    minsize=500
+    opts="-size +$minsize"
+    
+    echo "File extensions considered: ${exts[@]}"
+    opts="$opts -name 'DUMMY_DUMMY_DUMMY'"
+ #   for ext in ${exts[@]}; do
+#	opts="$opts -o -name '*.$ext'"
+ #   done
+
+
+    if test "$action" == "list"; then
+        echo "find options: $opts"
+        find . -type f ${opts} -exec ls -lh {} \; | awk '{ print $9 ": " $5 " (" $6 " " $7 " " $8 ")" }'
+#        find . -type f $opts -exec ls -lh {} \; | awk '{ print $9 ": " $5 " (" $6 " " $7 " " $8 ")" }'
+    elif test "$action" == "gzip"; then
+        echo "find options: $opts"
+        find . -type f $opts ! -f '*.gz' -exec gzip
+    else
+	echo "ERROR: --action <action> is missing."
+	exit 1
+    fi
 elif test $cmd == "apply"; then
     echo "Nodes to be called: $(echo $nodes)"
     node_cmd="$*"
