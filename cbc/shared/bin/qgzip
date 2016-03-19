@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+### USAGE:
+### qgzip [gzip options] [file] ...
+###
+### EXAMPLES:
+### qgzip *.txt
+### qgzip -9 *.txt
+###
+### AUTHOR:
+### Henrik Bengtsson, 2016
+
+action=
+verbose=FALSE
+dryrun=FALSE
+
+qcmd_options=
+options=
+for arg in $*; do
+  if [[ $arg == "--help" ]]; then
+    action=help
+    break
+  elif [[ $arg == "--verbose" ]]; then
+    qcmd_options="$qcmd_options --verbose"
+  elif [[ $arg == "--dryrun" ]]; then
+    qcmd_options="$qcmd_options --dryrun"
+  else
+   options=($options "$arg")
+   shift
+  fi
+done
+
+if [[ $action == "help" ]]; then
+  grep "^###" $0 | grep -v "^####" | cut -b 5-
+else
+  qcmd ${qcmd_options} --exec gzip ${options[@]}
+fi
