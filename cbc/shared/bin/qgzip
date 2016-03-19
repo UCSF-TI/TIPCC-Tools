@@ -14,7 +14,10 @@ action=
 verbose=FALSE
 dryrun=FALSE
 
-qcmd_options=
+
+## Use special job queue
+qcmd_options="-q secondary"
+
 options=
 for arg in $*; do
   if [[ $arg == "--help" ]]; then
