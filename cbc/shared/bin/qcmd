@@ -48,9 +48,24 @@ done
 if [[ $action == "help" ]]; then
   grep "^###" $0 | grep -v "^####" | cut -b 5-
 elif [[ $state == 1 || $state == 2 ]]; then
+  qsub_name="$(basename $cmd)_$(date +%H%M%S-%Y%m%d)"
+  pwd=$(pwd)
+  if [[ $pwd == *","* ]]; then
+      echo "VALIDATION ERROR: 'qsub -d <working path>' does not support paths with commas: $pwd"
+      exit 1
+
+      ## The following does not work; qsub seems to resolve the soft link. /HB 2016-03-19
+      ## See also https://github.com/UCSF-TI/TIPCC/issues/35
+      auxpwd=~/qcmd/$(date +%Y%m%d/%H%M%S-%N)
+      mkdir -p $(dirname $auxpwd)
+      ln -s $pwd $auxpwd
+      echo "WORKAROUND: 'qsub -d <working path>' does not support paths with commas. Will use an auxiliary working directory ($auxpwd) which is linked to the intended working directory: $pwd"
+      pwd=$auxpwd
+  fi
+    
   ## Override default qsub options
-  qsub_defaults="-d $(pwd)"
-  qsub_defaults="$qsub_defaults -N $(basename $cmd)_$(date +%H%M%S-%Y%m%d)"
+  qsub_defaults="-d $pwd"
+  qsub_defaults="$qsub_defaults -N $qsub_name"
   qsub_defaults="$qsub_defaults -j oe"
 
   if [[ $verbose == "TRUE" ]]; then
