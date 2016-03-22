@@ -3,6 +3,7 @@
 ### qcmd [qsub options] --exec <command> [command options]
 ###
 ### EXAMPLES:
+### qcmd --stdout date.out --exec date
 ### qcmd --exec gzip *.txt
 ### qcmd -l nodes=1:ppn=4 --exec echo 'PBS_NUM_PPN=$PBS_NUM_PPN'
 ### qcmd -l nodes=1:ppn=4 --exec bash -c export
@@ -13,13 +14,18 @@
 action=help
 verbose=FALSE
 dryrun=FALSE
+safe=TRUE
 
 qsub_options=
 cmd=
+cmd_prefix=
 cmd_options=
+cmd_stdout=
+cmd_stderr=
 
 state=0
-for arg in $*; do
+while [[ $# > 0 ]]; do
+  arg=$1
   if [[ $state == 0 ]]; then
     if [[ $arg == "--help" ]]; then
       action=help
@@ -28,22 +34,41 @@ for arg in $*; do
       verbose=TRUE
     elif [[ $arg == "--dryrun" ]]; then
       dryrun=TRUE
+    elif [[ $arg == "--unsafe" ]]; then
+      safe=FALSE
+    elif [[ $arg == "--stdout" ]]; then
+      cmd_stdout=$2
+      shift
+    elif [[ $arg == "--stderr" ]]; then
+      cmd_stderr=$2
+      shift
     elif [[ $arg == "--exec" ]]; then
       action=submit
       state=1
     else
-      qsub_options="$qsub_options $arg"
+      qsub_options="$qsub_options $1"
     fi
     shift
   elif [[ $state == 1 ]]; then
-    cmd=$1
+    cmd=$arg
     state=2
     shift
   elif [[ $state == 2 ]]; then
-    cmd_options="$cmd_options $arg"
-   shift
+    cmd_options="$cmd_options $1"
+    shift
   fi
 done
+
+if [[ $verbose == "TRUE" ]]; then
+  echo "VERBOSE OUTPUT:"
+  echo "qsub_defaults: $qsub_defaults"
+  echo "qsub_options: $qsub_options"
+  echo "cmd: $cmd"
+  echo "cmd_options: $cmd_options"
+  echo "cmd_stdout: $cmd_stdout"
+  echo "cmd_stderr: $cmd_stderr"
+fi
+
 
 if [[ $action == "help" ]]; then
   grep "^###" $0 | grep -v "^####" | cut -b 5-
@@ -51,16 +76,19 @@ elif [[ $state == 1 || $state == 2 ]]; then
   qsub_name="$(basename $cmd)_$(date +%H%M%S-%Y%m%d)"
   pwd=$(pwd)
   if [[ $pwd == *","* ]]; then
-      echo "VALIDATION ERROR: 'qsub -d <working path>' does not support paths with commas: $pwd"
-      exit 1
+      if [[ $safe == "TRUE" ]]; then
+        echo "VALIDATION ERROR: 'qsub -d <working path>' does not support paths with commas (you could try to use '--unsafe'): $pwd"
+        exit 1
+      fi
 
       ## The following does not work; qsub seems to resolve the soft link. /HB 2016-03-19
       ## See also https://github.com/UCSF-TI/TIPCC/issues/35
       auxpwd=~/qcmd/$(date +%Y%m%d/%H%M%S-%N)
       mkdir -p $(dirname $auxpwd)
       ln -s $pwd $auxpwd
-      echo "WORKAROUND: 'qsub -d <working path>' does not support paths with commas. Will use an auxiliary working directory ($auxpwd) which is linked to the intended working directory: $pwd"
+      echo "WORKAROUND: 'qsub -d <working path>' does not support paths with commas (https://github.com/adaptivecomputing/torque/issues/351). Will try to work around this bug by using an auxiliary soft-linked directory ($auxpwd -> $pwd) and will set a correct 'PBS_O_WORKDIR', but unfortunately any qsub output files will end up in $(echo "$pwd" | sed 's/,.*//g;'), iff it exists."
       pwd=$auxpwd
+      cmd_prefix='export PBS_O_WORKDIR=`pwd`; '
   fi
     
   ## Override default qsub options
@@ -68,25 +96,27 @@ elif [[ $state == 1 || $state == 2 ]]; then
   qsub_defaults="$qsub_defaults -N $qsub_name"
   qsub_defaults="$qsub_defaults -j oe"
 
-  if [[ $verbose == "TRUE" ]]; then
-    echo "VERBOSE OUTPUT:"
-    echo "qsub_defaults: $qsub_defaults"
-    echo "qsub_options: ${qsub_options}"
-    echo "cmd: $cmd"
-    echo "cmd_options: ${cmd_options}"
-    echo "Manual call: echo \"$cmd ${cmd_options}\" | qsub $qsub_defaults ${qsub_options} -"
-    echo
-  fi
-  
   if [[ ! -x "$cmd" && ! -x "$(which $cmd 2> /dev/null)" ]]; then
     echo "ERROR: No such command: $cmd"
     exit
   fi
 
-  echo "echo \"$cmd ${cmd_options}\" | qsub $qsub_defaults ${qsub_options} -"
+  if [[ $verbose == "TRUE" ]]; then
+    echo "Manual call: echo \"$cmd_prefix $cmd $cmd_options\" | qsub $qsub_defaults $qsub_options -"
+  fi
+  
+  call="$cmd_prefix $cmd $cmd_options"
+  if [[ $cmd_stdout != "" ]]; then
+    call="$call > $cmd_stdout"
+  fi
+  if [[ $cmd_stderr != "" ]]; then
+    call="$call 2> $cmd_stderr"
+  fi
+  echo "call: $call"
+  echo "echo \"$call\" | qsub $qsub_defaults $qsub_options -"
   if [[ $dryrun == "TRUE" ]]; then
     echo "Nothing evaulated (--dryrun)"
   else
-    echo "$cmd ${cmd_options}" | qsub $qsub_defaults ${qsub_options} -
+    echo "$call" | qsub $qsub_defaults $qsub_options -
   fi
 fi

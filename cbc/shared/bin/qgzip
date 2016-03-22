@@ -27,6 +27,8 @@ for arg in $*; do
     qcmd_options="$qcmd_options --verbose"
   elif [[ $arg == "--dryrun" ]]; then
     qcmd_options="$qcmd_options --dryrun"
+  elif [[ $arg == "--unsafe" ]]; then
+    qcmd_options="$qcmd_options --unsafe"
   else
    options="$options $arg"
    shift
