@@ -56,6 +56,7 @@ for opt in $*; do
     elif test "$opt" == "--users"; then
 	shift
 	users=($(echo $1 | sed 's/,/ /g'))
+	all=TRUE
 	shift
     elif test "$opt" == "--user"; then
 	shift
@@ -106,12 +107,16 @@ elif test $cmd == "head"; then
 	echo "ERROR: c4 head is only supported on the head node ($HEAD_NODE): $HOST"
 	exit 1
     fi
+    
+    bfr=$(ps uax | bpstat -P | grep -E "^  " | grep -E -v "^[ ]+root" | grep -E -v "$USER .* (ps uax|grep -E )")
+    if test "$full" == "FALSE"; then
+        bfr=$(printf '%s\n' "${bfr[@]}" | grep -v -E "(ssh|top|watch|qstat|bash|zsh|tcsh|git|SCREEN|screen|bpstat|tmux|c4|less|qsub|emacs|vim)")
+    fi
+
     for user in ${users[@]}; do
-        echo $user:
-	res=$(ps uax | bpstat -P | grep -E "^  " | grep $user | grep -v "grep $user" | grep -v -E "^[ ]+root")
-	if test "$full" == "FALSE"; then
-	    res=$(printf '%s\n' "${res[@]}" | grep -v -E "(ssh|top|watch|qstat|bash|zsh|tcsh|git|SCREEN|screen|bpstat|tmux|c4|less|qsub|emacs|vim)")
-	fi
+        user_info=$(grep -E "^$user:" /etc/passwd | cut -d: -f5)
+        echo "$user [$user_info]:"
+	res=$(printf '%s\n' "${bfr[@]}" | grep $user | grep -v "grep $user")
 	if test "${res[@]}" != ""; then printf '%s\n' "${res[@]}"; fi
     done    
 elif test $cmd == "disk_usage"; then
@@ -120,8 +125,9 @@ elif test $cmd == "disk_usage"; then
 	exit 1
     fi
     for user in ${users[@]}; do
-      echo "$user:"
-      for path in /home/$user/ /data/$user/ /work/$user/; do
+      user_info=$(grep -E "^$user:" /etc/passwd | cut -d: -f5)
+      echo "$user [$user_info]:"
+      for path in $(eval echo ~$user) /data/$user/ /work/$user/; do
 	  if test -d $path; then
 	      du -sh $path
 	  fi
@@ -183,7 +189,7 @@ elif test $cmd == "apply"; then
 	echo
     done
 elif test $cmd == "sync-to-scratch"; then
-    srcdir=/home/$USER/cluster/scratch/
+    srcdir=$(eval echo ~$USER)/cluster/scratch/
     destdir=/scratch/$USER/
 
     if test $HOST == "HEAD_NODE"; then
