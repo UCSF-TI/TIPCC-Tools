@@ -164,7 +164,14 @@ lndir ${newest} ${what}
 
 
 # R 3.3.x
-what=R-3.3.0devel
+what=R-3.3.0alpha
+newest=`ls ${dir} | grep ${what}- | sort -ru | head -1`
+lndir ${dir}/${newest} .
+rm -f ${what}
+lndir ${newest} ${what}
+
+# R 3.4.x
+what=R-3.4.0devel
 newest=`ls ${dir} | grep ${what}- | sort -ru | head -1`
 lndir ${dir}/${newest} .
 rm -f ${what}
@@ -173,7 +180,10 @@ lndir ${newest} ${what}
 # R latest, patched and R devel
 lndir R-3.2.4 R-latest
 lndir R-3.2.4patched R-patched
-lndir R-3.3.0devel R-devel
+#lndir R-3.3.0alpha R-alpha
+#lndir R-3.3.0beta R-beta
+#lndir R-3.3.0rc R-rc
+lndir R-3.4.0devel R-devel
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
