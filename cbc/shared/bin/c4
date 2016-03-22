@@ -114,10 +114,17 @@ elif test $cmd == "head"; then
     fi
 
     for user in ${users[@]}; do
-        user_info=$(grep -E "^$user:" /etc/passwd | cut -d: -f5)
-        echo "$user [$user_info]:"
 	res=$(printf '%s\n' "${bfr[@]}" | grep $user | grep -v "grep $user")
-	if test "${res[@]}" != ""; then printf '%s\n' "${res[@]}"; fi
+        if test "${res[@]}" == ""; then
+            if test "$clean" == "FALSE"; then
+                user_info=$(grep -E "^$user:" /etc/passwd | cut -d: -f5)
+                echo "$user [$user_info]:"
+	    fi
+	else 
+            user_info=$(grep -E "^$user:" /etc/passwd | cut -d: -f5)
+            echo "$user [$user_info]:"
+	    printf '%s\n' "${res[@]}"
+	fi
     done    
 elif test $cmd == "disk_usage"; then
     if test ${#users[@]} -gt 1 && test "$all" == "FALSE"; then
