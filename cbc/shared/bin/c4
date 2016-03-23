@@ -119,7 +119,7 @@ elif test $cmd == "head"; then
     for user in ${users[@]}; do
 	res=$(printf '%s\n' "${bfr[@]}" | grep $user | grep -v "grep $user")
         if test "${res[@]}" == ""; then
-            if test "$clean" == "FALSE"; then
+            if test $full == "TRUE"; then
                 user_info=$(grep -E "^$user:" /etc/passwd | cut -d: -f5)
                 echo "$user [$user_info]:"
 	    fi
