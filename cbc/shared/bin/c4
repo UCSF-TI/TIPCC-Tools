@@ -119,7 +119,7 @@ elif test $cmd == "head"; then
     for user in ${users[@]}; do
 	res=$(printf '%s\n' "${bfr[@]}" | grep $user | grep -v "grep $user")
         if test "${res[@]}" == ""; then
-            if test "$clean" == "FALSE"; then
+            if test $full == "TRUE"; then
                 user_info=$(grep -E "^$user:" /etc/passwd | cut -d: -f5)
                 echo "$user [$user_info]:"
 	    fi
@@ -147,37 +147,43 @@ elif test $cmd == "disk_usage"; then
 elif test $cmd == "find_sam_with_bam"; then
     echo "Searching for SAM files with a newer BAM files"
     echo "Path (recursively): $(pwd)"
-    echo
     find . -type f -iname "*.sam" | sort -u > $TMPDIR/sam.txt
-    find . -type f -iname "*.bam" | sed 's/[.]bam$/.sam/g' | sort -u > $TMPDIR/bam_sam.txt
-    files=$(comm -1 -2 $TMPDIR/sam.txt $TMPDIR/bam_sam.txt)
-    rm $TMPDIR/sam.txt $TMPDIR/bam_sam.txt
-    sams=
-    for sam in $files; do
-	bam=${sam/sam/bam}
-	if [[ -f "$bam" && "$bam" -nt "$sam" ]]; then
-	    sams=($sams $sam)
-	fi
-    done
-    if [[ ${#sams[@]} -gt 0 ]]; then
-	for sam in $sams; do
-            if [[ $full == "TRUE" ]]; then
-                bam=${sam/sam/bam}
-	        ls -rtl --time-style=long-iso $sam $bam
-	    else
-	      echo $sam
-	    fi
-	    if [[ $action == "delete" ]]; then
-	      rm "$sam"
-	    fi
-	done
-        if [[ $action != "delete" ]]; then
-	    echo
-            echo "Use '--action delete' to delete these"
-        fi
+    ## Any SAM files found
+    if [[ -s $TMPDIR/sam.txt ]]; then
+      find . -type f -iname "*.bam" | sed 's/[.]bam$/.sam/g' | sort -u > $TMPDIR/bam_sam.txt
+      files=$(comm -1 -2 $TMPDIR/sam.txt $TMPDIR/bam_sam.txt)
+      rm $TMPDIR/sam.txt $TMPDIR/bam_sam.txt
+      sams=()
+      for sam in $files; do
+  	bam=${sam/sam/bam}
+  	if [[ -f "$bam" && "$bam" -nt "$sam" ]]; then
+  	    sams=($sams $sam)
+  	fi
+      done
+      if [[ ${#sams[@]} -gt 0 ]]; then
+          echo
+  	for sam in $sams; do
+              if [[ $full == "TRUE" ]]; then
+                  bam=${sam/sam/bam}
+  	        ls -rtl --time-style=long-iso $sam $bam
+  	    else
+  	      echo $sam
+  	    fi
+  	    if [[ $action == "delete" ]]; then
+  echo	      rm "$sam"
+  	    fi
+  	done
+          if [[ $action != "delete" ]]; then
+  	    echo
+              echo "Use '--action delete' to delete these"
+          fi
+      else
+        echo "No SAM files with matching BAM files found."
+      fi
     else
-      echo "No matching files found."
+      echo "No SAM files found."
     fi
+    echo
 elif test $cmd == "large_files"; then
     if test ${#users[@]} -gt 1 && test "$all" == "FALSE"; then
 	echo "ERROR: Did you forget --me or --user <user>?  If you wish to apply for multiple users, please confirm by specifying --all"
