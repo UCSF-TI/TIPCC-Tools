@@ -7,12 +7,12 @@
 ### Commands:
 ###
 ### Example:
-###  c4 status      - Cluster status
-###  c4 nodes       - List nodes that are up
-###  c4 nodes       - List all users
-###  c4 head        - List users' usage of headnode
-###  c4 disk_usage  - Summarize a users disk usage
-###  c4 large_files - List large files
+###  c4 status              - Cluster status
+###  c4 nodes               - List nodes that are up
+###  c4 nodes               - List all users
+###  c4 head                - List users' usage of headnode
+###  c4 disk_usage          - Summarize a users disk usage
+###  c4 delete_sam_with_bam - Delete SAM files with existing (newer) BAM file
 ###
 ### How to install:
 ### Add the following to your ~/.bashrc script:
@@ -34,9 +34,14 @@ CLUSTER_NODES=$(bpstat -l | tail -n +2 | cut -c 1-4 | sed -e 's/ //g')
 CLUSTER_NODES_UP=$(bpstat -l | tail -n +2 | grep -F up | cut -c 1-4 | sed -e 's/ //g')
 CLUSTER_NODES_DOWN=$(bpstat -l | tail -n +2 | grep -F up | cut -c 1-4 | sed -e 's/ //g')
 
+TMPDIR=/tmp/$USER/.c4
+mkdir -p $TMPDIR
+
 dryrun=FALSE
 all=FALSE
 full=FALSE
+force=FALSE
+verbose=FALSE
 clean=FALSE
 class=
 action=
@@ -48,45 +53,43 @@ for n in $CLUSTER_NODES_UP; do nodes="$nodes n$n"; done
 ## Identify all users on the cluster
 users=($(cat /etc/passwd | grep -F "/home/" | grep -E "(@|inactive)" | cut -d':' -f1 | sort -u))
 
-for opt in $*; do
+while [[ $# > 0 ]]; do
+    opt=$1
     if test "$opt" == "--nodes"; then
-        shift
-        nodes=$1
+        nodes=$2
         shift
     elif test "$opt" == "--users"; then
-	shift
-	users=($(echo $1 | sed 's/,/ /g'))
+	users=($(echo $2 | sed 's/,/ /g'))
 	all=TRUE
 	shift
     elif test "$opt" == "--user"; then
-	shift
-	users=($(echo $1 | sed 's/,/ /g'))
+	users=($(echo $2 | sed 's/,/ /g'))
 	shift
     elif test "$opt" == "--me"; then
 	users=($USER)
 	shift
     elif test "$opt" == "--all"; then
 	all=TRUE
-	shift
     elif test "$opt" == "--clean"; then
 	clean=TRUE
-	shift
     elif test "$opt" == "--class"; then
-        shift
-        class=$1
+        class=$2
 	shift
     elif test "$opt" == "--action"; then
+        action=$2
         shift
-        action=$1
-	shift
     elif test "$opt" == "--full"; then
-        shift
         full=TRUE
+    elif test "$opt" == "--verbose"; then
+        verbose=TRUE
     elif test "$opt" == "--dry-run"; then
-        shift
         dryrun=TRUE
+    elif test "$opt" == "--force"; then
+        force=TRUE
     fi
+    shift
 done
+
 
 if test $cmd == "help"; then
     grep "^###" $0 | grep -v "^####" | cut -b 5- | sed -e "s#\${SHARED_ROOT}#$SHARED_ROOT#g"
@@ -141,6 +144,40 @@ elif test $cmd == "disk_usage"; then
       done
       echo
     done
+elif test $cmd == "find_sam_with_bam"; then
+    echo "Searching for SAM files with a newer BAM files"
+    echo "Path (recursively): $(pwd)"
+    echo
+    find . -type f -iname "*.sam" | sort -u > $TMPDIR/sam.txt
+    find . -type f -iname "*.bam" | sed 's/[.]bam$/.sam/g' | sort -u > $TMPDIR/bam_sam.txt
+    files=$(comm -1 -2 $TMPDIR/sam.txt $TMPDIR/bam_sam.txt)
+    rm $TMPDIR/sam.txt $TMPDIR/bam_sam.txt
+    sams=
+    for sam in $files; do
+	bam=${sam/sam/bam}
+	if [[ -f "$bam" && "$bam" -nt "$sam" ]]; then
+	    sams=($sams $sam)
+	fi
+    done
+    if [[ ${#sams[@]} -gt 0 ]]; then
+	for sam in $sams; do
+            if [[ $full == "TRUE" ]]; then
+                bam=${sam/sam/bam}
+	        ls -rtl --time-style=long-iso $sam $bam
+	    else
+	      echo $sam
+	    fi
+	    if [[ $action == "delete" ]]; then
+	      rm "$sam"
+	    fi
+	done
+        if [[ $action != "delete" ]]; then
+	    echo
+            echo "Use '--action delete' to delete these"
+        fi
+    else
+      echo "No matching files found."
+    fi
 elif test $cmd == "large_files"; then
     if test ${#users[@]} -gt 1 && test "$all" == "FALSE"; then
 	echo "ERROR: Did you forget --me or --user <user>?  If you wish to apply for multiple users, please confirm by specifying --all"
