@@ -113,11 +113,11 @@ elif test $cmd == "head"; then
     
     bfr=$(ps uax | bpstat -P | grep -E "^  " | grep -E -v "^[ ]+root" | grep -E -v "$USER .* (ps uax|grep -E |.*c4 head)")
     if test $full == "FALSE"; then
-        bfr=$(printf '%s\n' "${bfr[@]}" | grep -v -E "(ssh|top|watch|qstat|bash|zsh|tcsh|git|SCREEN|screen|bpstat|tmux|c4|less|qsub|emacs|vim)")
+        bfr=$(printf '%s\n' "${bfr[@]}" | grep -v -E "(top|watch|qsub|qstat|bpstat|bash|zsh|tcsh|git|ssh|SCREEN|screen|tmux|c4|less|emacs|vim|nano)")
     fi
 
     for user in ${users[@]}; do
-	res=$(printf '%s\n' "${bfr[@]}" | grep $user | grep -v "grep $user")
+	res=$(printf '%s\n' "${bfr[@]}" | grep "$user " | grep -v "grep -E \"$user \"")
         if test "${res[@]}" == ""; then
             if test $full == "TRUE"; then
                 user_info=$(grep -E "^$user:" /etc/passwd | cut -d: -f5)
