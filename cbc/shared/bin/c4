@@ -94,9 +94,14 @@ done
 if test $cmd == "help"; then
     grep "^###" $0 | grep -v "^####" | cut -b 5- | sed -e "s#\${SHARED_ROOT}#$SHARED_ROOT#g"
 elif test $cmd == "status"; then
-  echo "** Cluster status:"
-  bpstat
-  echo "There are `qstat | grep -E "^[0-9]+" | wc -l` cluster jobs of which `qme | grep -E "^[0-9]+" | wc -l` are yours (see 'qstat' and 'qme')"
+    echo "# Cluster status"
+    echo
+    echo "## Nodes"
+    bpstat
+    echo "There are `qstat | grep -E "^[0-9]+" | wc -l` cluster jobs of which `qme | grep -E "^[0-9]+" | wc -l` are yours (see 'qstat' and 'qme')"
+    echo
+    echo "## Disk space"
+    df -h | grep -E "/(home|data|work)"
 elif test $cmd == "nodes"; then
     echo "Cluster nodes (that are up): $(echo $CLUSTER_NODES_UP)"
 elif test $cmd == "users"; then
