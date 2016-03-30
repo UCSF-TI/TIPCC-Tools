@@ -100,7 +100,7 @@ elif test $cmd == "status"; then
     bpstat
     echo
     echo "## Disk space"
-    df -h | grep -E "/(home|data|work)"
+    df -h | grep -E "(Filesystem|home|data|work)"
     echo
     echo "## Job scheduler"
     echo "There are `qstat | grep -E "^[0-9]+" | wc -l` cluster jobs of which `qme | grep -E "^[0-9]+" | wc -l` are yours (see 'qstat' and 'qme')"
