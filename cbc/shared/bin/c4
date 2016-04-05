@@ -121,6 +121,8 @@ elif test $cmd == "head"; then
     bfr=$(ps uax | bpstat -P | grep -E "^  " | grep -E -v "^[ ]+root" | grep -E -v "$USER .* (ps uax|grep -E |.*c4 head)")
     if test $full == "FALSE"; then
         bfr=$(printf '%s\n' "${bfr[@]}" | grep -v -E "( |-|/)(top|watch|qdel|qsub|qstat|bpstat|bash|zsh|tcsh|git|git-credential-cache--daemon|ssh|sshd|sftp-server|SCREEN|screen|tmux|c4|less|emacs|vim|nano)( |:|$)")
+	## Nextflow (http://www.nextflow.io/)
+        bfr=$(printf '%s\n' "${bfr[@]}" | grep -v -E "java .* [-]Dcapsule[.]app=nextflow")
     fi
 
     for user in ${users[@]}; do
