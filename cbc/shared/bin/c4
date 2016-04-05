@@ -9,7 +9,7 @@
 ### Example:
 ###  c4 status              - Cluster status
 ###  c4 nodes               - List nodes that are up
-###  c4 nodes               - List all users
+###  c4 users               - List all users
 ###  c4 head                - List users' usage of headnode
 ###  c4 disk_usage          - Summarize a users disk usage
 ###  c4 delete_sam_with_bam - Delete SAM files with existing (newer) BAM file
@@ -120,7 +120,7 @@ elif test $cmd == "head"; then
     
     bfr=$(ps uax | bpstat -P | grep -E "^  " | grep -E -v "^[ ]+root" | grep -E -v "$USER .* (ps uax|grep -E |.*c4 head)")
     if test $full == "FALSE"; then
-        bfr=$(printf '%s\n' "${bfr[@]}" | grep -v -E "(top|watch|qsub|qstat|bpstat|bash|zsh|tcsh|git|ssh|SCREEN|screen|tmux|c4|less|emacs|vim|nano)")
+        bfr=$(printf '%s\n' "${bfr[@]}" | grep -v -E "( |-|/)(top|watch|qdel|qsub|qstat|bpstat|bash|zsh|tcsh|git|git-credential-cache--daemon|ssh|sshd|sftp-server|SCREEN|screen|tmux|c4|less|emacs|vim|nano)( |:|$)")
     fi
 
     for user in ${users[@]}; do
@@ -133,6 +133,10 @@ elif test $cmd == "head"; then
 	else 
             user_info=$(grep -E "^$user:" /etc/passwd | cut -d: -f5)
             echo "$user [$user_info]:"
+	    pids=$(printf "${res[@]}" | sed -E 's/^[ ]+[^ ]+[ ]+([0-9]+)[ ]+.*/\1/g' | grep -E "[0-9]+")
+	    pids="${pids[@]}"
+            printf "PIDs (on the head node): "
+	    echo ${pids}
 	    printf '%s\n' "${res[@]}"
 	fi
     done    
