@@ -183,9 +183,6 @@ if ! test -d ${dirname}; then
   export LDFLAGS=""
   export LD_LIBRARY_PATH=""
   config_args=""
-
-  ## Build the shared/dynamic library 'libR'
-  ## config_args="${config_args} --enable-R-shlib"
   
 ##  export CPICFLAGS='-fpic'
 ##  export CXX1XPICFLAGS='-fpic'
@@ -198,7 +195,12 @@ if ! test -d ${dirname}; then
 #  export CFLAGS="${CFLAGS} -I$p/include"
   export CFLAGS="${CFLAGS} -Wl,-rpath=$p/lib"
   export LDFLAGS="${LDFLAGS} -L$p/lib"
-  
+  export LDFLAGS="${LDFLAGS} -L$p/lib64"
+  ## Build the shared/dynamic library 'libR'
+  ## config_args="${config_args} --enable-R-shlib" ## FIXME: HB 2016-04-14
+  export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:$p/lib"
+#  export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:$p/lib64"
+
 #  p="/opt/tools"  # bzlib2, libcurl, etc.
 #  export PATH="${PATH}:$p/bin"
 #  export CFLAGS="${CFLAGS} -Wl,-rpath=$p/lib"
