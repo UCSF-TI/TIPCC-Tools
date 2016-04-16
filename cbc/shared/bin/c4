@@ -120,7 +120,7 @@ elif test $cmd == "head"; then
     
     bfr=$(ps uax | bpstat -P | grep -E "^  " | grep -E -v "^[ ]+root" | grep -E -v "$USER .* (ps uax|grep -E |.*c4 head)")
     if test $full == "FALSE"; then
-        bfr=$(printf '%s\n' "${bfr[@]}" | grep -v -E "( |-|/)(top|watch|qdel|qsub|qstat|bpstat|bash|zsh|tcsh|git|git-credential-cache--daemon|ssh|ssh-agent|sshd|sftp-server|SCREEN|screen|tmux|c4|less|emacs|vim|nano)( |:|$)")
+        bfr=$(printf '%s\n' "${bfr[@]}" | grep -v -E "( |-|/)(top|watch|qdel|qsub|qstat|bpstat|bash|dbus-daemon|dbus-launch|zsh|tcsh|git|git-credential-cache--daemon|ssh|ssh-agent|sshd|sftp-server|SCREEN|screen|tmux|c4|less|emacs|vim|nano)( |:|$)")
 
 	## HB's Cron jobs (calling this method)
         bfr=$(printf '%s\n' "${bfr[@]}" | grep -v -E "scan-c4_head")
