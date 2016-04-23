@@ -36,11 +36,13 @@ fi
 jobs=$(qstat -t -n -1 -u $user | grep $user | grep -v ' C ' | grep -v ' E ')
 
 ## Prune
-jobs=$(echo "$jobs" | sed 's/.cclc01.som.ucsf[ ]*/ /g')
+jobs=$(echo "$jobs" | sed -E 's/[.]cclc01[.]?(som)?[.]?(ucsf|ucs|uc|u)?[ ]*/ /g')
 jobs=$(echo "$jobs" | sed "s/batch[ ]*/ /g")
 jobs=$(echo "$jobs" | sed "s/$user[ ]*/ /g")
 jobs=$(echo "$jobs" | grep -v '^$')
 jobs=$(echo "$jobs" | grep -v '[HQE][ \t]*--[ \t]*--')
+jobs=$(echo "$jobs" | sed -E "s/^([0-9]+)\[([0-9])\]/\\1[\\2]  /g")
+jobs=$(echo "$jobs" | sed -E "s/^([0-9]+)\[([0-9]{2})\]/\\1[\\2] /g")
 
 ## Identify nodes
 #nodes=$(echo "$jobs" | sed 's|/.*||g' | sed -E 's/.*[ ]+//g' | sort -u)
