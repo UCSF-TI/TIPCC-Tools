@@ -45,9 +45,7 @@ jobs=$(echo "$jobs" | grep -v '[HQE][ \t]*--[ \t]*--')
 ## Identify nodes
 #nodes=$(echo "$jobs" | sed 's|/.*||g' | sed -E 's/.*[ ]+//g' | sort -u)
 nodes=$(echo "$jobs" | sed -E 's/.* [0-9]+:[0-9]+:[0-9]+ +//g' | sed -E 's|/[0-9]+||g' | sed 's/+/\n/g' | sort -u)
-echo $nodes
 nodes=$(echo "$nodes" | sort -n -t n -k 2)  ## Sort mixed numerals
-echo $nodes
 nodes=$(echo $nodes) ## Paste to one string
 nnodes=$(echo $nodes | wc -w)
 
