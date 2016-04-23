@@ -153,6 +153,7 @@ lndir $SRC_CBC/R/R-3.2.1-20150618 R-3.2.1
 lndir $SRC_CBC/R/R-3.2.2-20150814 R-3.2.2
 lndir $SRC_CBC/R/R-3.2.3-20151210 R-3.2.3
 lndir $SRC_CBC/R/R-3.2.4-20160310 R-3.2.4
+lndir $SRC_CBC/R/R-3.2.5-20160415 R-3.2.5
 
 # R 3.2.x patched
 dir=$SRC_CBC/R/
@@ -164,7 +165,7 @@ lndir ${newest} ${what}
 
 
 # R 3.3.x
-what=R-3.3.0alpha
+what=R-3.3.0beta
 newest=`ls ${dir} | grep ${what}- | sort -ru | head -1`
 lndir ${dir}/${newest} .
 rm -f ${what}
@@ -178,9 +179,9 @@ rm -f ${what}
 lndir ${newest} ${what}
 
 # R latest, patched and R devel
-lndir R-3.2.4 R-latest
-lndir R-3.2.4patched R-patched
-#lndir R-3.3.0alpha R-alpha
+lndir R-3.2.5 R-latest
+lndir R-3.2.5 R-patched
+#lndir R-3.2.4patched R-patched
 #lndir R-3.3.0beta R-beta
 #lndir R-3.3.0rc R-rc
 lndir R-3.4.0devel R-devel
@@ -351,11 +352,13 @@ lndir /opt/SAMtools/SAMTools-0.1.18 .
 lndir $SRC_CBC/samtools-0.1.19 .
 lndir $SRC_CBC/samtools-0.1.19-patched .
 lndir $SRC_CBC/samtools-1.2 .
-lndir samtools-1.2 samtools-latest
+lndir $SRC_CBC/samtools-1.3.1 .
+lndir samtools-1.3.1 samtools-latest
 
 # BCFtools
 lndir $SRC_CBC/bcftools-1.2 .
-lndir bcftools-1.2 bcftools-latest
+lndir $SRC_CBC/bcftools-1.3.1 .
+lndir bcftools-1.3.1 bcftools-latest
 
 # snpEff
 lndir /home/jocostello/tools/snpEff_v2_0_2 .
@@ -368,7 +371,8 @@ lndir SNVMix2-0.11.8-r3 SNVMix2-latest
 # SRA Toolkit [http://trace.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?view=software]
 lndir $SRC_CBC/sratoolkit.2.3.4-2-centos_linux64 .
 lndir $SRC_CBC/sratoolkit.2.4.1-centos_linux64 .
-lndir sratoolkit.2.4.1-centos_linux64 sratoolkit-latest
+lndir $SRC_CBC/sratoolkit.2.5.7-centos_linux64 .
+lndir sratoolkit.2.5.7-centos_linux64 sratoolkit-latest
 
 # TopHat
 #lndir /home/taylorbs/lbin/tophat-1.1.1.Linux_x86_64 .
