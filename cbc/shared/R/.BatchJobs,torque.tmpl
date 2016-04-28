@@ -4,14 +4,17 @@
 # Author: Henrik Bengtsson
 ######################################################################
 
-## Job name
+## Job name:
 #PBS -N <%= job.name %>
 
 ## Merge standard error and output:
 #PBS -j oe
 
-## Direct streams to our logfile:
+## Direct streams to logfile:
 #PBS -o <%= log.file %>
+
+## Email on abort (a) and termination (e), but not when starting (b)
+#PBS -m ae
 
 ## Resources needed:
 <% if (length(resources) > 0) {
