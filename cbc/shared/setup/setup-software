@@ -386,6 +386,10 @@ lndir $SRC_CBC/tophat-2.0.10.Linux_x86_64 .
 lndir $SRC_CBC/tophat-2.1.0.Linux_x86_64 .
 lndir tophat-2.1.0.Linux_x86_64 tophat-latest
 
+# VCFTools
+lndir /opt/vcftools/0.1.13/gcc.4.4.7 vcftools-0.1.13
+lndir vcftools-0.1.13 vcftools-latest
+
 # VarScan
 lndir /opt/local/VarScan VarScan-v2.2.3
 lndir $SRC_CBC/VarScan-2.3.9 .
