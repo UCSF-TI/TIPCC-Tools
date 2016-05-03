@@ -155,21 +155,17 @@ lndir $SRC_CBC/R/R-3.2.3-20151210 R-3.2.3
 lndir $SRC_CBC/R/R-3.2.4-20160310 R-3.2.4
 lndir $SRC_CBC/R/R-3.2.5-20160415 R-3.2.5
 
-# R 3.2.x patched
+# R 3.3.x
+lndir $SRC_CBC/R/R-3.3.0-20160503 R-3.3.0
+
+# R 3.3.x patched
 dir=$SRC_CBC/R/
-what=R-3.2.4patched
+what=R-3.3.0patched
 newest=`ls ${dir} | grep ${what}- | sort -ru | head -1`
 lndir ${dir}${newest} .
 rm -f ${what}
 lndir ${newest} ${what}
 
-
-# R 3.3.x
-what=R-3.3.0beta
-newest=`ls ${dir} | grep ${what}- | sort -ru | head -1`
-lndir ${dir}/${newest} .
-rm -f ${what}
-lndir ${newest} ${what}
 
 # R 3.4.x
 what=R-3.4.0devel
@@ -179,11 +175,8 @@ rm -f ${what}
 lndir ${newest} ${what}
 
 # R latest, patched and R devel
-lndir R-3.2.5 R-latest
-lndir R-3.2.5 R-patched
-#lndir R-3.2.4patched R-patched
-#lndir R-3.3.0beta R-beta
-#lndir R-3.3.0rc R-rc
+lndir R-3.3.0 R-latest
+lndir R-3.3.0 R-patched
 lndir R-3.4.0devel R-devel
 
 
