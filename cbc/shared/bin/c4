@@ -32,7 +32,7 @@ shift
 HEAD_NODE="cclc01.som.ucsf.edu"
 CLUSTER_NODES=$(bpstat -l | tail -n +2 | cut -c 1-4 | sed -e 's/ //g')
 CLUSTER_NODES_UP=$(bpstat -l | tail -n +2 | grep -F up | cut -c 1-4 | sed -e 's/ //g')
-CLUSTER_NODES_DOWN=$(bpstat -l | tail -n +2 | grep -F up | cut -c 1-4 | sed -e 's/ //g')
+CLUSTER_NODES_DOWN=$(bpstat -l | tail -n +2 | grep -F down | cut -c 1-4 | sed -e 's/ //g')
 
 TMPDIR=/tmp/$USER/.c4
 mkdir -p $TMPDIR
@@ -106,6 +106,15 @@ elif test $cmd == "status"; then
     echo "There are `qstat -t -n -1 | grep -E "^[0-9]+" | wc -l` cluster jobs of which `qme | grep -E "^[0-9]+" | wc -l` are yours (see 'qstat' and 'qme')"
 elif test $cmd == "nodes"; then
     echo "Cluster nodes (that are up): $(echo $CLUSTER_NODES_UP)"
+elif test $cmd == "checknodes"; then
+    echo "Cluster nodes: $(echo $CLUSTER_NODES)"
+    echo "Cluster nodes (that are up): $(echo $CLUSTER_NODES_UP)"
+    echo "Cluster nodes (that are down): $(echo $CLUSTER_NODES_DOWN)"    
+    for node in $CLUSTER_NODES; do
+	printf "Node n$node: "
+	status=$(/opt/moab/bin/checknode n$node | grep State: | sed 's/State: *//g')
+	echo "$status"
+    done
 elif test $cmd == "users"; then
     if test $clean == "TRUE"; then
       echo "${users[@]}"
