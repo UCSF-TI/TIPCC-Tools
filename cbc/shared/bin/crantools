@@ -11,6 +11,7 @@
 ###  status   : Display check status
 ###  results  : Displays check result log files
 ###  summary  : Displays summary text useful for CRAN submission
+###  reset    : Resets registry (delete tmp/, *.txt and ERROR/)
 ###  versions : List R versions for which summaries exist
 ###
 ### Example:
@@ -66,6 +67,10 @@ while (( "$#" )); do
     cmd=status
   fi
 
+  if test $1 == "reset"; then
+    cmd=reset
+  fi
+  
   if test $1 == "results"; then
     cmd=results
   fi
@@ -171,7 +176,7 @@ elif test $cmd == "check"; then
   log=".check_CRAN_${rver}.log"
   echo "Log file: $log"
   if test -d "$root_path/$subdir/checks/tmp" || test -f "$root_path/$subdir/$pkg,EmailToCRAN.txt"; then
-    if $force == "true"; then
+    if test $force == "true"; then
       rm -f "$root_path/$subdir/$pkg,EmailToCRAN.txt"
       echo "Forcing"
     else
@@ -188,8 +193,11 @@ elif test $cmd == "status"; then
   for dir in ${dirs}; do
     d=$dir/checks/
     echo "Directory: $d"
+    pkgC="$(ls $dir/checks*/tmp 2> /dev/null | grep .Rcheck | sed 's/.Rcheck//')"
+    if test "${pkgC}" = ""; then
+      rm -rf $d/tmp/
+    fi
     ls ${LS_OPTS} -l $d
-    pkgC="$(ls $dir/checks*/tmp | grep .Rcheck | sed 's/.Rcheck//')"
     if test "${pkgC}" = ""; then
       echo "Status: DONE"
     else
@@ -211,7 +219,12 @@ elif test $cmd == "results"; then
     fi
     for file in $files; do
       if test -f $file; then
-        more $file
+        d=${file/.log/}
+        if test -d "$d"; then
+          more $file
+	else
+          rm $file
+        fi
       fi
     done
   done
@@ -221,8 +234,14 @@ elif test $cmd == "summary"; then
     more $dir/$pkg,EmailToCRAN.txt
     echo
   done
-elif test $cmd == "versions"; then
+elif test $cmd == "reset"; then
     for dir in ${dirs}; do
+      rm $dir/$pkg,EmailToCRAN.txt
+      rm -rf $dir/checks/tmp
+      rm -rf $dir/checks/ERROR
+    done
+elif test $cmd == "versions"; then
+  for dir in ${dirs}; do
     grep "^* R " $dir/$pkg,EmailToCRAN.txt | grep -F "Platform: "
   done
 fi

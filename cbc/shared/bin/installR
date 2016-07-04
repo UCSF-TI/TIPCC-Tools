@@ -183,7 +183,10 @@ if ! test -d ${dirname}; then
   export LDFLAGS=""
   export LD_LIBRARY_PATH=""
   config_args=""
-  
+
+  ## Enable memory profiling
+  config_args="${config_args} --enable-memory-profiling"
+
 ##  export CPICFLAGS='-fpic'
 ##  export CXX1XPICFLAGS='-fpic'
 ##  export CXXPICFLAGS='-fpic'
