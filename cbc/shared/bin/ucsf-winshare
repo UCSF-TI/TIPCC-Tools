@@ -1,0 +1,102 @@
+#!/usr/bin/env bash
+### Usage:
+###  ucsf-winshare [options]
+###
+### Options:
+###  --debug        Display debug information
+###  --help         This help
+###  --version      Display version
+###
+### Any other options are passed to openconnect as is.
+###
+### Requirements:
+### This script requires sudo rights.
+###
+### Example:
+###  ## Manual
+###  ucsf-winshare --share=Urology$ --domain=campus --user=johndoe
+###
+###  ## With ~/.smb/ucsf-winshare credential file
+###  ucsf-winshare --share=Urology$
+###
+### Copyright: 2016 Henrik Bengtsson
+### License: GPL (>= 2.1) [https://www.gnu.org/licenses/gpl.html]
+call="$0 $*"
+
+function mecho() { echo "$@" 1>&2; }
+function mdebug() {
+    if [[ $debug == TRUE ]]; then
+	mecho "[DEBUG] $@";
+    fi
+}
+
+mountpt=$HOME/mounts/ucsf-winshare
+
+action=mount
+debug=FALSE
+
+server=somlh17
+share=Urology$
+domain=campus
+username=
+
+opts=
+
+# Parse command-line options
+while [[ $# > 0 ]]; do
+    opt=$1
+    if test "$1" == "--help"; then
+        action="help"
+    elif test "$1" == "--debug"; then
+        debug=TRUE
+    elif test "$1" == "--version"; then
+        action="version"
+    elif test "$1" == "--share"; then
+	shift
+        share="$1"
+    elif test "$1" == "--domain"; then
+	shift
+        domain="$1"
+    elif test "$1" == "--username"; then
+	shift
+        username="$1"
+    elif test "$1" == "--umount"; then
+	action="umount"
+    else
+	opts="$opts $1"
+    fi
+    shift
+done
+
+if [[ $debug == TRUE ]]; then
+    mdebug "call: $call"
+    mdebug "action: $action"
+    mdebug "opts: $opts"
+fi
+
+if [[ $action == "version" ]]; then
+    echo "0.1.0"
+    exit 0
+fi 
+
+if [[ $action == "help" ]]; then
+    grep "^###" $0 | grep -v "^####" | cut -b 5-
+    exit 0
+fi 
+
+if [[ $action == "mount" ]]; then
+    mkdir -p $mountpt
+    credfile=~/.smb/ucsf-winshare
+    if [[ -f $credfile ]]; then
+        mdebug "Using credential file: $credfile"
+        sudo mount --types cifs //$server/$share $mountpt --options credentials=$credfile
+    else
+        mdebug "Using domain=$domain and username=$username"
+        sudo mount --types cifs //$server/$share $mountpt --options domain=$domain,username=$username
+    fi
+    echo "UCSF Windows Share mount point: $mountpt"
+fi
+  
+if [[ $action == "umount" ]]; then
+  sudo umount $mountpt
+fi
