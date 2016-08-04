@@ -7,9 +7,11 @@
 ###  --help    : Display this help
 ###  --usage   : Lists the total usage under tmppath (default is /tmp/) on all nodes
 ###  --cleanup : Removes all your files (recursively) under tmppath (default is /tmp/) on all nodes
+###  --all     : List also queued jobs
 
 path=$(dirname $0)
 user=$USER
+all=false
 
 ## Parse command-line options
 cmd=show
@@ -20,6 +22,8 @@ while (( "$#" )); do
   elif test $1 == "--user" || test $1 == "-u"; then
     shift
     user=$1
+  elif test $1 == "--all" || test $1 == "-a"; then
+    all=true
   fi
 
   shift
@@ -33,7 +37,10 @@ fi
 
 
 ## Collect
-jobs=$(qstat -t -n -1 -u $user | grep $user | grep -v ' C ' | grep -v ' E ')
+jobs=$(qstat -t -n -1 -u $user | grep $user)
+if test $all == "false"; then
+  jobs=$(echo "$jobs" | grep -v ' C ' | grep -v ' E ')
+fi
 
 ## Prune
 jobs=$(echo "$jobs" | sed -E 's/[.]cclc01[.]?(som)?[.]?(ucsf|ucs|uc|u)?[ ]*/ /g')
