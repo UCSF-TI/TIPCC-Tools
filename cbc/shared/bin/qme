@@ -49,13 +49,9 @@ jobs=$(echo "$jobs" | sed "s/$user[ ]*/ /g")
 jobs=$(echo "$jobs" | grep -v '^$')
 jobs=$(echo "$jobs" | sed -E "s/^([0-9]+)\[([0-9])\]/\\1[\\2]  /g")
 jobs=$(echo "$jobs" | sed -E "s/^([0-9]+)\[([0-9]{2})\]/\\1[\\2] /g")
-if test $all == "false"; then
-  jobs=$(echo "$jobs" | grep -v '[HQE][ \t]*--[ \t]*--')
-fi
 
 ## Identify nodes
-#nodes=$(echo "$jobs" | sed 's|/.*||g' | sed -E 's/.*[ ]+//g' | sort -u)
-nodes=$(echo "$jobs" | sed -E 's/.* [0-9]+:[0-9]+:[0-9]+ +//g' | sed -E 's|/[0-9]+||g' | sed 's/+/\n/g' | sort -u)
+nodes=$(echo "$jobs" | sed -E 's/.* [0-9]+:[0-9]+:[0-9]+ +//g' | sed -E 's|/[0-9]+||g' | sed 's/+/\n/g' | sed -E 's/(--|Q|R|C|E)//g' | sort -u)
 nodes=$(echo "$nodes" | sort -n -t n -k 2)  ## Sort mixed numerals
 nodes=$(echo $nodes) ## Paste to one string
 nnodes=$(echo $nodes | wc -w)
@@ -64,6 +60,10 @@ nnodes=$(echo $nodes | wc -w)
 njobs=$(echo "$jobs" | grep -v '^$' | wc -l)
 rjobs=$(echo "$jobs" | grep ' R ' | wc -l)
 qjobs=$(echo "$jobs" | grep ' Q ' | wc -l)
+
+if test $all == "false"; then
+  jobs=$(echo "$jobs" | grep -v '[HQE][ \t]*--[ \t]*--')
+fi
 
 ## Jobs stats
 stats="Number of jobs: $njobs ($rjobs running, $qjobs queued)"
