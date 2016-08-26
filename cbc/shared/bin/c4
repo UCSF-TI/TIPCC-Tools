@@ -126,7 +126,8 @@ elif test $cmd == "head"; then
 	echo "ERROR: c4 head is only supported on the head node ($HEAD_NODE): $HOST"
 	exit 1
     fi
-    
+
+    hdr=$(ps uax | bpstat -P | head -1)
     bfr=$(ps uax | bpstat -P | grep -E "^  " | grep -E -v "^[ ]+root" | grep -E -v "$USER .* (ps uax|grep -E |.*c4 head)")
     if test $full == "FALSE"; then
         bfr=$(printf '%s\n' "${bfr[@]}" | grep -v -E "( |-|/)(top|watch|qdel|qsub|qstat|bpstat|bash|dbus-daemon|dbus-launch|zsh|tcsh|git|git-credential-cache--daemon|ssh|ssh-agent|sshd|sftp-server|SCREEN|screen|tmux|c4|less|emacs|vim|nano)( |:|$)")
@@ -152,6 +153,7 @@ elif test $cmd == "head"; then
 	    pids="${pids[@]}"
             printf "PIDs (on the head node): "
 	    echo ${pids}
+	    printf '%s\n' "${hdr[@]}"
 	    printf '%s\n' "${res[@]}"
 	fi
     done    
