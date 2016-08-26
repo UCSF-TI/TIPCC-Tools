@@ -127,8 +127,8 @@ elif test $cmd == "head"; then
 	exit 1
     fi
 
-    hdr=$(ps uax | bpstat -P | head -1)
-    bfr=$(ps uax | bpstat -P | grep -E "^  " | grep -E -v "^[ ]+root" | grep -E -v "$USER .* (ps uax|grep -E |.*c4 head)")
+    hdr=$(ps uax | bpstat -P | head -1 | sed -E 's/^NODE[ ]*//g')
+    bfr=$(ps uax | bpstat -P | grep -E "^  " | grep -E -v "^[ ]+root" | grep -E -v "$USER .* (ps uax|grep -E |.*c4 head)" | sed -E 's/^[ ]*//g')
     if test $full == "FALSE"; then
         bfr=$(printf '%s\n' "${bfr[@]}" | grep -v -E "( |-|/)(top|watch|qdel|qsub|qstat|bpstat|bash|dbus-daemon|dbus-launch|zsh|tcsh|git|git-credential-cache--daemon|ssh|ssh-agent|sshd|sftp-server|SCREEN|screen|tmux|c4|less|emacs|vim|nano)( |:|$)")
 
@@ -149,12 +149,13 @@ elif test $cmd == "head"; then
 	else 
             user_info=$(grep -E "^$user:" /etc/passwd | cut -d: -f5)
             echo "$user [$user_info]:"
-	    pids=$(printf "${res[@]}" | sed -E 's/^[ ]+[^ ]+[ ]+([0-9]+)[ ]+.*/\1/g' | grep -E "[0-9]+")
+	    pids=$(printf "${res[@]}" | sed -E 's/^[ ]*[^ ]+[ ]+([0-9]+)[ ]+.*/\1/g' | grep -E "[0-9]+")
 	    pids="${pids[@]}"
             printf "PIDs (on the head node): "
 	    echo ${pids}
 	    printf '%s\n' "${hdr[@]}"
 	    printf '%s\n' "${res[@]}"
+	    echo
 	fi
     done    
 elif test $cmd == "disk_usage"; then
