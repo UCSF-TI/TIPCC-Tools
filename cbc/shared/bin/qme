@@ -7,11 +7,12 @@
 ###  --help    : Display this help
 ###  --usage   : Lists the total usage under tmppath (default is /tmp/) on all nodes
 ###  --cleanup : Removes all your files (recursively) under tmppath (default is /tmp/) on all nodes
+###  --running : List only running jobs
 ###  --all     : List also queued jobs
 
 path=$(dirname $0)
 user=$USER
-all=false
+all=true
 
 ## Parse command-line options
 cmd=show
@@ -24,6 +25,8 @@ while (( "$#" )); do
     user=$1
   elif test $1 == "--all" || test $1 == "-a"; then
     all=true
+  elif test $1 == "--running" || test $1 == "-r"; then
+    all=false
   fi
 
   shift
