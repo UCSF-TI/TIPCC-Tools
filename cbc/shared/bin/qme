@@ -61,6 +61,12 @@ nnodes=$(echo $nodes | wc -w)
 njobs=$(echo "$jobs" | grep -v '^$' | wc -l)
 rjobs=$(echo "$jobs" | grep ' R ' | wc -l)
 qjobs=$(echo "$jobs" | grep ' Q ' | wc -l)
+ntasks=$(echo "$jobs" | grep -v '^$' | tr -s ' ' | cut -d ' ' -f 5 | paste -sd+ | bc)
+rtasks=$(echo "$jobs" | grep ' R ' | tr -s ' ' | cut -d ' ' -f 5 | paste -sd+ | bc)
+qtasks=$(echo "$jobs" | grep ' Q ' | tr -s ' ' | cut -d ' ' -f 5 | paste -sd+ | bc)
+if test -z $ntasks; then ntasks=0; fi
+if test -z $rtasks; then rtasks=0; fi
+if test -z "$qtasks"; then qtasks=0; fi
 
 if test $all == "false"; then
   jobs=$(echo "$jobs" | grep -v '[HQE][ \t]*--[ \t]*--')
@@ -68,6 +74,7 @@ fi
 
 ## Jobs stats
 stats="Number of jobs: $njobs ($rjobs running, $qjobs queued)"
+stats="$stats\nNumber of tasks: $ntasks ($rtasks running, $qtasks tasks queued)"
 
 ## Report
 echo "Username: $user"
@@ -92,8 +99,4 @@ fi
 if test "$njobs" != "0"; then
     echo "Nodes used ($nnodes): $nodes"
 fi
-echo $stats
-
-
-
-
+printf "$stats"
