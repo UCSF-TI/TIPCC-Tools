@@ -1,14 +1,12 @@
-### CBC Cleanup Tools (temporary disk usage on nodes)
+### List User's Jobs on the Job Queue
 ###
 ### Usage:
-###  clean_tmp <option> [tmppath]
+###  qme <option>
 ###
 ### Options:
-###  --help    : Display this help
-###  --usage   : Lists the total usage under tmppath (default is /tmp/) on all nodes
-###  --cleanup : Removes all your files (recursively) under tmppath (default is /tmp/) on all nodes
-###  --running : List only running jobs
-###  --all     : List also queued jobs
+###  --help      : Display this help
+###  --user user : Check another user (default: $USER)
+###  --running   : Check only running jobs (not queued)
 
 path=$(dirname $0)
 user=$USER
