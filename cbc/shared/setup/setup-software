@@ -190,6 +190,13 @@ lndir $SRC_CBC/dropbox-cli/ .
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Docker-ish tools
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+lndir $SRC_CBC/udocker-1.0.0/ .
+lndir udocker-1.0.0 udocker-latest
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Documentation tools
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 lndir $SRC_CBC/asciidoc-8.6.8/ .
