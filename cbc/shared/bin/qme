@@ -74,13 +74,13 @@ fi
 
 ## Jobs stats
 stats="Number of jobs: $njobs ($rjobs running, $qjobs queued)"
-stats="$stats\nNumber of tasks: $ntasks ($rtasks running, $qtasks tasks queued)"
+stats="$stats\nNumber of tasks: $ntasks ($rtasks running, $qtasks tasks queued)\n"
 
 ## Report
 echo "Username: $user"
 if test "$njobs" != "0"; then
     echo "Nodes used ($nnodes): $nodes"
-    echo $stats
+    printf "$stats"
 fi
 
 if test "$#" == "0"; then
