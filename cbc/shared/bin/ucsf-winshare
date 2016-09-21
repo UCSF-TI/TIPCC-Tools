@@ -3,6 +3,8 @@
 ###  ucsf-winshare [options]
 ###
 ### Options:
+###  --mount        Mount Windows Share (default).
+###  --umount       Unmount Windows Share.
 ###  --debug        Display debug information
 ###  --help         This help
 ###  --version      Display version
@@ -75,7 +77,7 @@ if [[ $debug == TRUE ]]; then
 fi
 
 if [[ $action == "version" ]]; then
-    echo "0.1.0"
+    echo "0.1.1"
     exit 0
 fi 
 
