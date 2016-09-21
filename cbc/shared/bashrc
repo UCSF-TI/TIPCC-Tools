@@ -235,6 +235,9 @@ if test -d "${GCC_HOME}"; then
   export PKG_LIBS="${PKG_LIBS} -L${GCC_HOME}"
 fi
 
+## 'nc-config' needs to be on the PATH in order to install R package ncdf4
+appendPath /opt/NetCDF/NetCDF-4.3.0/bin
+
 ## Setup R_LIBS locally for user and machine type
 # Get the OS type in lower case
 #ostype=`uname -s | tr '[A-Z]' '[a-z]'`
