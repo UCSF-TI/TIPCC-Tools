@@ -140,6 +140,11 @@ elif test $cmd == "head"; then
 	exit 1
     fi
 
+    echo "HIGH-MEMORY NON-USER PROCESSES ON HEAD NODE:"
+    printf "USER\tPID\tCPU%%\tMEM%%\tPROCESS\n"
+    $0 ps --node head | grep -vE "^USER" | grep -v -E "($(c4 users --clean | sed 's/ /|/g'))" | awk '{printf "%s\t%s\t%s\t%s\t%s\n", $1, $2, $3, $4, $11}' | sort --key=4 -r -n | head -5
+    echo
+    
     hdr=$(ps uax | bpstat -P | head -1 | sed -E 's/^NODE[ ]*//g')
     bfr=$(ps uax | bpstat -P | grep -E "^  " | grep -E -v "^[ ]+root" | sed -E 's/^[ ]*//g' | grep -E -v "$USER .* (ps uax|grep -E |.*c4 head|sed -E)")
     if test $full == "FALSE"; then
