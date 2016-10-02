@@ -10,7 +10,9 @@
 ###  c4 status              - Cluster status
 ###  c4 nodes               - List nodes that are up
 ###  c4 users               - List all users
-###  c4 head                - List users' usage of headnode
+###  c4 ps --node head      - List all processes on the head node
+###  c4 ps --node n6        - List all processes on node n6
+###  c4 head                - List users' usage of head node
 ###  c4 disk_usage          - Summarize a users disk usage
 ###  c4 delete_sam_with_bam - Delete SAM files with existing (newer) BAM file
 ###
@@ -56,6 +58,9 @@ users=($(cat /etc/passwd | grep -F "/home/" | grep -E "(@|inactive)" | cut -d':'
 while [[ $# > 0 ]]; do
     opt=$1
     if test "$opt" == "--nodes"; then
+        nodes=$2
+        shift
+    elif test "$opt" == "--node"; then
         nodes=$2
         shift
     elif test "$opt" == "--users"; then
@@ -104,6 +109,7 @@ elif test $cmd == "status"; then
     echo
     echo "## Job scheduler"
     echo "There are `qstat -t -n -1 | grep -E "^[0-9]+" | wc -l` cluster jobs of which `qme | grep -E "^[0-9]+" | wc -l` are yours (see 'qstat' and 'qme')"
+    echo "Moab status: $(service moab status)"
 elif test $cmd == "nodes"; then
     echo "Cluster nodes (that are up): $(echo $CLUSTER_NODES_UP)"
 elif test $cmd == "checknodes"; then
@@ -121,6 +127,13 @@ elif test $cmd == "users"; then
     else
       echo "Cluster users: [n=${#users[@]}] ${users[@]}"
     fi
+elif test $cmd == "ps"; then
+    nodesT=$(echo $nodes | sed 's/n//g' | sed -E 's/(,| )/|/g' | sed -E 's/(head|-1)/ /g')
+    bfr=$(ps uax | bpstat -P)
+    hdr=$(printf '%s\n' "${bfr[@]}" | head -1 | sed -E 's/^NODE[ ]*//g')
+    res=$(printf '%s\n' "${bfr[@]}" | grep -E "^($nodesT)[ ]+")
+    printf '%s\n' "${hdr[@]}"
+    printf '%s\n' "${res[@]}"
 elif test $cmd == "head"; then
     if test $HOST != $HEAD_NODE; then
 	echo "ERROR: c4 head is only supported on the head node ($HEAD_NODE): $HOST"
