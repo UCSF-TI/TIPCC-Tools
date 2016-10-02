@@ -142,7 +142,7 @@ elif test $cmd == "head"; then
 
     echo "HIGH-MEMORY NON-USER PROCESSES ON HEAD NODE:"
     printf "USER\tPID\tCPU%%\tMEM%%\tPROCESS\n"
-    $0 ps --node head | grep -vE "^USER" | grep -v -E "($(echo $users | sed 's/ /|/g'))" | awk '{printf "%s\t%s\t%s\t%s\t%s\n", $1, $2, $3, $4, $11}' | sort --key=4 -r -n | head -5
+    $0 ps --node head | grep -vE "^USER" | grep -v -E "($(echo ${users[@]} | sed 's/ /|/g'))" | awk '{printf "%s\t%s\t%s\t%s\t%s\n", $1, $2, $3, $4, $11}' | sort --key=4 -r -n | head -5
     echo
     
     hdr=$(ps uax | bpstat -P | head -1 | sed -E 's/^NODE[ ]*//g')
