@@ -146,6 +146,10 @@ elif test $cmd == "head"; then
     printf "USER\tPID\t%%CPU\t%%MEM\tPROCESS\n"
     $0 ps --node head | grep -vE "^USER" | grep -v -E "($(echo ${users[@]} | sed 's/ /|/g'))" | awk '{printf "%s\t%s\t%s\t%s\t%s\n", $1, $2, $3, $4, $11}' | sort --key=4 -r -n | head -5
     echo
+    echo "## High-CPU non-user processes"
+    printf "USER\tPID\t%%CPU\t%%MEM\tPROCESS\n"
+    $0 ps --node head | grep -vE "^USER" | grep -v -E "($(echo ${users[@]} | sed 's/ /|/g'))" | awk '{printf "%s\t%s\t%s\t%s\t%s\n", $1, $2, $3, $4, $11}' | sort --key=3 -r -n | head -5
+    echo
 
     echo "## User processes (excl. white-listed ones)"
     
