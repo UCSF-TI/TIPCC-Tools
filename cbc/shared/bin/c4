@@ -109,7 +109,11 @@ elif test $cmd == "status"; then
     echo
     echo "## Job scheduler"
     echo "There are `qstat -t -n -1 | grep -E "^[0-9]+" | wc -l` cluster jobs of which `qme | grep -E "^[0-9]+" | wc -l` are yours (see 'qstat' and 'qme')"
-    echo "Moab status: $(service moab status)"
+    if test $HOST == $HEAD_NODE; then
+	echo "Moab status: $(service moab status)"
+    else
+	echo "Moab status: <only available from head node>"
+    fi
 elif test $cmd == "nodes"; then
     echo "Cluster nodes (that are up): $(echo $CLUSTER_NODES_UP)"
 elif test $cmd == "checknodes"; then
