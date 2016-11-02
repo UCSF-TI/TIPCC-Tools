@@ -158,10 +158,11 @@ lndir $SRC_CBC/R/R-3.2.5-20160415 R-3.2.5
 # R 3.3.x
 lndir $SRC_CBC/R/R-3.3.0-20160503 R-3.3.0
 lndir $SRC_CBC/R/R-3.3.1-20160703 R-3.3.1
+lndir $SRC_CBC/R/R-3.3.2-20161031 R-3.3.2
 
 # R 3.3.x patched
 dir=$SRC_CBC/R/
-what=R-3.3.1patched
+what=R-3.3.2patched
 newest=`ls ${dir} | grep ${what}- | sort -ru | head -1`
 lndir ${dir}${newest} .
 rm -f ${what}
@@ -176,8 +177,8 @@ rm -f ${what}
 lndir ${newest} ${what}
 
 # R latest, patched and R devel
-lndir R-3.3.1 R-latest
-lndir R-3.3.1patched R-patched
+lndir R-3.3.2 R-latest
+lndir R-3.3.2patched R-patched
 lndir R-3.4.0devel R-devel
 
 
@@ -267,7 +268,8 @@ lndir blast-2.2.26 blast-latest
 lndir /opt/local/bin/bowtie2-2.0.0-beta6 .
 lndir $SRC_CBC/bowtie2-2.1.0 .
 lndir $SRC_CBC/bowtie2-2.2.6 .
-lndir bowtie2-2.2.6 bowtie2-latest
+lndir $SRC_CBC/bowtie2-2.2.9 .
+lndir bowtie2-2.2.9 bowtie2-latest
 
 # bwa
 #lndir /home/taylorbs/lbin/bwa-0.5.8c .
@@ -306,7 +308,9 @@ lndir /home/jocostello/shared/LG3_Pipeline/tools/GenomeAnalysisTK-1.5-12-gd0056d
 lndir $SRC_CBC/GenomeAnalysisTK-1.6-2-gc2b74ec .
 lndir $SRC_CBC/GenomeAnalysisTK-3.0-0 .
 lndir $SRC_CBC/GenomeAnalysisTK-3.4-46 .
-lndir GenomeAnalysisTK-3.4-46 GATK-latest
+lndir $SRC_CBC/GenomeAnalysisTK-3.6 .
+lndir GenomeAnalysisTK-3.6 GenomeAnalysisTK-latest
+lndir GenomeAnalysisTK-latest GATK-latest
 
 # GeneTorrent
 lndir $SRC_CBC/GeneTorrent-3.0.2 .
@@ -385,7 +389,8 @@ lndir /opt/local/bin/tophat-2.0.3.Linux_x86_64/ .
 lndir $SRC_CBC/tophat-2.0.9.Linux_x86_64 .
 lndir $SRC_CBC/tophat-2.0.10.Linux_x86_64 .
 lndir $SRC_CBC/tophat-2.1.0.Linux_x86_64 .
-lndir tophat-2.1.0.Linux_x86_64 tophat-latest
+lndir $SRC_CBC/tophat-2.1.1.Linux_x86_64 .
+lndir tophat-2.1.1.Linux_x86_64 tophat-latest
 
 # VCFTools
 lndir /opt/vcftools/0.1.13/gcc.4.4.7 vcftools-0.1.13
