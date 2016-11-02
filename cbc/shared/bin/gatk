@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 
 ###################################################################
-# Author: Henrik Bengtsson <hb@biostat.ucsf.edu>
+# Author: Henrik Bengtsson <henrik.bengtsson@ucsf.edu>
 ###################################################################
 
 # Useful functions
 source /cbc/shared/bin/includes.bash
 
 function gatk() {
-  TOOL_PATH=${SHARED_SOFTWARE}/GATK-latest
+  TOOL_PATH=${SHARED_SOFTWARE}/GenomeAnalysisTK-latest
   TOOL=${TOOL_PATH}/GenomeAnalysisTK.jar
   args=$*
   if test -z "${args}"; then
