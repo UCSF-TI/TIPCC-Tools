@@ -347,8 +347,11 @@ lndir RNAstructure-unknown RNAstructure-latest
 lndir $SRC_CBC/s3cmd-1.5.0-alpha3 .
 lndir $SRC_CBC/s3cmd-1.5.0-alpha3 s3cmd-latest
 
+# HTSlib (http://www.htslib.org/download/)
+lndir $SRC_CBC/htslib-1.3.2 .
+lndir htslib-1.3.2 htslib-latest
 
-# SAMtools
+# SAMtools (http://www.htslib.org/download/)
 #lndir /home/taylorbs/lbin/samtools-0.1.9 .
 lndir /home/jocostello/tools/samtools-0.1.12a .
 lndir /home/jocostello/tools/samtools-0.1.17 .
@@ -359,6 +362,10 @@ lndir $SRC_CBC/samtools-0.1.19-patched .
 lndir $SRC_CBC/samtools-1.2 .
 lndir $SRC_CBC/samtools-1.3.1 .
 lndir samtools-1.3.1 samtools-latest
+
+## BamUtil (https://github.com/statgen/bamUtil)
+lndir $SRC_CBC/BamUtil-1.0.14 .
+lndir BamUtil-1.0.14 BamUtil-latest
 
 # BCFtools
 lndir $SRC_CBC/bcftools-1.2 .

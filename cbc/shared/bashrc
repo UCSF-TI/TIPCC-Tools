@@ -148,6 +148,7 @@ export PYTHONPATH=${PYTHONPATH}:${PYTHON_SITE}
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Fix path
 prependPath ${SHARED_SOFTWARE}/jdk-latest/bin
+prependPath ${SHARED_SOFTWARE}/BamUtil-latest/bamUtil/bin
 prependPath ${SHARED_SOFTWARE}/bedops-latest/bin
 prependPath ${SHARED_SOFTWARE}/BEDTools-latest/bin
 prependPath ${SHARED_SOFTWARE}/blast-latest
@@ -205,6 +206,9 @@ prependPath ${SHARED_SOFTWARE}/IGV-latest
 alias igv=${SHARED_SOFTWARE}/IGV-latest/igv.sh
 export PICARD_HOME=${SHARED_SOFTWARE}/picard-tools-latest
 export GATK_HOME=${SHARED_SOFTWARE}/GATK-latest
+
+prependPath ${SHARED_SOFTWARE}/htslib-latest/bin
+export HTSLIB_HOME=/home/shared/cbc/software/htslib-latest
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

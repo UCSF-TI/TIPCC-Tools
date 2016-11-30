@@ -168,15 +168,16 @@ elif test $cmd == "head"; then
     fi
 
     for user in ${users[@]}; do
-	res=$(printf '%s\n' "${bfr[@]}" | grep "$user " | grep -v "grep -E \"$user \"")
+	uid=$(id -u $user)
+	res=$(printf '%s\n' "${bfr[@]}" | grep -E "^($user|$uid) " | grep -v "grep -E \"$user \"")
         if test "${res[@]}" == ""; then
             if test $full == "TRUE"; then
                 user_info=$(grep -E "^$user:" /etc/passwd | cut -d: -f5)
-                echo "$user [$user_info]:"
+                echo "$user [$user_info, UID $uid]:"
 	    fi
 	else 
             user_info=$(grep -E "^$user:" /etc/passwd | cut -d: -f5)
-            echo "$user [$user_info]:"
+            echo "$user [$user_info, UID $uid]:"
 	    pids=$(printf "${res[@]}" | sed -E 's/^[ ]*[^ ]+[ ]+([0-9]+)[ ]+.*/\1/g' | grep -E "[0-9]+")
 	    pids="${pids[@]}"
             printf "PIDs (on the head node): "
