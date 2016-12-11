@@ -1,0 +1,30 @@
+#! /bin/env bash
+
+## Identify all installed versions
+path=/cbc/shared/software
+versions=$(ls $path | grep "bwa[-][0-9]" | sed 's/bwa-//g' | tr '\n' ' ')
+echo $versions
+
+for version in ${versions}; do
+  echo "Version: ${version}"
+## Here document for template
+cat << EOF > ${version}.lua
+help([[
+Burrows-Wheeler Aligner (BWA)
+]])
+
+local name = "bwa"
+local version = "${version}"
+whatis("Version: " .. version)
+whatis("Keywords: sequencing")
+whatis("URL: http://bio-bwa.sourceforge.net/")
+whatis("Description: Burrows-Wheeler Aligner (BWA) is a software package for mapping low-divergent sequences against a large reference genome, such as the human genome.")
+
+-- Local variables
+local cbc_shared = "/home/shared/cbc"
+local cbc_software = cbc_shared .. "/software"
+
+local home = cbc_software .. "/" .. name .. "-" .. version
+prepend_path("PATH", home)
+EOF
+done

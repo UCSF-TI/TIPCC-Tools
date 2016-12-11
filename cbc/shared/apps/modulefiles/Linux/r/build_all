@@ -1,0 +1,37 @@
+#! /bin/env bash
+
+## Identify all installed versions of R
+path=/cbc/shared/software
+versions=$(ls $path | grep "R[-][0-9]" | grep -v "[-]20[0-9]" | cut -c 3- | tr '\n' ' ')
+echo $versions
+
+## Set the default version
+default=3.3.2
+
+for version in ${versions}; do
+  echo "R version: ${version}"
+## Here document for RSP template
+cat << EOF > ${version}.lua
+help([[
+The R Programming Language
+]])
+
+local name = "R"
+local version = "${version}"
+whatis("Version: " .. version)
+whatis("Keywords: Programming, Statistics")
+whatis("URL: https://www.r-project.org/")
+whatis("Description: The R programming language")
+
+-- Local variables
+local cbc_shared = "/home/shared/cbc"
+local cbc_software = cbc_shared .. "/software"
+
+-- Setting an command-line alias
+-- set_alias("foo", "echo 'Foo!'")
+
+prepend_path( "PATH",           cbc_software .. "/R-" .. version .. "/bin")
+EOF
+done
+
+ln -fs 3.3.2.lua default
