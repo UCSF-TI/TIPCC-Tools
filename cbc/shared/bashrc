@@ -163,8 +163,8 @@ export MODULEPATH_ORG="${MODULEPATH}"
 ## contains `module use /usr/share/Modules`, which seems to cause
 ## an infinite loop.  If commented out, the problem goes away.
 ## /HB 2016-12-11
-export MODULEPATH0="/etc/modulefiles:/opt/scyld/modulefiles"
-alias use_lmod='export MODULEPATH=${MODULEPATH0}; source /home/shared/cbc/apps/lmod/lmod/init/profile'
+export MODULEPATH_LEGACY="/etc/modulefiles:/opt/scyld/modulefiles"
+alias use_lmod='export MODULEPATH=; source /home/shared/cbc/apps/lmod/lmod/init/profile; export MODULEPATH="${MODULEPATH}:${MODULEPATH_LEGACY}"'
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
