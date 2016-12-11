@@ -1,0 +1,10 @@
+*~
+**/*~
+*.o
+*.dll
+*.Rout
+*.tmp
+.RData
+.Rhistory
+
+
