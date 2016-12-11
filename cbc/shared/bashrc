@@ -144,13 +144,37 @@ export PYTHONPATH=${PYTHONPATH}:${PYTHON_SITE}
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Lua, LuaRocks and Lmod
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+prependPath ${SHARED_SOFTWARE}/lua-latest/bin
+prependPath ${SHARED_SOFTWARE}/luarocks-latest/bin
+
+## Find also Lua modules installed via luarocks install --local
+ver=$(luarocks config --lua-ver)
+export LUA_PATH="${HOME}/.luarocks/share/lua/5.3/?.lua;${HOME}/.luarocks/share/lua/5.3/?/init.lua;/home/shared/cbc/software_cbc/luarocks-2.4.2/share/lua/5.3/?.lua;/home/shared/cbc/software_cbc/luarocks-2.4.2/share/lua/5.3/?/init.lua;/usr/local/share/lua/5.3/?.lua;/usr/local/share/lua/5.3/?/init.lua;/usr/local/lib/lua/5.3/?.lua;/usr/local/lib/lua/5.3/?/init.lua;./?.lua;./?/init.lua"
+export LUA_CPATH="${HOME}/.luarocks/lib/lua/5.3/?.so;/home/shared/cbc/software_cbc/luarocks-2.4.2/lib/lua/5.3/?.so;/usr/local/lib/lua/5.3/?.so;/usr/local/lib/lua/5.3/loadall.so;./?.so"
+
+export MODULEPATH_ORG="${MODULEPATH}"
+
+## WORKAROUND: When using Lmod, then `module avail` command will
+## run in an end-less loop and consume huge amount of memory (leak?)
+## iff we would keep /usr/share/Modules/modulefiles in MODULEPATH.
+## TROUBLESHOOTING: File /usr/share/Modules/modulefiles/modules
+## contains `module use /usr/share/Modules`, which seems to cause
+## an infinite loop.  If commented out, the problem goes away.
+## /HB 2016-12-11
+export MODULEPATH0="/etc/modulefiles:/opt/scyld/modulefiles"
+alias use_lmod='export MODULEPATH=${MODULEPATH0}; source /home/shared/cbc/apps/lmod/lmod/init/profile'
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # SHARED SOFTWARE
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Fix path
 prependPath ${SHARED_SOFTWARE}/jdk-latest/bin
 prependPath ${SHARED_SOFTWARE}/BamUtil-latest/bamUtil/bin
 prependPath ${SHARED_SOFTWARE}/bedops-latest/bin
-prependPath ${SHARED_SOFTWARE}/BEDTools-latest/bin
+prependPath ${SHARED_SOFTWARE}/bedtools2-latest/bin
 prependPath ${SHARED_SOFTWARE}/blast-latest
 prependPath ${SHARED_SOFTWARE}/bowtie2-latest
 prependPath ${SHARED_SOFTWARE}/bwa-latest
@@ -299,6 +323,12 @@ alias wmirror="wget --no-host-directories --recursive --no-parent --reject='inde
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 export CPPFLAGS="-I${SHARED_ROOT}/local/include $CPPFLAGS"
 export LDFLAGS="-L${SHARED_ROOT}/local/lib $LDFLAGS"
+
+## TODO: Make available to all users /HB 2016-12-01
+#if test $USER == "henrik" || test $USER == "cbctest"; then
+#export LD_LIBRARY_PATH="${SHARED_ROOT}/local/lib:${LD_LIBRARY_PATH}"
+#fi
+
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

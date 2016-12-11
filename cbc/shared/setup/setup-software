@@ -104,6 +104,14 @@ lndir matlab-R2012a matlab-latest
 # Python 2.6.8 is install under /opt/local/bin
 lndir /opt/Python/Python-2.7.4 .
 
+# Lua and LuaRocks
+lndir $SRC_CBC/lua-5.3.3 .
+lndir lua-5.3.3 lua-latest
+
+lndir $SRC_CBC/luarocks-2.4.2 .
+lndir luarocks-2.4.2 luarocks-latest
+
+
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # R
@@ -247,11 +255,12 @@ lndir $SRC_CBC/bedops-1.2.2c .
 lndir bedops-1.2.2c bedops-latest
 
 # BEDtools
-#lndir /opt/BEDTools-2.1.5 .
-#lndir /home/taylorbs/lbin/BEDTools-2.10.1 .
-lndir /home/jocostello/tools/BEDTools-Version-2.13.4 .
-lndir /opt/local/bin/BEDTools-Version-2.15.0 .
-lndir BEDTools-Version-2.15.0 BEDTools-latest
+lndir /home/jocostello/tools/BEDTools-Version-2.13.4 bedtools2-2.13.4
+#lndir /opt/local/bin/BEDTools-Version-2.15.0 bedtools2-2.15.0
+lndir /opt/BEDTools/BEDTools-2.15.0 bedtools2-2.15.0
+lndir /opt/BEDTools/BEDTools-2.16.2 bedtools2-2.16.2
+lndir $SRC_CBC/bedtools2-2.26.0 .
+lndir bedtools2-2.26.0 bedtools2-latest
 
 # bismark
 lndir /opt/local/bin/bismark_v0.5.4 .
@@ -404,7 +413,7 @@ lndir /opt/vcftools/0.1.13/gcc.4.4.7 vcftools-0.1.13
 lndir vcftools-0.1.13 vcftools-latest
 
 # VarScan
-lndir /opt/local/VarScan VarScan-v2.2.3
+lndir /opt/local/VarScan VarScan-2.2.3
 lndir $SRC_CBC/VarScan-2.3.9 .
 lndir VarScan-2.3.9 VarScan-latest
 
