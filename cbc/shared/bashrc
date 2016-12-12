@@ -154,8 +154,8 @@ ver=$(luarocks config --lua-ver)
 export LUA_PATH="${HOME}/.luarocks/share/lua/5.3/?.lua;${HOME}/.luarocks/share/lua/5.3/?/init.lua;/home/shared/cbc/software_cbc/luarocks-2.4.2/share/lua/5.3/?.lua;/home/shared/cbc/software_cbc/luarocks-2.4.2/share/lua/5.3/?/init.lua;/usr/local/share/lua/5.3/?.lua;/usr/local/share/lua/5.3/?/init.lua;/usr/local/lib/lua/5.3/?.lua;/usr/local/lib/lua/5.3/?/init.lua;./?.lua;./?/init.lua"
 export LUA_CPATH="${HOME}/.luarocks/lib/lua/5.3/?.so;/home/shared/cbc/software_cbc/luarocks-2.4.2/lib/lua/5.3/?.so;/usr/local/lib/lua/5.3/?.so;/usr/local/lib/lua/5.3/loadall.so;./?.so"
 
-if [[ -z "${MODULEPATH_ORG}" ]]; then
-    export MODULEPATH_ORG="${MODULEPATH}"
+if [[ -z "${MODULEPATH_LEGACY}" ]]; then
+    export MODULEPATH_LEGACY="${MODULEPATH}"
 fi
 
 ## WORKAROUND: When using Lmod, then `module avail` command will
@@ -165,10 +165,16 @@ fi
 ## contains `module use /usr/share/Modules`, which seems to cause
 ## an infinite loop.  If commented out, the problem goes away.
 ## /HB 2016-12-11
-if [[ -z "${MODULEPATH_LEGACY}" ]]; then
-    export MODULEPATH_LEGACY="/etc/modulefiles:/opt/scyld/modulefiles"
-fi    
-alias use_lmod='export MODULEPATH_ROOT=; export MODULEPATH=; source /home/shared/cbc/apps/lmod/lmod/init/profile; export MODULEPATH="${MODULEPATH}:${MODULEPATH_LEGACY}"'
+if [[ -z "${MODULEPATH_DEFAULT}" ]]; then
+    export MODULEPATH_DEFAULT="/etc/modulefiles:/opt/scyld/modulefiles"
+fi
+if [[ -z "${MODULEPATH_USER}" ]]; then
+    if [[ -d "${HOME}/modulefiles" ]]; then
+        export MODULEPATH_USER="${HOME}/modulefiles"
+    fi
+fi
+
+alias use_lmod='export MODULEPATH_ROOT=; export MODULEPATH=; source /home/shared/cbc/apps/lmod/lmod/init/profile; export MODULEPATH="${MODULEPATH_USER}:${MODULEPATH}:${MODULEPATH_DEFAULT}"'
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
