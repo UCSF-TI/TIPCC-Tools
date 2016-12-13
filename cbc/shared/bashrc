@@ -174,7 +174,15 @@ if [[ -z "${MODULEPATH_USER}" ]]; then
     fi
 fi
 
-alias use_lmod='export MODULEPATH_ROOT=; export MODULEPATH=; source /home/shared/cbc/apps/lmod/lmod/init/profile; export MODULEPATH="${MODULEPATH_USER}:${MODULEPATH}:${MODULEPATH_DEFAULT}"'
+use_lmod() {
+    export MODULEPATH_ROOT=
+    export MODULEPATH=
+    source /home/shared/cbc/apps/lmod/lmod/init/profile
+    export MODULEPATH="${MODULEPATH}:${MODULEPATH_DEFAULT}"
+    if [[ -n "${MODULEPATH_USER}" ]]; then
+        export MODULEPATH="${MODULEPATH_USER}:${MODULEPATH}"
+    fi
+}
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
