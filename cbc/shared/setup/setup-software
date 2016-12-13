@@ -422,8 +422,8 @@ lndir /opt/local/share/ViennaRNA ViennaRNA-unknown
 lndir ViennaRNA-unknown ViennaRNA-latest
 
 # WordSpy [http://cic.cs.wustl.edu/wordspy/dltemp.htm]
-lndir /opt/local/bin/wordspy1.5 .
-lndir wordspy1.5 wordspy-latest
+lndir /opt/local/bin/wordspy1.5 wordspy-1.5
+lndir wordspy-1.5 wordspy-latest
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
