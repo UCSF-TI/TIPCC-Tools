@@ -175,14 +175,38 @@ if [[ -z "${MODULEPATH_USER}" ]]; then
 fi
 
 use_lmod() {
+    >&2 echo "[x] Using Lmod environment modules (BETA)"
+    >&2 echo "    https://github.com/UCSF-TI/TIPCC/wiki/Software-Environment-Modules-(BETA)"
     export MODULEPATH_ROOT=
     export MODULEPATH=
     source /home/shared/cbc/apps/lmod/lmod/init/profile
     export MODULEPATH="${MODULEPATH}:${MODULEPATH_DEFAULT}"
+    if [[ -d "${MODULEPATH_ROOT}/Spack" ]]; then
+        export MODULEPATH="${MODULEPATH_ROOT}/Spack:${MODULEPATH}"
+    fi
     if [[ -n "${MODULEPATH_USER}" ]]; then
         export MODULEPATH="${MODULEPATH_USER}:${MODULEPATH}"
     fi
+
+    ## Default modules for all users, cf. ${MODULEPATH_ROOT}/Core/StdEnv.lua
+    ## http://lmod.readthedocs.io/en/latest/070_standard_modules.html?highlight=MODULE%20DEFAULT
+    if [ -z "$__Init_Default_Modules" ]; then
+        export __Init_Default_Modules=1;
+        ## ability to predefine elsewhere the default list
+        LMOD_SYSTEM_DEFAULT_MODULES=${LMOD_SYSTEM_DEFAULT_MODULES:-"StdEnv"}
+        export LMOD_SYSTEM_DEFAULT_MODULES
+        module --initial_load restore
+    else
+        module refresh
+    fi
 }
+
+
+## For BETA users
+## (http://lmod.readthedocs.io/en/latest/045_transition.html?highlight=no-lmod)
+if [[ -f "${HOME}/.lmod" && ! -f "${HOME}/.no.lmod" ]]; then
+    use_lmod
+fi
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
