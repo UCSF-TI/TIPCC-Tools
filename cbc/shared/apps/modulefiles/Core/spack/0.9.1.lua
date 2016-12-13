@@ -10,9 +10,7 @@ spack install samtools
 spack install samtools@1.2
 ]])
 
-local name = "spack"
-local version = "0.9.1"
-whatis("Version: " .. version)
+whatis("Version: " .. myModuleVersion())
 whatis("Keywords: sysadm")
 whatis("URL: https://spack.readthedocs.io/")
 whatis("GitHub: https://github.com/llnl/spack")
@@ -20,10 +18,7 @@ whatis("Description: Spack is a package management tool designed to support mult
 
 -- Use this compiler
 local apps = "/home/shared/cbc/apps"
-local home = pathJoin(apps, name)
+local home = pathJoin(apps, myModuleName())
 
 setenv("SPACK_ROOT", home)
 prepend_path("PATH", pathJoin(home, "bin"))
-
-
-
