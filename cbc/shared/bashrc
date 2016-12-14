@@ -175,15 +175,13 @@ if [[ -z "${MODULEPATH_USER}" ]]; then
 fi
 
 use_lmod() {
-    >&2 echo "[x] Using Lmod environment modules (BETA)"
+    >&2 echo "[x] Using Lmod environment modules (BETA); see 'module avail'"
     >&2 echo "    https://github.com/UCSF-TI/TIPCC/wiki/Software-Environment-Modules-(BETA)"
     export MODULEPATH_ROOT=
     export MODULEPATH=
     source /home/shared/cbc/apps/lmod/lmod/init/profile
     export MODULEPATH="${MODULEPATH}:${MODULEPATH_DEFAULT}"
-    if [[ -d "${MODULEPATH_ROOT}/Spack" ]]; then
-        export MODULEPATH="${MODULEPATH_ROOT}/Spack:${MODULEPATH}"
-    fi
+
     if [[ -n "${MODULEPATH_USER}" ]]; then
         export MODULEPATH="${MODULEPATH_USER}:${MODULEPATH}"
     fi
@@ -207,6 +205,14 @@ use_lmod() {
 if [[ -f "${HOME}/.lmod" && ! -f "${HOME}/.no.lmod" ]]; then
     use_lmod
 fi
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Spack - Supercomputing Package Manager
+# (https://spack.readthedocs.io/)
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+export SPACK_ROOT="/home/shared/cbc/shared/apps/spack"
+export SPACK_ARCH="linux-rhel6-x86_64"
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

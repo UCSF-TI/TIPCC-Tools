@@ -22,3 +22,7 @@ local home = pathJoin(apps, myModuleName())
 
 setenv("SPACK_ROOT", home)
 prepend_path("PATH", pathJoin(home, "bin"))
+
+-- Add Spack to the PATH and its modules to MODULEPATH
+-- https://spack.readthedocs.io/en/latest/module_file_support.html#auto-generating-module-files
+-- execute {cmd = "source ${SPACK_ROOT}/share/spack/setup-env.sh", modeA = {"load"}}
