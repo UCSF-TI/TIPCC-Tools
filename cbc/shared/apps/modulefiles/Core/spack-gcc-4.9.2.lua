@@ -1,4 +1,6 @@
 load("spack")
+load("python")
+load("binutils")
 
 local spack_root = os.getenv("SPACK_ROOT")
 
