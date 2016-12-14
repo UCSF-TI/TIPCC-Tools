@@ -204,6 +204,9 @@ lndir $SRC_CBC/dropbox-cli/ .
 lndir $SRC_CBC/udocker-1.0.0/ .
 lndir udocker-1.0.0 udocker-latest
 
+lndir $SRC_CBC/singularity-2.2/ .
+lndir singularity-2.2 singularity-latest
+
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Documentation tools
