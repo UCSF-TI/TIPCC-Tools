@@ -1,18 +1,4 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# SOFTWARE: Programming languages
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-prependPath ${SHARED_SOFTWARE}/valgrind-latest/coregrind
-prependPath ${SHARED_SOFTWARE}/jdk-latest/bin
-prependPath ${SHARED_SOFTWARE}/matlab-latest/bin
-prependPath ${SHARED_SOFTWARE}/R-latest/bin
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# SOFTWARE: Containers
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-prependPath ${SHARED_SOFTWARE}/udocker-latest
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # SOFTWARE: HT-Seq
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 prependPath ${SHARED_SOFTWARE}/BamUtil-latest/bamUtil/bin

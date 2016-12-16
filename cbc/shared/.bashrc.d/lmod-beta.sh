@@ -5,10 +5,6 @@ if [[ -z "${MODULEPATH_LEGACY}" ]]; then
     export MODULEPATH_LEGACY="${MODULEPATH}"
 fi
 
-## Find also Lua modules installed via luarocks install --local
-ver=$(luarocks config --lua-ver)
-export LUA_PATH="${HOME}/.luarocks/share/lua/5.3/?.lua;${HOME}/.luarocks/share/lua/5.3/?/init.lua;/home/shared/cbc/software_cbc/luarocks-2.4.2/share/lua/5.3/?.lua;/home/shared/cbc/software_cbc/luarocks-2.4.2/share/lua/5.3/?/init.lua;/usr/local/share/lua/5.3/?.lua;/usr/local/share/lua/5.3/?/init.lua;/usr/local/lib/lua/5.3/?.lua;/usr/local/lib/lua/5.3/?/init.lua;./?.lua;./?/init.lua"
-export LUA_CPATH="${HOME}/.luarocks/lib/lua/5.3/?.so;/home/shared/cbc/software_cbc/luarocks-2.4.2/lib/lua/5.3/?.so;/usr/local/lib/lua/5.3/?.so;/usr/local/lib/lua/5.3/loadall.so;./?.so"
 
 ## WORKAROUND: When using Lmod, then `module avail` command will
 ## run in an end-less loop and consume huge amount of memory (leak?)

@@ -66,9 +66,6 @@ fi
 # Never use /usr/libexec/openssh/gnome-ssh-askpass
 unset SSH_ASKPASS
 
-# htop (system tools)
-prependPath ${SHARED_SOFTWARE}/htop
-
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Python
@@ -105,17 +102,6 @@ fi
 export PYTHONPATH=${PYTHONPATH}:${PYTHON_SITE}
 
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Lua, LuaRocks and Lmod
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-prependPath ${SHARED_SOFTWARE}/lua-latest/bin
-prependPath ${SHARED_SOFTWARE}/luarocks-latest/bin
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Ruby
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-prependPath ${SHARED_SOFTWARE}_cbc/bin
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -127,8 +113,6 @@ if test -d "${GCC_HOME}"; then
     prependPath ${GCC_HOME}/bin
     export LD_LIBRARY_PATH="${GCC_HOME}/lib64:${LD_LIBRARY_PATH}"
 fi
-
-
 
 
 
