@@ -113,54 +113,9 @@ prependPath ${SHARED_SOFTWARE}/luarocks-latest/bin
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# SHARED SOFTWARE
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Fix path
-prependPath ${SHARED_SOFTWARE}/jdk-latest/bin
-prependPath ${SHARED_SOFTWARE}/BamUtil-latest/bamUtil/bin
-prependPath ${SHARED_SOFTWARE}/bedops-latest/bin
-prependPath ${SHARED_SOFTWARE}/bedtools2-latest/bin
-prependPath ${SHARED_SOFTWARE}/blast-latest
-prependPath ${SHARED_SOFTWARE}/bowtie2-latest
-prependPath ${SHARED_SOFTWARE}/bwa-latest
-prependPath ${SHARED_SOFTWARE}/Control-FREEC-latest/bin
-prependPath ${SHARED_SOFTWARE}/cufflinks-latest
-prependPath ${SHARED_SOFTWARE}/FastQC-latest
-prependPath ${SHARED_SOFTWARE}/GeneTorrent-latest/bin
-prependManPath ${SHARED_SOFTWARE}/GeneTorrent-latest/share/man
-prependPath ${SHARED_SOFTWARE}/HTSeq-latest/scripts
-prependPath ${SHARED_SOFTWARE}/matlab-latest/bin
-prependPath ${SHARED_SOFTWARE}/R-latest/bin
-prependPath ${SHARED_SOFTWARE}/sratoolkit-latest/bin
-prependPath ${SHARED_SOFTWARE}/samtools-latest
-prependPath ${SHARED_SOFTWARE}/bcftools-latest
-prependPath ${SHARED_SOFTWARE}/tophat-latest
-prependPath ${SHARED_SOFTWARE}/udocker-latest
-prependPath ${SHARED_SOFTWARE}/valgrind-latest/coregrind
-prependPath ${SHARED_SOFTWARE}/vcftools-latest/bin
-prependPath ${SHARED_SOFTWARE}/wordspy-latest
-prependPath ${SHARED_ROOT}/bin
-prependPath ${SHARED_ROOT}/local/bin
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Ruby
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 prependPath ${SHARED_SOFTWARE}_cbc/bin
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# GENOMIC TOOLS
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-prependPath ${SHARED_SOFTWARE}/IGVTools-latest
-prependPath ${SHARED_SOFTWARE}/IGV-latest
-
-alias igv=${SHARED_SOFTWARE}/IGV-latest/igv.sh
-export PICARD_HOME=${SHARED_SOFTWARE}/picard-tools-latest
-export GATK_HOME=${SHARED_SOFTWARE}/GATK-latest
-
-prependPath ${SHARED_SOFTWARE}/htslib-latest/bin
-export HTSLIB_HOME=/home/shared/cbc/software/htslib-latest
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -174,21 +129,6 @@ if test -d "${GCC_HOME}"; then
 fi
 
 
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Cloud tools
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Dropbox
-prependPath ${SHARED_SOFTWARE}/.dropbox-dist
-prependPath ${SHARED_SOFTWARE}/dropbox-cli
-alias dropbox="python ${SHARED_SOFTWARE}/dropbox-cli/dropbox.py"
-
-# s3cmd (Amazon AWS S3)
-prependPath ${SHARED_SOFTWARE}/s3cmd-latest
-alias s3cmd=${SHARED_SOFTWARE}/s3cmd-latest/s3cmd
-
-# Mirror website
-alias wmirror="wget --no-host-directories --recursive --no-parent --reject='index.html*'"
 
 
 
@@ -228,10 +168,11 @@ if [[ -d "${SHARED_ROOT}/.bashrc.d" ]]; then
 fi
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Odds and ends
+# SHARED SOFTWARE
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# gource - https://code.google.com/p/gource/
-alias gource="LD_LIBRARY_PATH=$SHARED_LOCAL/lib64 gource"
+prependPath ${SHARED_ROOT}/bin
+prependPath ${SHARED_ROOT}/local/bin
+
 
 ###################################################################
 # HISTORY:
