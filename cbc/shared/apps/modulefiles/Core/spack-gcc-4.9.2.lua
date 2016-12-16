@@ -1,6 +1,5 @@
 load("spack")
 load("python")
-load("binutils")
 
 local spack_root = os.getenv("SPACK_ROOT")
 
@@ -10,3 +9,6 @@ local compiler = pathJoin("gcc", "4.9.2")
 
 local home = pathJoin(spack_root, "share/spack/lmod", spack_arch, compiler)
 prepend_path("MODULEPATH", home)
+
+-- These modules need to be loaded after this module is setup
+load("binutils")
