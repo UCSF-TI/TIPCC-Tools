@@ -12,29 +12,23 @@
 #   source /home/shared/cbc/bashrc
 ###################################################################
 
-# Setup SHARED_ROOT
-if test -z "${SHARED_ROOT}"; then
-  export SHARED_ROOT=
-  for dd in /home/shared/cbc; do
-    if test -d ${dd}; then
-      export SHARED_ROOT=${dd}
-      break
-    fi
-  done
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Record original state
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+if test "${PATH_SYSTEM}" == ""; then
+  export PATH_SYSTEM=${PATH}
 fi
-## echo SHARED_ROOT=${SHARED_ROOT}
 
+# Setup SHARED_ROOT
+export SHARED_ROOT=/home/shared/cbc
 
 # Useful functions
 source ${SHARED_ROOT}/bin/includes.bash
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Record original PATH and setup PATH depending on system
+# Setup PATH depending on system
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-if test "${PATH_SYSTEM}" == ""; then
-  export PATH_SYSTEM=${PATH}
-fi
 export PATH=${PATH_SYSTEM}
 
 # Added ~/bin/
@@ -42,6 +36,7 @@ if ! test -d "${HOME}/bin"; then
   mkdir ${HOME}/bin
 fi
 appendPath ${HOME}/bin
+
 
 export HOST=`uname -n`
 export HOST_SHORT=${HOST/.*/}
@@ -63,42 +58,6 @@ export CLUSTER_NODES="n0 n1 n2 n3 n4 n5 n6 n7 n8 n9 n10 n11 n12 n13 n14 n15 n17 
 if [[ "${ISCOMPUTENODE}" = "1" ]]; then
     prependPath ${SHARED_ROOT}/bin/compute_nodes_only
 fi
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Personalized temporary and scrattch directory
-# (e.g. cleaner /tmp/ directory on cluster)
-# Acknowledged by e.g. R
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-export TMPDIR=/tmp/$USER
-if ! test -d "$TMPDIR"; then
-  mkdir -p "$TMPDIR"
-fi
-
-export VARTMPDIR=/var/tmp/$USER
-if ! test -d "$VARTMPDIR"; then
-  mkdir -p "$VARTMPDIR"
-fi
-
-# Create /scratch/$USER/shared/ (only on compute nodes)
-if test $ISCOMPUTENODE == 1; then
-  export SCRATCHDIR=/scratch/$USER
-  if ! test -d "$SCRATCHDIR"; then
-    mkdir -p "$SCRATCHDIR"
-  fi
-fi
-
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Cluster tools
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-alias ganglia='lynx -accept_all_cookies http://localhost/ganglia/'
-#alias gmem='free -g | echo "      `head -1`"; gsh free -g | egrep -e "Mem"'
-alias gswap='free -g | echo "      `head -1`"; gsh free -g | egrep -e "Swap"'
-alias gmem='gsh vmstatmem'
-alias topme='top -U ${USER}'
-alias htopme='htop -u ${USER}'
-alias psme='ps -ef | grep ${USER}'
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -152,71 +111,6 @@ export PYTHONPATH=${PYTHONPATH}:${PYTHON_SITE}
 prependPath ${SHARED_SOFTWARE}/lua-latest/bin
 prependPath ${SHARED_SOFTWARE}/luarocks-latest/bin
 
-## Find also Lua modules installed via luarocks install --local
-ver=$(luarocks config --lua-ver)
-export LUA_PATH="${HOME}/.luarocks/share/lua/5.3/?.lua;${HOME}/.luarocks/share/lua/5.3/?/init.lua;/home/shared/cbc/software_cbc/luarocks-2.4.2/share/lua/5.3/?.lua;/home/shared/cbc/software_cbc/luarocks-2.4.2/share/lua/5.3/?/init.lua;/usr/local/share/lua/5.3/?.lua;/usr/local/share/lua/5.3/?/init.lua;/usr/local/lib/lua/5.3/?.lua;/usr/local/lib/lua/5.3/?/init.lua;./?.lua;./?/init.lua"
-export LUA_CPATH="${HOME}/.luarocks/lib/lua/5.3/?.so;/home/shared/cbc/software_cbc/luarocks-2.4.2/lib/lua/5.3/?.so;/usr/local/lib/lua/5.3/?.so;/usr/local/lib/lua/5.3/loadall.so;./?.so"
-
-if [[ -z "${MODULEPATH_LEGACY}" ]]; then
-    export MODULEPATH_LEGACY="${MODULEPATH}"
-fi
-
-## WORKAROUND: When using Lmod, then `module avail` command will
-## run in an end-less loop and consume huge amount of memory (leak?)
-## iff we would keep /usr/share/Modules/modulefiles in MODULEPATH.
-## TROUBLESHOOTING: File /usr/share/Modules/modulefiles/modules
-## contains `module use /usr/share/Modules`, which seems to cause
-## an infinite loop.  If commented out, the problem goes away.
-## /HB 2016-12-11
-if [[ -z "${MODULEPATH_DEFAULT}" ]]; then
-    export MODULEPATH_DEFAULT="/etc/modulefiles:/opt/scyld/modulefiles"
-fi
-if [[ -z "${MODULEPATH_USER}" ]]; then
-    if [[ -d "${HOME}/modulefiles" ]]; then
-        export MODULEPATH_USER="${HOME}/modulefiles"
-    fi
-fi
-
-use_lmod() {
-    >&2 echo "[x] Using Lmod environment modules (BETA); see 'module avail'"
-    >&2 echo "    https://github.com/UCSF-TI/TIPCC/wiki/Software-Environment-Modules-(BETA)"
-    export MODULEPATH_ROOT=
-    export MODULEPATH=
-    source /home/shared/cbc/apps/lmod/lmod/init/profile
-    export MODULEPATH="${MODULEPATH}:${MODULEPATH_DEFAULT}"
-
-    if [[ -n "${MODULEPATH_USER}" ]]; then
-        export MODULEPATH="${MODULEPATH_USER}:${MODULEPATH}"
-    fi
-
-    ## Default modules for all users, cf. ${MODULEPATH_ROOT}/Core/StdEnv.lua
-    ## http://lmod.readthedocs.io/en/latest/070_standard_modules.html?highlight=MODULE%20DEFAULT
-    if [ -z "$__Init_Default_Modules" ]; then
-        export __Init_Default_Modules=1;
-        ## ability to predefine elsewhere the default list
-        LMOD_SYSTEM_DEFAULT_MODULES=${LMOD_SYSTEM_DEFAULT_MODULES:-"StdEnv"}
-        export LMOD_SYSTEM_DEFAULT_MODULES
-        module --initial_load restore
-    else
-        module refresh
-    fi
-}
-
-
-## For BETA users
-## (http://lmod.readthedocs.io/en/latest/045_transition.html?highlight=no-lmod)
-if [[ -f "${HOME}/.lmod" && ! -f "${HOME}/.no.lmod" ]]; then
-    use_lmod
-fi
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Spack - Supercomputing Package Manager
-# (https://spack.readthedocs.io/)
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-export SPACK_ROOT="/home/shared/cbc/shared/apps/spack"
-
-
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # SHARED SOFTWARE
@@ -241,29 +135,12 @@ prependPath ${SHARED_SOFTWARE}/sratoolkit-latest/bin
 prependPath ${SHARED_SOFTWARE}/samtools-latest
 prependPath ${SHARED_SOFTWARE}/bcftools-latest
 prependPath ${SHARED_SOFTWARE}/tophat-latest
+prependPath ${SHARED_SOFTWARE}/udocker-latest
 prependPath ${SHARED_SOFTWARE}/valgrind-latest/coregrind
 prependPath ${SHARED_SOFTWARE}/vcftools-latest/bin
 prependPath ${SHARED_SOFTWARE}/wordspy-latest
 prependPath ${SHARED_ROOT}/bin
 prependPath ${SHARED_ROOT}/local/bin
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Docker-ish
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-prependPath ${SHARED_SOFTWARE}/udocker-latest
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Git
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Remove alias 'git', iff set
-alias git=foo
-unalias git
-# Add  git installation
-## prependPath /opt/rh/devtoolset-2/root/usr/bin/
-prependPath /opt/Git/Git-latest/bin
-prependPath ${SHARED_SOFTWARE}/gitflow-0.4.2/bin
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -296,56 +173,6 @@ if test -d "${GCC_HOME}"; then
     export LD_LIBRARY_PATH="${GCC_HOME}/lib64:${LD_LIBRARY_PATH}"
 fi
 
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# R
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-if test "${PKG_LIBS0}" = ""; then
-  export PKG_LIBS0="${PKG_LIBS}"
-else
-  export PKG_LIBS="${PKG_LIBS0}"
-fi
-
-# Fixes "/usr/bin/ld: cannot find -lgfortran" error when
-# building package that needs libgfortran.
-# FIXME: Should this be configured already when building R, i.e.
-#        in /home/shared/cbc/bin/installR? /HB 2015-01-10
-if test -d "${GCC_HOME}"; then
-  export PKG_LIBS="${PKG_LIBS} -L${GCC_HOME}"
-fi
-
-## 'nc-config' needs to be on the PATH in order to install R package ncdf4
-appendPath /opt/NetCDF/NetCDF-4.3.0/bin
-
-## Setup R_LIBS locally for user and machine type
-# Get the OS type in lower case
-#ostype=`uname -s | tr '[A-Z]' '[a-z]'`
-#export R_LIBS=${HOME}/R/${ostype}/library/
-#if ! test -d "${R_LIBS}"; then
-#  mkdir -p ${R_LIBS}
-#fi
-
-## WORKAROUND: Some packages are hard/fail to install in R 3.2.0, e.g. 'png'.
-## These are shared by CBC.
-export R_LIBS_SITE=/home/shared/cbc/R/site-library/%p-library/%v
-
-
-alias R-2.15.3=${SHARED_SOFTWARE}/R-2.15.3/bin/R
-alias R-3.0.0=${SHARED_SOFTWARE}/R-3.0.0/bin/R
-alias R-3.0.1=${SHARED_SOFTWARE}/R-3.0.1/bin/R
-alias R-3.0.2=${SHARED_SOFTWARE}/R-3.0.2/bin/R
-alias R-3.0.3=${SHARED_SOFTWARE}/R-3.0.3/bin/R
-alias R-3.1.0=${SHARED_SOFTWARE}/R-3.1.0/bin/R
-alias R-3.1.1=${SHARED_SOFTWARE}/R-3.1.1/bin/R
-alias R-3.1.2=${SHARED_SOFTWARE}/R-3.1.2/bin/R
-alias R-3.1.3=${SHARED_SOFTWARE}/R-3.1.3/bin/R
-alias R-3.2.0=${SHARED_SOFTWARE}/R-3.2.0/bin/R
-alias R-3.2.1=${SHARED_SOFTWARE}/R-3.2.1/bin/R
-alias R-3.2.2=${SHARED_SOFTWARE}/R-3.2.2/bin/R
-alias R-latest=${SHARED_SOFTWARE}/R-latest/bin/R
-alias R-patched=${SHARED_SOFTWARE}/R-patched/bin/R
-alias R-devel=${SHARED_SOFTWARE}/R-devel/bin/R
-alias useR=". ${SHARED_ROOT}/bin/useR"
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -391,77 +218,14 @@ fi
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Create aliases 'n0, 'n1', etc. to ssh into corresponding node 
-# preserving the current working directory.
+# CBC-shared .bashrc.d/
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-export QNODES=`qnodes | grep "^n[0-9][0-9]*"`
-for n in ${QNODES}; do
-  cmd="alias $n='pwd=\$(pwd); ssh -Y -t $n \"cd \$pwd; $SHELL\"'"
-#  echo $cmd
-  eval $cmd
-done
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Convenient ways of listing files
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-alias ll="ls -l"
-alias lll="ls -la"
-
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# SECURITY: Assert file permissions
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-assertUserOnlyPermissions ${HOME}/.ssh
-assertUserOnlyPermissions ${HOME}/.ssh/authorized_keys
-assertUserOnlyPermissions ${HOME}/.netrc
-assertUserOnlyPermissions ${HOME}/.pine-passfile
-assertUserOnlyPermissions ${HOME}/cron-bin/ucsf_mail_fetch_keep
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Personal public_html
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Only on head node
-if test $ISCOMPUTENODE == 0; then
-# Create users ~/public_html, iff missing
-## if ! test -d "${HOME}/public_html"; then
-##   mkdir "${HOME}/public_html"
-##   t=${HOME}/public_html/README.txt
-##   echo "The content in your ~/public_html/ directory can be accessed" > ${t}
-##   echo "via the web using address http://cclc01.som.ucsf.edu/~${USER}/." >> ${t}
-##   echo "You can use this to setup your own internal webpage and/or" >> ${t}
-##   echo "result files (e.g. HTML, PDF) from jobs easily accessible." >> ${t}
-##   echo "" >> ${t}
-##   echo "SECURITY: To access your web content from outside the UCSF" >> ${t}
-##   echo "login via the UCSF VPN, e.g. http://cbc.ucsf.edu/vpn/" >> ${t}
-##   chmod go-rwx ${t}
-## 
-##   t=${HOME}/public_html/index.html
-##   echo "<html>" > ${t}
-##   echo "<head>" >> ${t}
-##   echo " <title>${USER}</title>" >> ${t}
-##   echo "</head>" >> ${t}
-##   echo "<body>" >> ${t}
-##   echo "<h1>${USER}</h1>" >> ${t}
-##   echo "Hello world!" >> ${t}
-##   echo "</body>" >> ${t}
-##   echo "</html>" >> ${t}
-## fi
-
-  # Check file permissions
-  if test -d "${HOME}/public_html"; then
-    check-public_html
-  fi
+if [[ -d "${SHARED_ROOT}/.bashrc.d" ]]; then
+    for ff in $(find "${SHARED_ROOT}/.bashrc.d/" -type f ! -name '*~'); do
+      if [[ "${USER}" = "henrik" ]]; then >&2 echo "${ff}"; fi
+      source "${ff}"
+    done
 fi
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# LG3 Exome Pipeline
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-export LG3_HOME=/home/henrik/projects/CostelloJ_2014-LG3-Exome-Pipeline/pbs
-
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Odds and ends
