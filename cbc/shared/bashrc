@@ -18,6 +18,9 @@
 if test "${PATH_SYSTEM}" == ""; then
   export PATH_SYSTEM=${PATH}
 fi
+if test "${LD_LIBRARY_PATH_SYSTEM}" == ""; then
+  export LD_LIBRARY_PATH_SYSTEM=${LD_LIBRARY_PATH}
+fi
 
 # Setup SHARED_ROOT
 export SHARED_ROOT=/home/shared/cbc
@@ -30,6 +33,7 @@ source ${SHARED_ROOT}/bin/includes.bash
 # Setup PATH depending on system
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 export PATH=${PATH_SYSTEM}
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH_SYSTEM}
 
 # Added ~/bin/
 if ! test -d "${HOME}/bin"; then

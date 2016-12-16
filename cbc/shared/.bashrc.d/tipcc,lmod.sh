@@ -45,6 +45,11 @@ use_lmod() {
     else
         module refresh
     fi
+
+    ## WORKAROUND:
+    ## 'module load StdEnv' may introduce :: in LD_LIBRARY_PATH
+    ## (which e.g. Linux brew will complain about)
+    export LD_LIBRARY_PATH=$(echo ${LD_LIBRARY_PATH} | sed -E 's/:$//')
 }
 
 
