@@ -61,13 +61,6 @@ fi
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Misc
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Never use /usr/libexec/openssh/gnome-ssh-askpass
-unset SSH_ASKPASS
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Python
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ##prependPath /opt/local/bin # Python 2.6.5
@@ -131,14 +124,6 @@ export LDFLAGS="-L${SHARED_ROOT}/local/lib $LDFLAGS"
 #export LD_LIBRARY_PATH="${SHARED_ROOT}/local/lib:${LD_LIBRARY_PATH}"
 #fi
 
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Default editor for 'svn commit' and others
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-if test "${EDITOR}" = ""; then
-  export EDITOR="emacs -nw"
-fi
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
