@@ -2,11 +2,8 @@
 # Create aliases 'n0, 'n1', etc. to ssh into corresponding node 
 # preserving the current working directory.
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-export QNODES=`qnodes | grep "^n[0-9][0-9]*"`
-for n in ${QNODES}; do
-  cmd="alias $n='pwd=\$(pwd); ssh -Y -t $n \"cd \$pwd; $SHELL\"'"
-#  echo $cmd
-  eval $cmd
+for kk in {0..27}; do
+  eval "alias n${kk}='pwd=\$(pwd); ssh -Y -t n${kk} \"cd \$pwd; $SHELL\"'"
 done
 
 
