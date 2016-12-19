@@ -75,8 +75,10 @@ prependPath ${SHARED_ROOT}/local/bin
 # CBC-shared .bashrc.d/
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 if [[ -d "${SHARED_ROOT}/.bashrc.d" ]]; then
+  if [[ -n "${BASHRC_DEBUG}" ]]; then >&2 echo "Sourcing ${SHARED_ROOT}/.bashrc.d ..."; fi
   for ff in $(find "${SHARED_ROOT}/.bashrc.d/" -type f ! -name '*~' | LC_ALL=C sort); do
-    if [[ "${USER}" = "henrik" ]]; then >&2 echo "${ff}"; fi
+    if [[ -n "${BASHRC_DEBUG}" ]]; then >&2 echo "${ff}"; fi
     source "${ff}"
   done
+  if [[ -n "${BASHRC_DEBUG}" ]]; then >&2 echo "Sourcing ${SHARED_ROOT}/.bashrc.d ... done"; fi
 fi
