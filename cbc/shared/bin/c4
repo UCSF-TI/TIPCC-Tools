@@ -104,6 +104,12 @@ elif test $cmd == "status"; then
     echo "## Nodes"
     bpstat
     echo
+    bfr=$(pbsnodes | grep -B 5 -A 2 -F "ERROR")
+    if [[ -n "${bfr}" ]]; then
+      echo "## WARNING: Problematic nodes"
+      echo ${bfr}
+    fi
+    echo
     echo "## Disk space"
     df -h | grep -E "(Filesystem|home|data|work)"
     echo
