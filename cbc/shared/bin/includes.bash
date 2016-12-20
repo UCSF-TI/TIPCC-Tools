@@ -8,7 +8,9 @@
 # Useful functions
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 function error() {
-  echo "ERROR: $*"
+    tput setaf 3 >&2 /dev/null ## yellow
+    >&2 echo "ERROR: $*"
+    tput sgr0 >&2 /dev/null    ## reset
 #  exit 1
 }
 
