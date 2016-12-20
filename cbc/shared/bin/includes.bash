@@ -8,7 +8,7 @@
 # Useful functions
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 function error() {
-    tput setaf 3 >&2 /dev/null ## yellow
+    tput setaf 1 >&2 /dev/null ## red
     >&2 echo "ERROR: $*"
     tput sgr0 >&2 /dev/null    ## reset
 #  exit 1
@@ -104,11 +104,15 @@ function assertUserOnlyPermissions() {
   permsT=$(ls -al ${d} | grep -F $f | cut -c 1-10)
   permsGO=$(echo $permsT | cut -c 5-10)
   if test "${permsGO}" != "------"; then
-    echo >&2 "SECURITY ERROR: Detected that ${path} was acessible by others (ugo=$perms). Tried to reset permissions (chmod go-rwx ${path}), but failed. They are still accessible by others; ugo=${permsT}"
+    tput setaf 1 >&2 /dev/null ## red
+    >&2 echo "SECURITY ERROR: Detected that ${path} was accessible by others (ugo=$perms). Tried to reset permissions (chmod go-rwx ${path}), but failed. They are still accessible by others; ugo=${permsT}"
+    tput sgr0 >&2 /dev/null    ## reset
     return
   fi
-  
-  echo >&2 "SECURITY WARNING: Detected that ${path} was acessible by others (ugo=$perms). Reset permssions (chmod go-rwx ${path}) such only you can access it. New permissions: ugo=${permsT}"
+
+  tput setaf 3 >&2 /dev/null ## yellow
+  >&2 echo "SECURITY WARNING: Detected that ${path} was accessible by others (ugo=$perms). Permissions were reset (chmod go-rwx ${path}) such only you can access it. New permissions: ugo=${permsT}"
+  tput sgr0 >&2 /dev/null    ## reset
 }
 
 
@@ -117,7 +121,7 @@ function setPrompt() {
   export PS1="$1"
 
   # If on the head node...
-  if test "$HOST" == "cclc01.som.ucsf.edu"; then
+  if test "$HOSTNAME" == "cclc01.som.ucsf.edu"; then
     # If not already done...
     res=`echo "$PS1" | grep "[*][*][*]"`
     if test -z "$res"; then
