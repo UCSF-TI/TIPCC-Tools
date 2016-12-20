@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-tput setaf 3 >&2 /dev/null ## yellow
+tput setaf 3 2> /dev/null ## yellow
 mecho "WARNING: $*"
-tput sgr0 >&2 /dev/null    ## reset
+tput sgr0 2> /dev/null    ## reset
 
 
 
