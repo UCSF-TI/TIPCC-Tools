@@ -23,8 +23,10 @@ if [[ -z "${MODULEPATH_USER}" ]]; then
 fi
 
 use_lmod() {
-    >&2 echo "[x] Using Lmod environment modules (BETA); see 'module avail'"
-    >&2 echo "    https://github.com/UCSF-TI/TIPCC/wiki/Software-Environment-Modules-(BETA)"
+    if [[ "${PS1}" ]]; then
+      >&2 echo "[x] Using Lmod environment modules (BETA); see 'module avail'"
+      >&2 echo "    https://github.com/UCSF-TI/TIPCC/wiki/Software-Environment-Modules-(BETA)"
+    fi
     export MODULEPATH_ROOT=
     export MODULEPATH=
     source /home/shared/cbc/apps/lmod/lmod/init/profile
@@ -37,12 +39,20 @@ use_lmod() {
     ## Default modules for all users, cf. ${MODULEPATH_ROOT}/Core/StdEnv.lua
     ## http://lmod.readthedocs.io/en/latest/070_standard_modules.html?highlight=MODULE%20DEFAULT
     if [ -z "$__Init_Default_Modules" ]; then
-        export __Init_Default_Modules=1;
+        if [[ "${PS1}" ]]; then
+            >&2 printf "    Refreshing modules ."
+	fi
         ## ability to predefine elsewhere the default list
-        LMOD_SYSTEM_DEFAULT_MODULES=${LMOD_SYSTEM_DEFAULT_MODULES:-"StdEnv"}
-        export LMOD_SYSTEM_DEFAULT_MODULES
+        export LMOD_SYSTEM_DEFAULT_MODULES=${LMOD_SYSTEM_DEFAULT_MODULES:-"StdEnv"}
         module --initial_load restore 2> /dev/null
+        if [[ "${PS1}" ]]; then
+            >&2 printf "."
+	fi
         module restore 2> /dev/null
+        export __Init_Default_Modules=1
+        if [[ "${PS1}" ]]; then
+            >&2 printf ". done\n"
+	fi
     else
         module refresh
     fi
