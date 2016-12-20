@@ -41,7 +41,8 @@ use_lmod() {
         ## ability to predefine elsewhere the default list
         LMOD_SYSTEM_DEFAULT_MODULES=${LMOD_SYSTEM_DEFAULT_MODULES:-"StdEnv"}
         export LMOD_SYSTEM_DEFAULT_MODULES
-        module --initial_load restore
+        module --initial_load restore 2> /dev/null
+        module restore 2> /dev/null
     else
         module refresh
     fi
