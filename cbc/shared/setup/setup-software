@@ -52,7 +52,7 @@ trap 'cd ${opwd}; exit' INT TERM EXIT
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 chmod ugo+rx $SHARED_ROOT
 chmod ugo+rx $SHARED_ROOT/*
-chmod ugo+rx $SRC_CBC/*
+chmod ugo+rx $SRC_CBC/* 2> /dev/null
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Setup software/
