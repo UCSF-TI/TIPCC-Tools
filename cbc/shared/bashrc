@@ -46,7 +46,7 @@ export HOST=`uname -n`
 export HOST_SHORT=${HOST/.*/}
 export ARCH=`uname -m`
 export ISCOMPUTENODE=0
-if [[ ${HOST_SHORT} =~ n[0-9]{1,2} ]]; then
+if [[ "${HOST_SHORT}" =~ ^n[0-9]{1,2} ]]; then
   export ISCOMPUTENODE=1
 fi
 ## echo ISCOMPUTENODE=$ISCOMPUTENODE
