@@ -1,5 +1,5 @@
 ## Running in interactive mode?
-if [[ "$PS1" && -n "${BASHRC_CHECK}" ]]; then
+if [[ "$PS1" ]]; then
     ## ... on the head node? (c4 head only works there)
     if test "$HOSTNAME" == "cclc01.som.ucsf.edu"; then
         bfr=$(/home/shared/cbc/bin/c4 head --user ${USER})
