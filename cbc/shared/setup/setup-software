@@ -204,9 +204,12 @@ lndir $SRC_CBC/dropbox-cli/ .
 lndir $SRC_CBC/udocker-1.0.0/ .
 lndir udocker-1.0.0 udocker-latest
 
-lndir $SRC_CBC/singularity-2.2/ .
-lndir $SRC_CBC/singularity-2.2-patch .
-lndir singularity-2.2-patch singularity-latest
+
+## NOT SAFE WITH OUR CURRENT KERNEL! IT MAY GIVE "kernel panic"
+## and crash a machine. /Henrik 2016-12-22
+## lndir $SRC_CBC/singularity-2.2/ .
+## lndir $SRC_CBC/singularity-2.2-patch .
+## lndir singularity-2.2-patch singularity-latest
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
