@@ -24,6 +24,14 @@ if test -z "$SHARED_SOFTWARE"; then
   source /home/shared/cbc/bashrc
 fi
 
+function user_info() {
+    local user=$1
+    local uid=$(id -u $user)
+    local info=$(grep -E "^$user:" /etc/passwd | cut -d: -f5)
+    local groups=$(groups $user | sed 's/.*:[ ]*//g')
+    echo "$user [$info, UID $uid, GROUPS $groups]:"
+}
+
 cmd=$1
 if test "$cmd" == ""; then
     cmd="help"
@@ -178,12 +186,10 @@ elif test $cmd == "head"; then
 	res=$(printf '%s\n' "${bfr[@]}" | grep -E "^($user|$uid) " | grep -v "grep -E \"$user \"")
         if test "${res[@]}" == ""; then
             if test $full == "TRUE"; then
-                user_info=$(grep -E "^$user:" /etc/passwd | cut -d: -f5)
-                echo "$user [$user_info, UID $uid]:"
+                user_info "$user"
 	    fi
 	else 
-            user_info=$(grep -E "^$user:" /etc/passwd | cut -d: -f5)
-            echo "$user [$user_info, UID $uid]:"
+            user_info "$user"
 	    pids=$(printf "${res[@]}" | sed -E 's/^[ ]*[^ ]+[ ]+([0-9]+)[ ]+.*/\1/g' | grep -E "[0-9]+")
 	    pids="${pids[@]}"
             printf "PIDs (on the head node): "
@@ -199,8 +205,7 @@ elif test $cmd == "disk_usage"; then
 	exit 1
     fi
     for user in ${users[@]}; do
-      user_info=$(grep -E "^$user:" /etc/passwd | cut -d: -f5)
-      echo "$user [$user_info]:"
+      user_info "$user"
       for path in $(eval echo ~$user) /data/$user/ /work/$user/; do
 	  if test -d $path; then
 	      du -sh $path
@@ -358,8 +363,3 @@ fi
 # 2014-10-05
 # o Created by Henrik Bengtsson.
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-
-
-
-
