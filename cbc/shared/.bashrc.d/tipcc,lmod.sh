@@ -48,7 +48,7 @@ use_lmod() {
     ## http://lmod.readthedocs.io/en/latest/070_standard_modules.html?highlight=MODULE%20DEFAULT
     if [ -z "$__Init_Default_Modules" ]; then
         if [[ "${PS1}" ]]; then
-            >&2 printf "  Refreshing modules ."
+            >&2 printf "Refreshing modules ."
 	fi
         ## ability to predefine elsewhere the default list
         export LMOD_SYSTEM_DEFAULT_MODULES=${LMOD_SYSTEM_DEFAULT_MODULES:-"StdEnv"}
