@@ -81,15 +81,15 @@ elif test $cmd == "utils"; then
   ls $SHARED_BIN | grep -v "~$"
 elif test $cmd == "aliases"; then
   echo "** Aliases set by $SHARED_ROOT/bashrc:"
-  grep "^alias" $SHARED_ROOT/bashrc | grep -v "alias git" | sort -u
+   grep --no-filename "^alias" -r $SHARED_ROOT/bashrc $SHARED_ROOT/.bashrc.d/ 2> /dev/null | grep -v "alias git" | sort -u
 elif test $cmd == "functions"; then
   echo "** Functions defined in bashrc and bin/* in $SHARED_ROOT/:"
-  cat $SHARED_ROOT/bashrc $SHARED_BIN/* | grep "^function" | sed 's/ {//g' | sort -u
+  cat $SHARED_ROOT/bashrc $SHARED_ROOT/.bashrc.d/* $SHARED_ROOT/.bashrc.d/*/* $SHARED_BIN/* 2> /dev/null | grep "^function" | sed 's/ {//g' | sort -u
   echo
   echo "To see a function definition, use type <fcn>, e.g. type timestamp"
 elif test $cmd == "envvars"; then
   echo "** Environment variable set by $SHARED_ROOT/bashrc:"
-  grep "^export" $SHARED_ROOT/bashrc | cut -b 8- | cut -d = -f 1 | sort -u
+  grep --no-filename "^export" -r $SHARED_ROOT/bashrc $SHARED_ROOT/.bashrc.d/ 2> /dev/null | cut -b 8- | cut -d = -f 1 | sort -u
 elif test $cmd == "motd"; then
     if test $HOST != $HEAD_NODE; then
 	echo "ERROR: cbc --motd is only supported on the head node ($HEAD_NODE): $HOST"
