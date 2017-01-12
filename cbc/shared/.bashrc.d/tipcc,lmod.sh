@@ -32,7 +32,7 @@ use_lmod() {
       >&2 echo " module list          - your loaded modules"
       >&2 echo
       >&2 echo "Documentation:"
-      >&2 echo " https://github.com/UCSF-TI/TIPCC/wiki/Software-Environment-Modules-(BETA)"
+      >&2 echo " https://github.com/UCSF-TI/TIPCC/wiki/Software-Environment-Modules"
       >&2 echo
     fi
     export MODULEPATH_ROOT=
