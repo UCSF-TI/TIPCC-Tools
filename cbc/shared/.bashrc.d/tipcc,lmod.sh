@@ -1,3 +1,6 @@
+## Already done?
+if [[ ${CBC_LOADED} == *"lmod"* && -z ${CBC_FORCE} ]]; then return 0; fi
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Lua, LuaRocks and Lmod
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -78,3 +81,6 @@ use_lmod() {
 if [[ -f "${HOME}/.lmod" && ! -f "${HOME}/.no.lmod" ]]; then
     use_lmod
 fi
+
+export CBC_LOADED="${CBC_LOADED} lmod"
+

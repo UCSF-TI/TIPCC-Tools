@@ -8,7 +8,7 @@ if [[ "$PS1" ]]; then
             >&2 echo
             >&2 echo "******************************************************************"
             >&2 echo "** WARNING: You are running the below processes on the head node"
-            >&2 echo "**          (please use node n6 instead)"
+            >&2 echo "**          (please use n6 for prototyping / interactive use)"
             >&2 echo "******************************************************************"
             >&2 printf '%s\n' "${bfr[@]}"
             >&2 echo
