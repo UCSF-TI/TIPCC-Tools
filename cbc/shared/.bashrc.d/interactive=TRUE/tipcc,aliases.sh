@@ -2,7 +2,7 @@
 # Create aliases 'n0, 'n1', etc. to ssh into corresponding node 
 # preserving the current working directory.
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-for kk in {0..27}; do
+for kk in {0..30}; do
   eval "alias n${kk}='pwd=\$(pwd); ssh -Y -t n${kk} \"cd \$pwd; $SHELL\"'"
 done
 
