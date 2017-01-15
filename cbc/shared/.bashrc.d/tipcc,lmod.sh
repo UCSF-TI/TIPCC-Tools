@@ -1,5 +1,5 @@
 ## Already done?
-if [[ ${CBC_LOADED} == *"lmod"* && -z ${CBC_FORCE} ]]; then return 0; fi
+## if [[ ${CBC_LOADED} == *"lmod"* && -z ${CBC_FORCE} ]]; then return 0; fi
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Lua, LuaRocks and Lmod
@@ -83,4 +83,3 @@ if [[ -f "${HOME}/.lmod" && ! -f "${HOME}/.no.lmod" ]]; then
 fi
 
 export CBC_LOADED="${CBC_LOADED} lmod"
-
