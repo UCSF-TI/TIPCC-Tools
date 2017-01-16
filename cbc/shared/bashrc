@@ -72,19 +72,25 @@ prependPath ${SHARED_ROOT}/local/bin
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# CBC-shared .bashrc.d/
+# CBC-shared .bashrc.d/ and ~/.bashrc.d/
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-if [[ -d "${SHARED_ROOT}/.bashrc.d" ]]; then
-    if [[ -n "${BASHRC_DEBUG}" ]]; then >&2 echo "Sourcing ${SHARED_ROOT}/.bashrc.d ..."; fi
-    files=$(find "${SHARED_ROOT}/.bashrc.d/" -type f ! -name '*~' | LC_ALL=C sort)
-    ## Not running in interactive mode?
-    if [[ -z "$PS1" ]]; then
-	## Drop pathnames with interactive=TRUE
-	files=$(printf "%s\n" ${files[@]} | grep -vF "interactive=TRUE")
-    fi
-    for ff in ${files}; do
-        if [[ -n "${BASHRC_DEBUG}" ]]; then >&2 echo " - ${ff}"; fi
+for pathT in ${SHARED_ROOT} ${HOME}; do
+    if [[ -d "${pathT}/.bashrc.d" ]]; then
+        if [[ -n "${BASHRC_DEBUG}" ]]; then >&2 echo "Sourcing ${pathT}/.bashrc.d ..."; fi
+	
+        files=$(find "${pathT}/.bashrc.d/" -type f ! -name '*~' | LC_ALL=C sort)
+	
+        ## Not running in interactive mode?
+        if [[ -z "$PS1" ]]; then
+          ## Drop pathnames with interactive=TRUE
+          files=$(printf "%s\n" ${files[@]} | grep -vF "interactive=TRUE")
+        fi
+	
+        for ff in ${files}; do
+            if [[ -n "${BASHRC_DEBUG}" ]]; then >&2 echo " - ${ff}"; fi
             source "${ff}"
         done
-     if [[ -n "${BASHRC_DEBUG}" ]]; then >&2 echo "Sourcing ${SHARED_ROOT}/.bashrc.d ... done"; fi
-fi
+	
+        if [[ -n "${BASHRC_DEBUG}" ]]; then >&2 echo "Sourcing ${pathT}/.bashrc.d ... done"; fi
+    fi
+done
