@@ -74,9 +74,17 @@ prependPath ${SHARED_ROOT}/local/bin
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # CBC-shared .bashrc.d/ and ~/.bashrc.d/
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+if [[ -n "${BASHRC_DEBUG}" ]]; then
+    START_TIME=$(echo $(($(date +%s%N)/1000000)))
+    function duration() {
+	local d=$(($(echo $(($(date +%s%N)/1000000))) - $START_TIME))
+	d=$(echo 000$d | sed -E 's/([0-9]{3})$/.\1/' | sed -E 's/^0*([0-9])/\1/')
+	echo $d
+    }
+fi
 for pathT in ${SHARED_ROOT} ${HOME}; do
     if [[ -d "${pathT}/.bashrc.d" ]]; then
-        if [[ -n "${BASHRC_DEBUG}" ]]; then >&2 echo "Sourcing ${pathT}/.bashrc.d ..."; fi
+        if [[ -n "${BASHRC_DEBUG}" ]]; then >&2 echo "$(duration)s: Sourcing ${pathT}/.bashrc.d ..." ; fi
 	
         files=$(find "${pathT}/.bashrc.d/" -type f ! -name '*~' | LC_ALL=C sort)
 	
@@ -87,10 +95,10 @@ for pathT in ${SHARED_ROOT} ${HOME}; do
         fi
 	
         for ff in ${files}; do
-            if [[ -n "${BASHRC_DEBUG}" ]]; then >&2 echo " - ${ff}"; fi
+            if [[ -n "${BASHRC_DEBUG}" ]]; then >&2 echo "$(duration)s:  - ${ff}"; fi
             source "${ff}"
         done
 	
-        if [[ -n "${BASHRC_DEBUG}" ]]; then >&2 echo "Sourcing ${pathT}/.bashrc.d ... done"; fi
+        if [[ -n "${BASHRC_DEBUG}" ]]; then >&2 echo "$(duration)s: Sourcing ${pathT}/.bashrc.d ... done"; fi
     fi
 done
