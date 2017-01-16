@@ -82,8 +82,8 @@ for pathT in ${SHARED_ROOT} ${HOME}; do
 	
         ## Not running in interactive mode?
         if [[ -z "$PS1" ]]; then
-          ## Drop pathnames with interactive=TRUE
-          files=$(printf "%s\n" ${files[@]} | grep -vF "interactive=TRUE")
+            ## Drop pathnames with interactive=TRUE
+            files=$(printf "%s\n" ${files[@]} | grep -vF "interactive=TRUE")
         fi
 	
         for ff in ${files}; do
