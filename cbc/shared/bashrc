@@ -74,7 +74,9 @@ prependPath ${SHARED_ROOT}/local/bin
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # CBC-shared .bashrc.d/ and ~/.bashrc.d/
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-export CBC_STARTUP_COMPLETED=
+if [[ -z ${CBC_STARTUP_COMPLETED+x} ]]; then
+    export CBC_STARTUP_COMPLETED=
+fi
 
 if [[ -n "${BASHRC_DEBUG}" ]]; then
     START_TIME=$(echo $(($(date +%s%N)/1000000)))

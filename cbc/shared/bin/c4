@@ -4,9 +4,7 @@
 ### Usage:
 ###  c4 <command> [options]
 ###
-### Commands:
-###
-### Example:
+### Examples:
 ###  c4 status              - Cluster status
 ###  c4 nodes               - List nodes that are up
 ###  c4 users               - List all users
@@ -19,10 +17,52 @@
 ### How to install:
 ### Add the following to your ~/.bashrc script:
 ###  source ${SHARED_ROOT}/bashrc
+call="$0 $*"
+args="$*"
+tool_name=$(basename $0)
 
 if test -z "$SHARED_SOFTWARE"; then
   source /home/shared/cbc/bashrc
 fi
+
+
+function mecho() { echo "$@" 1>&2; }
+
+function merror() {
+    mecho "ERROR in '${tool_name}': $*"
+    exit 1
+}
+
+function as_logical() {
+    if [[ $1 == "false" || $1 == "0" ]]; then echo 0; else echo 1; fi
+}
+
+function help() {
+    local res=$(grep -E "^###( .*|)$" $0 | cut -b 5-)
+
+    ## Substitutions
+    res=$(printf '%s\n' "${res[@]}" | sed -e "s#\${SHARED_ROOT}#$SHARED_ROOT#g")
+
+#    local search=$(basename $0)
+#    if [[ "${search}" != "${tool_name}" ]]; then
+#        res=$(printf '%s\n' "${res[@]}" | sed "s/${search}/${tool_name}/g")
+#    fi
+    printf '%s\n' "${res[@]}"
+}
+
+function whatis() {
+    local res=$(grep "^### .*[^:][[:space:]]*$" $0 | head -1 | cut -b 5-)
+    printf '%s\n' "${res[@]}"
+}
+
+function version() {
+    grep -E "^###[ ]*Version:[ ]*" $0 | sed 's/###[ ]*Version:[ ]*//g'
+}
+
+function on_compute_node() {
+    $(pbsnodes ${HOSTNAME} &> /dev/null)
+    echo $?
+}
 
 function user_info() {
     local user=$1
@@ -105,7 +145,8 @@ done
 
 
 if test $cmd == "help"; then
-    grep "^###" $0 | grep -v "^####" | cut -b 5- | sed -e "s#\${SHARED_ROOT}#$SHARED_ROOT#g"
+    help
+    exit 0
 elif test $cmd == "status"; then
     echo "# Cluster status"
     echo
@@ -123,7 +164,7 @@ elif test $cmd == "status"; then
     echo
     echo "## Job scheduler"
     echo "There are `qstat -t -n -1 | grep -E "^[0-9]+" | wc -l` cluster jobs of which `qme | grep -E "^[0-9]+" | wc -l` are yours (see 'qstat' and 'qme')"
-    if test $HOST == $HEAD_NODE; then
+    if [[ $(on_compute_node) -ne 0 ]]; then
 	echo "Moab status: $(service moab status)"
         echo
         echo "## Head-Node Status"
@@ -164,45 +205,20 @@ elif test $cmd == "ps"; then
     printf '%s\n' "${hdr[@]}"
     printf '%s\n' "${res[@]}"
 elif test $cmd == "head"; then
-    if test $HOST != $HEAD_NODE; then
-	echo "ERROR: c4 head is only supported on the head node ($HEAD_NODE): $HOST"
-	exit 1
+    if [[ $(on_compute_node) -eq 0 ]]; then
+         merror "Command '${tool_name} ${cmd}' only works on the head node: $HOST"
     fi
-
-    hdr=$(ps uax | bpstat -P | head -1 | sed -E 's/^NODE[ ]*//g')
-    bfr=$(ps uax | bpstat -P | grep -E "^  " | grep -E -v "^[ ]+root" | sed -E 's/^[ ]*//g' | grep -E -v "$USER .* (ps uax|grep -E |.*c4 head|sed -E)")
-    if test $full == "FALSE"; then
-        bfr=$(printf '%s\n' "${bfr[@]}" | grep -v -E "( |-|/)(top|watch|qdel|qsub|qstat|bpstat|sh|bash|dbus-daemon|dbus-launch|zsh|tcsh|git|git-credential-cache--daemon|ssh|ssh-agent|sshd|sftp-server|mosh-server|SCREEN|screen|tmux|c4|less|more|emacs|vim|nano|pico|top|htop|ping|rsync|man|sendmail|fetchmail|lftp)( |:|$)")
-
-	## HB's Cron jobs (calling this method)
-        bfr=$(printf '%s\n' "${bfr[@]}" | grep -v -E "scan-c4_head")
-	
-	## Nextflow (http://www.nextflow.io/)
-        bfr=$(printf '%s\n' "${bfr[@]}" | grep -v -E "java .* [-]Dcapsule[.]app=nextflow")
-    fi
-
-    for user in ${users[@]}; do
-	uid=$(id -u $user)
-	res=$(printf '%s\n' "${bfr[@]}" | grep -E "^($user|$uid) " | grep -v "grep -E \"$user \"")
-        if test "${res[@]}" == ""; then
-            if test $full == "TRUE"; then
-                user_info "$user"
-	    fi
-	else 
-            user_info "$user"
-	    pids=$(printf "${res[@]}" | sed -E 's/^[ ]*[^ ]+[ ]+([0-9]+)[ ]+.*/\1/g' | grep -E "[0-9]+")
-	    pids="${pids[@]}"
-            printf "PIDs (on the head node): "
-	    echo ${pids}
-	    printf '%s\n' "${hdr[@]}"
-	    printf '%s\n' "${res[@]}"
-	    echo
-	fi
-    done    
+    
+    subcmd="${tool_name}-${cmd}"
+    PATH="$(dirname $0):$PATH"
+    export C4_TOOLS=1
+    ${subcmd} ${args}
+    res=$?
+    export C4_TOOLS=
+    exit ${res}
 elif test $cmd == "disk_usage"; then
     if test ${#users[@]} -gt 1 && test "$all" == "FALSE"; then
-	echo "ERROR: Did you forget --me or --user <user>?  If you wish to apply for multiple users, please confirm by specifying --all"
-	exit 1
+	merror "Did you forget --me or --user <user>?  If you wish to apply for multiple users, please confirm by specifying --all"
     fi
     for user in ${users[@]}; do
       user_info "$user"
@@ -255,8 +271,7 @@ elif test $cmd == "find_sam_with_bam"; then
     echo
 elif test $cmd == "large_files"; then
     if test ${#users[@]} -gt 1 && test "$all" == "FALSE"; then
-	echo "ERROR: Did you forget --me or --user <user>?  If you wish to apply for multiple users, please confirm by specifying --all"
-	exit 1
+	merror "Did you forget --me or --user <user>?  If you wish to apply for multiple users, please confirm by specifying --all"
     fi
     echo "Cluster users: [n=${#users[@]}] ${users[@]}"
 
@@ -266,8 +281,7 @@ elif test $cmd == "large_files"; then
     elif test "$class" == "text"; then
 	exts=("txt")
     else
-	echo "ERROR: --class <class> is missing."
-	exit 1
+	merror "--class <class> is missing."
     fi
 
     minsize=50000k
@@ -289,16 +303,14 @@ elif test $cmd == "large_files"; then
         echo "find options: $opts"
         find . -type f $opts ! -f '*.gz' -exec gzip
     else
-	echo "ERROR: --action <action> is missing."
-	exit 1
+	merror "--action <action> is missing."
     fi
 elif test $cmd == "apply"; then
     echo "Nodes to be called: $(echo $nodes)"
     node_cmd="$*"
     echo "Command applied to each node: '$node_cmd'"
     if test -z "$node_cmd"; then
-      echo "ERROR: Missing command to be called on each node"
-      exit -1
+      merror "Missing command to be called on each node"
     fi
     for node in $nodes; do
 	echo NODE $node:
@@ -311,9 +323,8 @@ elif test $cmd == "sync-to-scratch"; then
     srcdir=$(eval echo ~$USER)/cluster/scratch/
     destdir=/scratch/$USER/
 
-    if test $HOST == "HEAD_NODE"; then
-	echo "ERROR: Trying to sync $srcdir to local disk on the head node."
-	exit 1
+    if [[ $(on_compute_node) -ne 0 ]]; then
+	merror "Trying to sync $srcdir to local disk on the head node."
     fi
 
     if test ! -d "$srcdir"; then

@@ -7,7 +7,7 @@ fi
 if [[ "$PS1" ]]; then
     ## ... on the head node? (c4 head only works there)
     if test "$HOSTNAME" == "cclc01.som.ucsf.edu"; then
-        bfr=$(/home/shared/cbc/bin/c4 head --user ${USER})
+        bfr=$(/home/shared/cbc/bin/c4-head --user ${USER})
         if [[ -n "${bfr}" ]]; then
             tput setaf 3 2> /dev/null ## yellow
             >&2 echo

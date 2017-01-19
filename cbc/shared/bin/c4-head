@@ -1,0 +1,172 @@
+#!/usr/bin/env bash
+### UCSF C4 Toolkit:
+### List head-node processes of a user
+###
+### Usage:
+###  c4-head [options]
+###
+### Options:
+###  --user <user>       Specify user (default: _all_)
+###  --me                Same as '--user \$USER'
+###  --filter <logical>  Exclude processes on white list (default: true)
+###  --help              This help
+###
+### Example:
+###  c4-head
+###  c4-head --me
+###  c4-head --user alice
+###
+### Version: 0.1.0-9000
+### Copyright: Henrik Bengtsson (2016-2017)
+### License: GPL (>= 2.1) [https://www.gnu.org/licenses/gpl.html]
+call="$0 $*"
+tool_name=$(basename $0)
+if [[ ${C4_TOOLS} -ne 0 ]]; then
+   tool_name=${tool_name/-/ }
+fi
+
+function mecho() { echo "$@" 1>&2; }
+
+function merror() {
+    mecho "ERROR in '${tool_name}': $*"
+    exit 1
+}
+
+function as_logical() {
+    if [[ $1 == "false" || $1 == "0" ]]; then echo 0; else echo 1; fi
+}
+
+function help() {
+    local res=$(grep -E "^###( .*|)$" $0 | cut -b 5-)
+    local search=$(basename $0)
+    if [[ "${search}" != "${tool_name}" ]]; then
+        res=$(printf '%s\n' "${res[@]}" | sed "s/${search}/${tool_name}/g")
+    fi
+    printf '%s\n' "${res[@]}"
+}
+
+function whatis() {
+    local res=$(grep "^### .*[^:][[:space:]]*$" $0 | head -1 | cut -b 5-)
+    printf '%s\n' "${res[@]}"
+}
+
+function version() {
+    grep -E "^###[ ]*Version:[ ]*" $0 | sed 's/###[ ]*Version:[ ]*//g'
+}
+
+## Cluster functions
+function on_compute_node() {
+    $(pbsnodes ${HOSTNAME} &> /dev/null)
+    echo $?
+}
+
+function all_users() {
+  cat /etc/passwd | grep -F "/home/" | grep -E "(@|inactive)" | cut -d':' -f1 | sort -u
+}
+
+function user_info() {
+    local user=$1
+    local uid=$(id -u $user)
+    local info=$(grep -E "^$user:" /etc/passwd | cut -d: -f5)
+    local groups=$(groups $user | sed 's/.*:[ ]*//g')
+    echo "$user [$info, UID $uid, GROUPS $groups]:"
+}
+
+user=_all_
+filter=1
+
+# Parse command-line options
+while [[ $# > 0 ]]; do
+    opt=$1
+    if test "$1" == "--help"; then
+        help
+        exit 0
+    elif test "$1" == "--whatis"; then
+        whatis
+        exit 0
+    elif test "$1" == "--version"; then
+        version
+        exit 0
+    elif test "$1" == "--user"; then
+        shift
+        user=$1
+    elif test "$1" == "--me"; then
+        user=${USER}
+    elif test "$1" == "--filter"; then
+        shift
+        filter=$1
+    else
+        extras="$extras $1"
+    fi
+    shift
+done
+
+filter=$(as_logical $filter)
+
+## Assert running on head node
+if [[ $(on_compute_node) -eq 0 ]]; then
+    merror "This command only works on the head node: $HOST"
+fi
+
+
+## Check all users?
+if [[ $user == *","* ]]; then
+    mecho "Multiple users: $user"
+    users=$(echo ${user} | sed 's/,/ /')
+elif [[ $user == *" "* ]]; then
+    mecho "Multiple users: $user"
+elif [[ ${user} == "_all_" ]]; then
+    users=$(all_users)
+else
+    users=${user}
+fi
+
+	
+## Query ps + bpstat for _all_ running head-node processes
+## Note: head node process are those without NODE information.
+res=$(ps uax | bpstat -P | grep -E "^  " | grep -E -v "^[ ]+root" | sed -E 's/^[ ]*//g' | grep -E -v "$USER .* (ps uax|grep -E |.*c4 head|sed -E)")
+
+## Apply whitelist filter?
+if [[ $filter -ne 0 ]]; then
+    res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(top|watch|qdel|qsub|qstat|bpstat|sh|bash|dbus-daemon|dbus-launch|zsh|tcsh|git|git-credential-cache--daemon|ssh|ssh-agent|sshd|sftp-server|mosh-server|SCREEN|screen|tmux|c4|less|more|emacs|vim|nano|pico|top|htop|ping|rsync|man|sendmail|fetchmail|lftp)( |:|$)")
+    
+    ## HB's Cron jobs (calling this method)
+    res=$(printf '%s\n' "${res[@]}" | grep -v -E "scan-c4_head")
+    
+    ## Nextflow (http://www.nextflow.io/)
+    res=$(printf '%s\n' "${res[@]}" | grep -v -E "java .* [-]Dcapsule[.]app=nextflow")
+fi
+
+
+## Nothing to do?
+if [[ -z "${res[@]}" ]]; then exit 0; fi
+
+
+## For each user
+for user in ${users}; do
+  ## Identify user
+  uid=$(id -u $user 2> /dev/null)
+  if [[ $? -ne 0 ]]; then
+      merror "No such user: $user"
+  fi
+
+  ## Keep only those for the user of interest
+  res_ii=$(printf '%s\n' "${res[@]}" | grep -E "^($user|$uid) " | grep -v "grep -E \"$user \"")
+
+  ## Nothing to do?
+  if [[ -z "${res_ii[@]}" ]]; then continue; fi
+
+
+  ## Display user information
+  user_info "$user"
+  
+  ## Display processes
+  pids=$(printf "${res_ii[@]}" | sed -E 's/^[ ]*[^ ]+[ ]+([0-9]+)[ ]+.*/\1/g' | grep -E "[0-9]+")
+  pids="${pids[@]}"
+  printf "PIDs (on the head node): "
+  echo ${pids}
+  ps uax | bpstat -P | head -1 | sed -E 's/^NODE[ ]*//g'
+  printf '%s\n' "${res_ii[@]}"
+
+  echo
+done
