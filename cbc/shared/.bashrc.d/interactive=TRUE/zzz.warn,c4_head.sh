@@ -1,3 +1,8 @@
+## Nothing to do?
+if [[ $CBC_STARTUP_COMPLETED == *"c4_head"* ]]; then
+    return;
+fi
+
 ## Running in interactive mode?
 if [[ "$PS1" ]]; then
     ## ... on the head node? (c4 head only works there)
@@ -15,4 +20,7 @@ if [[ "$PS1" ]]; then
             tput sgr0 2> /dev/null    ## reset
         fi
     fi
+    
+    ## Flag as done
+    export CBC_STARTUP_COMPLETED="${CBC_STARTUP_COMPLETED} c4_head"
 fi
