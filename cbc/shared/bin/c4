@@ -104,40 +104,39 @@ for n in $CLUSTER_NODES_UP; do nodes="$nodes n$n"; done
 users=($(cat /etc/passwd | grep -F "/home/" | grep -E "(@|inactive)" | cut -d':' -f1 | sort -u))
 
 while [[ $# > 0 ]]; do
-    opt=$1
-    if [[ "$opt" == "--nodes" ]]; then
-        nodes=$2
+    if [[ "$1" == "--nodes" ]]; then
         shift
-    elif [[ "$opt" == "--node" ]]; then
-        nodes=$2
+        nodes=$1
+    elif [[ "$1" == "--node" ]]; then
         shift
-    elif [[ "$opt" == "--users" ]]; then
-	users=($(echo $2 | sed 's/,/ /g'))
+        nodes=$1
+    elif [[ "$1" == "--users" ]]; then
+	shift
+	users=($(echo $1 | sed 's/,/ /g'))
 	all=TRUE
-	shift
-    elif [[ "$opt" == "--user" ]]; then
+    elif [[ "$1" == "--user" ]]; then
 	users=($(echo $2 | sed 's/,/ /g'))
 	shift
-    elif [[ "$opt" == "--me" ]]; then
+    elif [[ "$1" == "--me" ]]; then
 	users=($USER)
 	shift
-    elif [[ "$opt" == "--all" ]]; then
+    elif [[ "$1" == "--all" ]]; then
 	all=TRUE
-    elif [[ "$opt" == "--clean" ]]; then
+    elif [[ "$1" == "--clean" ]]; then
 	clean=TRUE
-    elif [[ "$opt" == "--class" ]]; then
-        class=$2
+    elif [[ "$1" == "--class" ]]; then
 	shift
-    elif [[ "$opt" == "--action" ]]; then
-        action=$2
+        class=$1
+    elif [[ "$1" == "--action" ]]; then
         shift
-    elif [[ "$opt" == "--full" ]]; then
+        action=$1
+    elif [[ "$1" == "--full" ]]; then
         full=TRUE
-    elif [[ "$opt" == "--verbose" ]]; then
+    elif [[ "$1" == "--verbose" ]]; then
         verbose=TRUE
-    elif [[ "$opt" == "--dry-run" ]]; then
+    elif [[ "$1" == "--dry-run" ]]; then
         dryrun=TRUE
-    elif [[ "$opt" == "--force" ]]; then
+    elif [[ "$1" == "--force" ]]; then
         force=TRUE
     fi
     shift
