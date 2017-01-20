@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 ### UCSF C4 Toolkit:
-### Summarize cluster status
+### Cluster status summary
 ###
 ### Usage:
 ###  c4-status [options]
