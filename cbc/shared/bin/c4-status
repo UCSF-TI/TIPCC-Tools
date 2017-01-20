@@ -53,7 +53,7 @@ function version() {
 function on_compute_node() {
     if [[ -z ${ISCOMPUTENODE+x} ]]; then
         pbsnodes ${HOSTNAME} &> /dev/null
-        echo $?
+        if [[ $? -eq 0 ]]; then echo 1; else echo 0; fi
     else
 	echo $(as_logical ${ISCOMPUTENODE})
     fi
