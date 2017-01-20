@@ -6,7 +6,7 @@
 ###  c4-ps [options]
 ###
 ### Options:
-###  --nodes <list>      List of nodes (default: _all_)
+###  --nodes <list>      List of nodes (default: _all_ or current node)
 ###  --help              This help
 ###
 ### Example:
@@ -91,7 +91,15 @@ while [[ $# > 0 ]]; do
     shift
 done
 
-if [[ -z ${nodes} || ${nodes} == "_all_" ]]; then
+if [[ -z ${nodes} ]]; then
+    if [[ $(on_compute_node) -eq 1 ]]; then
+	nodes=${HOSTNAME}
+    else
+	nodes=_all_
+    fi
+fi
+
+if [[ ${nodes} == "_all_" ]]; then
     nodes=head
     for n in $(compute_nodes_up); do nodes="$nodes n$n"; done
 else
@@ -99,11 +107,19 @@ else
     nodes=${nodes/,/ }
 fi
 
+## Drop 'n' prefix
+nodes=$(echo ${nodes} | sed 's/n//g')
+
+## Other nodes can only be queried from the head node
+if [[ $(on_compute_node) -eq 1 && "n${nodes}" != "${HOSTNAME}" ]]; then
+    merror "Processes on other nodes can only be queried from the head node: ${HOSTNAME}"
+fi
+
 ## Get _all_ processes on the cluster
 bfr=$(ps uax | bpstat -P | sed -E 's/^    /head/')
 
 ## Filter by nodes
-nodesT=$(echo ${nodes} | sed 's/n//g' | sed -E 's/(,| )/|/g')
+nodesT=$(echo ${nodes} | sed -E 's/(,| )/|/g')
 res=$(printf '%s\n' "${bfr[@]}" | grep -E "^(${nodesT})[ ]+")
 
 ## Sort
