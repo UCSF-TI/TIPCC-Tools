@@ -7,6 +7,13 @@
 ###
 ### Options:
 ###  --user <user>       Specify user (default: \$USER)
+###
+###  --jobs              List cluster jobs / tasks
+###  --head              List head-node processes
+###  --disk-usage        List disk usage (slow)
+###  --all               As --jobs --head --disk-usage
+###  --most              As --all without --disk-usage
+###
 ###  --help              This help
 ###
 ### Example:
@@ -76,6 +83,7 @@ function user_info() {
 user=${USER}
 jobs=0
 head=0
+disk_usage=0
 
 # Parse command-line options
 while [[ $# > 0 ]]; do
@@ -97,9 +105,15 @@ while [[ $# > 0 ]]; do
         jobs=1
     elif [[ "$1" == "--head" ]]; then
         head=1
+    elif [[ "$1" == "--disk-usage" ]]; then
+        disk_usage=1
+    elif [[ "$1" == "--most" ]]; then
+        jobs=1
+        head=1
     elif [[ "$1" == "--all" ]]; then
         jobs=1
         head=1
+        disk_usage=1
     else
         extras="$extras $1"
     fi
@@ -154,6 +168,18 @@ if [[ $head -eq 1 ]]; then
     else
         echo "Head node PIDs : <none>"
     fi
+fi
+
+## Disk usage
+if [[ $disk_usage -eq 1 ]]; then
+    echo "Disk usage     :"
+    for path in $home /data/$user/ /work/$user/; do
+       printf " - "
+       if [[ -d $path ]]; then
+           du -sh $path
+       fi
+    done
+    echo
 fi
 
 
