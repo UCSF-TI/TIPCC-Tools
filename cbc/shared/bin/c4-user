@@ -6,6 +6,8 @@
 ###  c4-user [options]
 ###
 ### Options:
+###  --list              List all users
+###
 ###  --user <user>       Specify user (default: \$USER)
 ###
 ###  --jobs              List cluster jobs / tasks
@@ -81,8 +83,8 @@ function user_info() {
 }
 
 user=${USER}
+moab=1
 jobs=0
-moab=0
 head=0
 disk_usage=0
 
@@ -100,6 +102,9 @@ while [[ $# > 0 ]]; do
     elif [[ "$1" == "--user" ]]; then
         shift
         user=$1
+    elif [[ "$1" == "--list" ]]; then
+        all_users
+	exit 0
     elif [[ "$1" == "--me" ]]; then
         user=${USER}
     elif [[ "$1" == "--jobs" ]]; then
