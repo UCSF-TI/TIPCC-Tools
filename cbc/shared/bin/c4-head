@@ -56,8 +56,12 @@ function version() {
 
 ## Cluster functions
 function on_compute_node() {
-    $(pbsnodes ${HOSTNAME} &> /dev/null)
-    echo $?
+    if [[ -z ${ISCOMPUTENODE+x} ]]; then
+        pbsnodes ${HOSTNAME} &> /dev/null
+        echo $?
+    else
+	echo $(as_logical ${ISCOMPUTENODE})
+    fi
 }
 
 function all_users() {
@@ -72,27 +76,31 @@ function user_info() {
     echo "$user [$info, UID $uid, GROUPS $groups]:"
 }
 
+what="users"
 user=_all_
 filter=1
 
 # Parse command-line options
 while [[ $# > 0 ]]; do
-    opt=$1
-    if test "$1" == "--help"; then
+    if [[ "$1" == "--help" ]]; then
         help
         exit 0
-    elif test "$1" == "--whatis"; then
+    elif [[ "$1" == "--whatis" ]]; then
         whatis
         exit 0
-    elif test "$1" == "--version"; then
+    elif [[ "$1" == "--version" ]]; then
         version
         exit 0
-    elif test "$1" == "--user"; then
+    elif [[ "$1" == "--himem" ]]; then
+        what=himem
+    elif [[ "$1" == "--hicpu" ]]; then
+        what=hicpu
+    elif [[ "$1" == "--user" ]]; then
         shift
         user=$1
-    elif test "$1" == "--me"; then
+    elif [[ "$1" == "--me" ]]; then
         user=${USER}
-    elif test "$1" == "--filter"; then
+    elif [[ "$1" == "--filter" ]]; then
         shift
         filter=$1
     else
@@ -104,8 +112,24 @@ done
 filter=$(as_logical $filter)
 
 ## Assert running on head node
-if [[ $(on_compute_node) -eq 0 ]]; then
-    merror "This command only works on the head node: $HOST"
+if [[ $(on_compute_node) -ne 0 ]]; then
+    merror "This command only works on the head node: ${HOSTNAME}"
+fi
+
+
+if [[ $what == "himem" || $what == "hicpu" ]]; then
+    printf "USER\tPID\t%%CPU\t%%MEM\tPROCESS\n"
+    
+    PATH="$(dirname $0):$PATH"
+    bfr=$(c4-ps --nodes head | grep -vE "^USER" | awk '{printf "%s\t%s\t%s\t%s\t%s\n", $2, $3, $4, $5, $12}')
+    if [[ $what == "himem" ]]; then
+	sort_by=4
+    elif [[ $what == "hicpu" ]]; then
+	sort_by=3
+    fi
+    
+    printf '%s\n' "${bfr[@]}" | sort --key=${sort_by} -r -n | head -5
+    exit 0
 fi
 
 
