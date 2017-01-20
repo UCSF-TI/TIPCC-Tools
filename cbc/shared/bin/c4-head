@@ -152,7 +152,7 @@ res=$(ps uax | bpstat -P | grep -E "^  " | grep -E -v "^[ ]+root" | sed -E 's/^[
 
 ## Apply whitelist filter?
 if [[ $filter -ne 0 ]]; then
-    res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(top|watch|qdel|qsub|qstat|bpstat|sh|bash|dbus-daemon|dbus-launch|zsh|tcsh|git|git-credential-cache--daemon|ssh|ssh-agent|sshd|sftp-server|mosh-server|SCREEN|screen|tmux|c4|less|more|emacs|vim|nano|pico|top|htop|ping|rsync|man|sendmail|fetchmail|lftp|wget)( |:|$)")
+    res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(top|watch|qdel|qsub|qstat|bpstat|sh|bash|dbus-daemon|dbus-launch|zsh|tcsh|git|git-credential-cache--daemon|ssh|ssh-agent|sshd|sftp-server|mosh-server|SCREEN|screen|tmux|c4|less|more|emacs|vim|nano|pico|top|htop|ping|rsync|man|sendmail|fetchmail|lftp|wget|tail)( |:|$)")
     
     ## HB's Cron jobs (calling this method)
     res=$(printf '%s\n' "${res[@]}" | grep -v -E "scan-c4_head")
