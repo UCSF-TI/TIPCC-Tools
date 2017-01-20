@@ -96,8 +96,8 @@ echo
 echo "## Job scheduler"
 echo "There are `qstat -t -n -1 | grep -E "^[0-9]+" | wc -l` cluster jobs of which `qme | grep -E "^[0-9]+" | wc -l` are yours (see 'qstat' and 'qme')"
 
-if [[ $(on_compute_node) -ne 0 ]]; then
+if [[ $(on_compute_node) -eq 0 ]]; then
     echo "Moab status: $(service moab status)"
 else
-    echo "NOTE: Moab status is only available from the head node: ${HOSTNAME}"
+    echo "Moab status: <only available from the head node: ${HOSTNAME}>"
 fi
