@@ -11,7 +11,7 @@
 ###  c4 ps --node head      - List all processes on the head node
 ###  c4 ps --node n6        - List all processes on node n6
 ###  c4 head                - List users' usage of head node
-###  c4 disk_usage          - Summarize a users disk usage
+###  c4 disk_usage          - Summarize a user's disk usage
 ###  c4 delete_sam_with_bam - Delete SAM files with existing (newer) BAM file
 ###
 ### How to install:
@@ -21,7 +21,7 @@ call="$0 $*"
 args="$*"
 tool_name=$(basename $0)
 
-if test -z "$SHARED_SOFTWARE"; then
+if [[ -z "$SHARED_SOFTWARE" ]]; then
   source /home/shared/cbc/bashrc
 fi
 
@@ -73,7 +73,7 @@ function user_info() {
 }
 
 cmd=$1
-if test "$cmd" == ""; then
+if [[ "$cmd" == "" ]]; then
     cmd="help"
 fi
 
@@ -105,39 +105,39 @@ users=($(cat /etc/passwd | grep -F "/home/" | grep -E "(@|inactive)" | cut -d':'
 
 while [[ $# > 0 ]]; do
     opt=$1
-    if test "$opt" == "--nodes"; then
+    if [[ "$opt" == "--nodes" ]]; then
         nodes=$2
         shift
-    elif test "$opt" == "--node"; then
+    elif [[ "$opt" == "--node" ]]; then
         nodes=$2
         shift
-    elif test "$opt" == "--users"; then
+    elif [[ "$opt" == "--users" ]]; then
 	users=($(echo $2 | sed 's/,/ /g'))
 	all=TRUE
 	shift
-    elif test "$opt" == "--user"; then
+    elif [[ "$opt" == "--user" ]]; then
 	users=($(echo $2 | sed 's/,/ /g'))
 	shift
-    elif test "$opt" == "--me"; then
+    elif [[ "$opt" == "--me" ]]; then
 	users=($USER)
 	shift
-    elif test "$opt" == "--all"; then
+    elif [[ "$opt" == "--all" ]]; then
 	all=TRUE
-    elif test "$opt" == "--clean"; then
+    elif [[ "$opt" == "--clean" ]]; then
 	clean=TRUE
-    elif test "$opt" == "--class"; then
+    elif [[ "$opt" == "--class" ]]; then
         class=$2
 	shift
-    elif test "$opt" == "--action"; then
+    elif [[ "$opt" == "--action" ]]; then
         action=$2
         shift
-    elif test "$opt" == "--full"; then
+    elif [[ "$opt" == "--full" ]]; then
         full=TRUE
-    elif test "$opt" == "--verbose"; then
+    elif [[ "$opt" == "--verbose" ]]; then
         verbose=TRUE
-    elif test "$opt" == "--dry-run"; then
+    elif [[ "$opt" == "--dry-run" ]]; then
         dryrun=TRUE
-    elif test "$opt" == "--force"; then
+    elif [[ "$opt" == "--force" ]]; then
         force=TRUE
     fi
     shift
@@ -147,10 +147,10 @@ export C4_TOOLS=1
 subcmd="${tool_name}-${cmd}"
 PATH="$(dirname $0):$PATH"
 
-if test $cmd == "help"; then
+if [[ $cmd == "help" ]]; then
     help
     exit 0
-elif test $cmd == "status"; then
+elif [[ $cmd == "status" ]]; then
     echo "# Cluster status"
     echo
     echo "## Nodes"
@@ -164,9 +164,9 @@ elif test $cmd == "status"; then
         c4-head --hicpu
         echo
     fi
-elif test $cmd == "nodes"; then
+elif [[ $cmd == "nodes" ]]; then
     echo "Cluster nodes (that are up): $(echo $CLUSTER_NODES_UP)"
-elif test $cmd == "checknodes"; then
+elif [[ $cmd == "checknodes" ]]; then
     echo "Cluster nodes: $(echo $CLUSTER_NODES)"
     echo "Cluster nodes (that are up): $(echo $CLUSTER_NODES_UP)"
     echo "Cluster nodes (that are down): $(echo $CLUSTER_NODES_DOWN)"    
@@ -175,18 +175,18 @@ elif test $cmd == "checknodes"; then
 	status=$(/opt/moab/bin/checknode n$node | grep State: | sed 's/State: *//g')
 	echo "$status"
     done
-elif test $cmd == "users"; then
-    if test $clean == "TRUE"; then
+elif [[ $cmd == "users" ]]; then
+    if [[ $clean == "TRUE" ]]; then
       echo "${users[@]}"
     else
       echo "Cluster users: [n=${#users[@]}] ${users[@]}"
     fi
-elif test $cmd == "ps"; then
+elif [[ $cmd == "ps" ]]; then
     ${subcmd} ${args}
     res=$?
     export C4_TOOLS=
     exit ${res}
-elif test $cmd == "head"; then
+elif [[ $cmd == "head" ]]; then
     if [[ $(on_compute_node) -eq 0 ]]; then
          merror "Command '${tool_name} ${cmd}' only works on the head node: $HOST"
     fi
@@ -196,20 +196,20 @@ elif test $cmd == "head"; then
     res=$?
     export C4_TOOLS=
     exit ${res}
-elif test $cmd == "disk_usage"; then
-    if test ${#users[@]} -gt 1 && test "$all" == "FALSE"; then
+elif [[ $cmd == "disk_usage" ]]; then
+    if [[ ${#users[@]} -gt 1 && "$all" == "FALSE" ]]; then
 	merror "Did you forget --me or --user <user>?  If you wish to apply for multiple users, please confirm by specifying --all"
     fi
     for user in ${users[@]}; do
       user_info "$user"
       for path in $(eval echo ~$user) /data/$user/ /work/$user/; do
-	  if test -d $path; then
+	  if [[ -d $path ]]; then
 	      du -sh $path
 	  fi
       done
       echo
     done
-elif test $cmd == "find_sam_with_bam"; then
+elif [[ $cmd == "find_sam_with_bam" ]]; then
     echo "Searching for SAM files with a newer BAM files"
     echo "Path (recursively): $(pwd)"
     find . -type f -iname "*.sam" | sort -u > $TMPDIR/sam.txt
@@ -249,16 +249,16 @@ elif test $cmd == "find_sam_with_bam"; then
       echo "No SAM files found."
     fi
     echo
-elif test $cmd == "large_files"; then
-    if test ${#users[@]} -gt 1 && test "$all" == "FALSE"; then
+elif [[ $cmd == "large_files" ]]; then
+    if [[ ${#users[@]} -gt 1 && "$all" == "FALSE" ]]; then
 	merror "Did you forget --me or --user <user>?  If you wish to apply for multiple users, please confirm by specifying --all"
     fi
     echo "Cluster users: [n=${#users[@]}] ${users[@]}"
 
     exts=()
-    if test "$class" == "htseq"; then
+    if [[ "$class" == "htseq" ]]; then
 	exts=("pileup" "mpileup" "fastq" "fq" "sam")
-    elif test "$class" == "text"; then
+    elif [[ "$class" == "text" ]]; then
 	exts=("txt")
     else
 	merror "--class <class> is missing."
@@ -275,31 +275,31 @@ elif test $cmd == "large_files"; then
  #   done
 
 
-    if test "$action" == "list"; then
+    if [[ "$action" == "list" ]]; then
         echo "find options: $opts"
         find . -type f ${opts} -exec ls -lh {} \; | awk '{ print $9 ": " $5 " (" $6 " " $7 " " $8 ")" }'
 #        find . -type f $opts -exec ls -lh {} \; | awk '{ print $9 ": " $5 " (" $6 " " $7 " " $8 ")" }'
-    elif test "$action" == "gzip"; then
+    elif [[ "$action" == "gzip" ]]; then
         echo "find options: $opts"
         find . -type f $opts ! -f '*.gz' -exec gzip
     else
 	merror "--action <action> is missing."
     fi
-elif test $cmd == "apply"; then
+elif [[ $cmd == "apply" ]]; then
     echo "Nodes to be called: $(echo $nodes)"
     node_cmd="$*"
     echo "Command applied to each node: '$node_cmd'"
-    if test -z "$node_cmd"; then
+    if [[ -z "$node_cmd" ]]; then
       merror "Missing command to be called on each node"
     fi
     for node in $nodes; do
 	echo NODE $node:
 	call="ssh $node $node_cmd"
 	echo $call
-	if test "$dryrun" == "TRUE"; then $call; fi
+	if [[ "$dryrun" == "TRUE" ]]; then $call; fi
 	echo
     done
-elif test $cmd == "sync-to-scratch"; then
+elif [[ $cmd == "sync-to-scratch" ]]; then
     srcdir=$(eval echo ~$USER)/cluster/scratch/
     destdir=/scratch/$USER/
 
@@ -307,7 +307,7 @@ elif test $cmd == "sync-to-scratch"; then
 	merror "Trying to sync $srcdir to local disk on the head node."
     fi
 
-    if test ! -d "$srcdir"; then
+    if [[ ! -d "$srcdir" ]]; then
 	echo "WARNING: Cannot sync $srcdir to $destdir on local disk on compute node $HOST, because source directory does not exist. Skipping."
 	exit 1
     fi
@@ -315,30 +315,32 @@ elif test $cmd == "sync-to-scratch"; then
     mkdir -p $destdir
 
     xopts=
-    if test -n "$dryrun" == "TRUE"; then xopts="$xopts --dry-run"; fi
+    if [[ "$dryrun" == "TRUE" ]]; then
+	xopts="$xopts --dry-run";
+    fi
     
     call="rsync -vLropgtD --delete --exclude='*~' --exclude='*.bak' --exclude='*.log' --exclude='*.out' --exclude='*.err' --exclude='*.logs/' --exclude='*.HIDE*/' --exclude=downloads/ --exclude=.async/ $xopts $srcdir $destdir"
     echo "Node: $HOST"
     echo "Command: $call"
     $call
-elif test $cmd == "software"; then
+elif [[ $cmd == "software" ]]; then
   echo "** Software in $SHARED_SOFTWARE/:"
   ls $SHARED_SOFTWARE | grep -v "~$"
-elif test $cmd == "utils"; then
+elif [[ $cmd == "utils" ]]; then
   echo "** Command-line utilities in $SHARED_BIN/:"
   ls $SHARED_BIN | grep -v "~$"
-elif test $cmd == "aliases"; then
+elif [[ $cmd == "aliases" ]]; then
   echo "** Aliases set by $SHARED_ROOT/bashrc:"
   grep "^alias" $SHARED_ROOT/bashrc | grep -v "alias git" | sort -u
-elif test $cmd == "functions"; then
+elif [[ $cmd == "functions" ]]; then
   echo "** Functions defined in bashrc and bin/* in $SHARED_ROOT/:"
   cat $SHARED_ROOT/bashrc $SHARED_BIN/* | grep "^function" | sed 's/ {//g' | sort -u
   echo
   echo "To see a function definition, use type <fcn>, e.g. type timestamp"
-elif test $cmd == "envvars"; then
+elif [[ $cmd == "envvars" ]]; then
   echo "** Environment variable set by $SHARED_ROOT/bashrc:"
   grep "^export" $SHARED_ROOT/bashrc | cut -b 8- | cut -d = -f 1 | sort -u
-elif test $cmd == "motd"; then
+elif [[ $cmd == "motd" ]]; then
   cat /etc/motd
 fi
 
