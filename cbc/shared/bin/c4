@@ -180,21 +180,6 @@ elif [[ $cmd == "users" ]]; then
     else
       echo "Cluster users: [n=${#users[@]}] ${users[@]}"
     fi
-elif [[ $cmd == "ps" ]]; then
-    ${subcmd} ${args}
-    res=$?
-    export C4_TOOLS=
-    exit ${res}
-elif [[ $cmd == "head" ]]; then
-    if [[ $(on_compute_node) -eq 0 ]]; then
-         merror "Command '${tool_name} ${cmd}' only works on the head node: $HOST"
-    fi
-    
-    export C4_TOOLS=1
-    ${subcmd} ${args}
-    res=$?
-    export C4_TOOLS=
-    exit ${res}
 elif [[ $cmd == "disk_usage" ]]; then
     if [[ ${#users[@]} -gt 1 && "$all" == "FALSE" ]]; then
 	merror "Did you forget --me or --user <user>?  If you wish to apply for multiple users, please confirm by specifying --all"
@@ -341,6 +326,16 @@ elif [[ $cmd == "envvars" ]]; then
   grep "^export" $SHARED_ROOT/bashrc | cut -b 8- | cut -d = -f 1 | sort -u
 elif [[ $cmd == "motd" ]]; then
   cat /etc/motd
+else
+    which "${subcmd}" &> /dev/null
+    if [[ $? -ne 0 ]]; then
+	merror "No such command: '${tool_name} ${cmd}'"
+    fi
+    export C4_TOOLS=1
+    ${subcmd} ${args}
+    res=$?
+    export C4_TOOLS=
+    exit ${res}
 fi
 
 export C4_TOOLS=
