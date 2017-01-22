@@ -86,14 +86,14 @@ lndir $SRC_CBC/valgrind-3.10.0 .
 lndir valgrind-3.10.0 valgrind-latest
 
 # Java
-lndir /opt/java/jre1.6.0_latest .
-lndir /opt/java/jdk1.6.0_latest .
-lndir /opt/java/jre1.7.0_latest .
-lndir /opt/java/jdk1.7.0_latest .
-lndir /opt/java/jre1.8.0_latest .
-lndir /opt/java/jdk1.8.0_latest .
-lndir jre1.8.0_latest jre-latest
-lndir jdk1.8.0_latest jdk-latest
+lndir /opt/java/jre1.6.0_latest jre-1.6.0
+lndir /opt/java/jre1.7.0_latest jre-1.7.0
+lndir /opt/java/jre1.8.0_latest jre-1.8.0
+lndir /opt/java/jdk1.6.0_latest jdk-1.6.0
+lndir /opt/java/jdk1.7.0_latest jdk-1.7.0
+lndir /opt/java/jdk1.8.0_latest jdk-1.8.0
+lndir jre-1.8.0 jre-latest
+lndir jdk-1.8.0 jdk-latest
 
 # Matlab
 lndir /opt/local/MATLAB/R2010b matlab-R2010b
