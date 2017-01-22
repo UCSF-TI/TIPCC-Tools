@@ -1,5 +1,7 @@
-## Already done?
-## if [[ ${CBC_LOADED} == *"lmod"* && -z ${CBC_FORCE} ]]; then return 0; fi
+## Nothing to do?
+#if [[ $CBC_STARTUP_COMPLETED == *"lmod"* ]]; then
+#    return;
+#fi
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Lua, LuaRocks and Lmod
@@ -25,7 +27,18 @@ if [[ -z "${MODULEPATH_USER}" ]]; then
     fi
 fi
 
-use_lmod() {
+
+function clean_lmod() {
+    ## FIXME: Something is added /cbc/GitHub/ duplicated paths
+    export MODULEPATH=$(echo $MODULEPATH | sed 's|/cbc/GitHub/[^:]*:||g')
+    
+    ## WORKAROUND:
+    ## 'module load StdEnv' may introduce :: in LD_LIBRARY_PATH
+    ## (which e.g. Linux brew will complain about)
+    export LD_LIBRARY_PATH=$(echo ${LD_LIBRARY_PATH} | sed -E 's/:$//')
+}
+
+function use_lmod() {
     if [[ "${PS1}" ]]; then
       >&2 echo "# Lmod environment modules (BETA)"
       >&2 echo
@@ -69,10 +82,7 @@ use_lmod() {
         module refresh
     fi
 
-    ## WORKAROUND:
-    ## 'module load StdEnv' may introduce :: in LD_LIBRARY_PATH
-    ## (which e.g. Linux brew will complain about)
-    export LD_LIBRARY_PATH=$(echo ${LD_LIBRARY_PATH} | sed -E 's/:$//')
+    clean_lmod
 }
 
 
@@ -82,4 +92,5 @@ if [[ -f "${HOME}/.lmod" && ! -f "${HOME}/.no.lmod" ]]; then
     use_lmod
 fi
 
-export CBC_LOADED="${CBC_LOADED} lmod"
+
+export CBC_STARTUP_COMPLETED="$CBC_STARTUP_COMPLETED lmod"

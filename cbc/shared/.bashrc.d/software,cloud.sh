@@ -7,8 +7,9 @@ prependPath ${SHARED_SOFTWARE}/dropbox-cli
 alias dropbox="python ${SHARED_SOFTWARE}/dropbox-cli/dropbox.py"
 
 # s3cmd (Amazon AWS S3)
-prependPath ${SHARED_SOFTWARE}/s3cmd-latest
-alias s3cmd=${SHARED_SOFTWARE}/s3cmd-latest/s3cmd
+module_load s3cmd ""
+#prependPath ${SHARED_SOFTWARE}/s3cmd-latest
+
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

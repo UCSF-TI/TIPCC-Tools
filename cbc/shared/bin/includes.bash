@@ -70,6 +70,35 @@ function prependPath() {
   uniquePath
 } # prependPath()
 
+if [[ $CBC_STARTUP_COMPLETED == *"lmod"* ]]; then
+  function module_load() {
+      local name=$1
+      name=${name,,} ## To lower case
+      local modulepath=$MODULEPATH
+      ## Don't load from the Spack software stack
+      MODULEPATH=$(echo $MODULEPATH | tr : '\n' | grep -vF "spack/lmod" | tr '\n' :)
+      mecho "module_load ${name}"
+      module load ${name}
+      MODULEPATH=$modulepath
+  }
+else
+  function module_load() {
+      ## mecho module_load $*
+      local name=$1
+      local version=latest
+      if [[ $name == *"/"* ]]; then
+        version=$(echo $name | sed 's|.*/||g')
+        name=$(echo $name | sed 's|/.*||g')
+      fi
+##      mecho "module_load ${name}/${version} (fake)"
+      local subdir=$2
+      if [[ $# == 1 ]]; then subdir="/bin"; fi
+      local path=${SHARED_SOFTWARE}/${name}-${version}${subdir}
+  ##    mecho path=$path
+      prependPath $path
+  }
+fi
+
 function prependManPath() {
   if test -z "$1"; then
     echo "prependManPath(): Path is missing."
