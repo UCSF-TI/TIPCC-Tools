@@ -103,6 +103,7 @@ for n in $CLUSTER_NODES_UP; do nodes="$nodes n$n"; done
 ## Identify all users on the cluster
 users=($(cat /etc/passwd | grep -F "/home/" | grep -E "(@|inactive)" | cut -d':' -f1 | sort -u))
 
+extras=
 while [[ $# > 0 ]]; do
     if [[ "$1" == "--nodes" ]]; then
         shift
@@ -138,6 +139,8 @@ while [[ $# > 0 ]]; do
         dryrun=TRUE
     elif [[ "$1" == "--force" ]]; then
         force=TRUE
+    else
+	extras="$extras $1"
     fi
     shift
 done
@@ -271,7 +274,7 @@ elif [[ $cmd == "large_files" ]]; then
     fi
 elif [[ $cmd == "apply" ]]; then
     echo "Nodes to be called: $(echo $nodes)"
-    node_cmd="$*"
+    node_cmd="$extras"
     echo "Command applied to each node: '$node_cmd'"
     if [[ -z "$node_cmd" ]]; then
       merror "Missing command to be called on each node"
@@ -280,7 +283,7 @@ elif [[ $cmd == "apply" ]]; then
 	echo NODE $node:
 	call="ssh $node $node_cmd"
 	echo $call
-	if [[ "$dryrun" == "TRUE" ]]; then $call; fi
+	if [[ "$dryrun" != "TRUE" ]]; then $call; fi
 	echo
     done
 elif [[ $cmd == "sync-to-scratch" ]]; then
