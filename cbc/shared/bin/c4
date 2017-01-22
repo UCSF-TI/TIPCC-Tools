@@ -21,9 +21,9 @@ call="$0 $*"
 args="$*"
 tool_name=$(basename $0)
 
-if [[ -z "$SHARED_SOFTWARE" ]]; then
-  source /home/shared/cbc/bashrc
-fi
+#if [[ -z "$SHARED_SOFTWARE" ]]; then
+#  source /home/shared/cbc/bashrc
+#fi
 
 
 function mecho() { echo "$@" 1>&2; }
