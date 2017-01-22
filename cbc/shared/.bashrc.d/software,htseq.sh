@@ -3,6 +3,7 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 prependPath ${SHARED_SOFTWARE}/BamUtil-latest/bamUtil/bin
 
+if [[ $(using_lmod) -eq 0 ]]; then
 module_load bedops
 ## prependPath ${SHARED_SOFTWARE}/bedops-latest/bin
 
@@ -59,9 +60,11 @@ module_load IGV ""
 ## prependPath ${SHARED_SOFTWARE}/IGV-latest
 alias igv=${SHARED_SOFTWARE}/IGV-latest/igv.sh
 
-export PICARD_HOME=${SHARED_SOFTWARE}/picard-tools-latest
-export GATK_HOME=${SHARED_SOFTWARE}/GATK-latest
-
 module_load htslib
 ##prependPath ${SHARED_SOFTWARE}/htslib-latest/bin
 export HTSLIB_HOME=/home/shared/cbc/software/htslib-latest
+fi
+
+export PICARD_HOME=${SHARED_SOFTWARE}/picard-tools-latest
+export GATK_HOME=${SHARED_SOFTWARE}/GATK-latest
+

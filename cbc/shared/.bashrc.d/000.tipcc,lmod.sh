@@ -31,6 +31,7 @@ fi
 function clean_lmod() {
     ## FIXME: Something is added /cbc/GitHub/ duplicated paths
     export MODULEPATH=$(echo $MODULEPATH | sed 's|/cbc/GitHub/[^:]*:||g')
+    export MODULEPATH=$(echo ${MODULEPATH} | sed -E 's/::/:/g')
     
     ## WORKAROUND:
     ## 'module load StdEnv' may introduce :: in LD_LIBRARY_PATH
@@ -82,7 +83,27 @@ function use_lmod() {
         module refresh
     fi
 
+    function module_load() {
+        local name=$1
+        name=${name,,} ## To lower case
+        local modulepath=$MODULEPATH
+        ## Don't load from the Spack software stack
+        MODULEPATH=$(echo $MODULEPATH | tr : '\n' | grep -vF "spack/lmod" | tr '\n' :)
+        mecho "module_load ${name}"
+        module load ${name}
+        MODULEPATH=$modulepath
+    }
+    
     clean_lmod
+
+    function using_lmod() {
+	type module | grep -q LMOD
+	if [[ $? -eq 0 ]]; then echo 1; else echo 0; fi
+    }
+}
+
+function using_lmod() {
+    echo 0
 }
 
 

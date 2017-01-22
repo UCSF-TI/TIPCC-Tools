@@ -19,6 +19,7 @@ export LUA_CPATH="${HOME}/.luarocks/lib/lua/5.3/?.so;/home/shared/cbc/software_c
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 prependPath ${SHARED_SOFTWARE}_cbc/bin
 
+if [[ $(using_lmod) -eq 0 ]]; then
 module_load valgrind "/coregrind"
 ##prependPath ${SHARED_SOFTWARE}/valgrind-latest/coregrind
 
@@ -31,14 +32,12 @@ module_load matlab
 module_load R
 ##prependPath ${SHARED_SOFTWARE}/R-latest/bin
 
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # SOFTWARE: Containers
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 module_load udocker ""
 ## prependPath ${SHARED_SOFTWARE}/udocker-latest
-
-
+fi
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
