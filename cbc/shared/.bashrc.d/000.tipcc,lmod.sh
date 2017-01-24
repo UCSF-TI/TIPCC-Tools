@@ -29,7 +29,7 @@ fi
 
 
 function clean_lmod() {
-    ## FIXME: Something is added /cbc/GitHub/ duplicated paths
+    ## FIXME: Something is adding /cbc/GitHub/ duplicated paths
     export MODULEPATH=$(echo $MODULEPATH | sed 's|/cbc/GitHub/[^:]*:||g')
     export MODULEPATH=$(echo ${MODULEPATH} | sed -E 's/::/:/g')
     
@@ -69,7 +69,7 @@ function use_lmod() {
 	fi
         ## ability to predefine elsewhere the default list
         export LMOD_SYSTEM_DEFAULT_MODULES=${LMOD_SYSTEM_DEFAULT_MODULES:-"StdEnv"}
-#        module --initial_load restore 2> /dev/null
+        module --initial_load restore 2> /dev/null
         if [[ "${PS1}" ]]; then
             >&2 printf "."
 	fi
@@ -89,7 +89,7 @@ function use_lmod() {
         local modulepath=$MODULEPATH
         ## Don't load from the Spack software stack
         MODULEPATH=$(echo $MODULEPATH | tr : '\n' | grep -vF "spack/lmod" | tr '\n' :)
-        mecho "module_load ${name}"
+##        mecho "module_load ${name}"
         module load ${name}
         MODULEPATH=$modulepath
     }
@@ -100,6 +100,9 @@ function use_lmod() {
 	type module | grep -q LMOD
 	if [[ $? -eq 0 ]]; then echo 1; else echo 0; fi
     }
+
+    module load spack-gcc-4.9.2
+    module load spack-gcc-5.4.0
 }
 
 function using_lmod() {
@@ -113,5 +116,6 @@ if [[ -f "${HOME}/.lmod" && ! -f "${HOME}/.no.lmod" ]]; then
     use_lmod
 fi
 
+## mecho "MODULEPATH=$(echo $MODULEPATH | tr : '\n')"
 
 export CBC_STARTUP_COMPLETED="$CBC_STARTUP_COMPLETED lmod"
