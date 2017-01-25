@@ -7,6 +7,7 @@
 ### Examples:
 ###  c4 status              - Cluster status
 ###  c4 nodes               - List nodes that are up
+###  c4 user                - Detailed user information
 ###  c4 users               - List all users
 ###  c4 ps --node head      - List all processes on the head node
 ###  c4 ps --node n6        - List all processes on node n6
