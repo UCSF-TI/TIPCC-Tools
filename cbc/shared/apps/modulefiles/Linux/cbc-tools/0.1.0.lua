@@ -11,8 +11,11 @@ whatis("Description: CBC Tools setup via modules.")
 
 load("cbc-bin")
 
+load("pcre")
+
 -- load("git")
 -- load("curl")
+-- load("pcre")
 -- load("wget")
 -- load("tar")
 -- load("zlib")
