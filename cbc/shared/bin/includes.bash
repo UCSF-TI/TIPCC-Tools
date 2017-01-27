@@ -14,6 +14,36 @@ function error() {
 #  exit 1
 }
 
+## Usage: source_d <path>
+function source_d() {
+    local path=$1
+    
+    if [[ $# -eq 0 ]]; then
+	>&2 echo "source_d: path not specified"
+	return 1;
+    elif [[ ! -d "${path}" ]]; then
+	>&2 echo "source_d: no such path: ${path}"
+	return 1;
+    fi
+    
+    if [[ -n "${BASHRC_DEBUG}" ]]; then >&2 echo "$(duration)s: Sourcing ${path}/ ..." ; fi
+	
+    local files=$(find -L "${path}" -type f ! -name '*~' 2> /dev/null | LC_ALL=C sort)
+    
+    ## Not running in interactive mode?
+    if [[ -z "$PS1" ]]; then
+        ## Drop pathnames with interactive=TRUE
+        files=$(printf "%s\n" ${files[@]} | grep -vF "interactive=TRUE")
+    fi
+	
+    for ff in ${files}; do
+         if [[ -n "${BASHRC_DEBUG}" ]]; then >&2 echo "$(duration)s:  - ${ff}"; fi
+         source "${ff}"
+    done
+	
+    if [[ -n "${BASHRC_DEBUG}" ]]; then >&2 echo "$(duration)s: Sourcing ${path}/ ... done"; fi
+} ## source_d()
+
 function timestamp() {
   flavor="$1"
   if test -z "${flavor}"; then
