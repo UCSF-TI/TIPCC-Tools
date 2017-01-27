@@ -154,9 +154,6 @@ if [[ $cmd == "help" ]]; then
     help
     exit 0
 elif [[ $cmd == "status" ]]; then
-    echo "# Cluster status"
-    echo
-    echo "## Nodes"
     c4-status
     if [[ $(on_compute_node) -ne 0 ]]; then
         echo
