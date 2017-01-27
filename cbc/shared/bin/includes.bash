@@ -14,6 +14,12 @@ function error() {
 #  exit 1
 }
 
+function decho() {
+    tput setaf 8 2> /dev/null ## red
+    >&2 echo "$*"
+    tput sgr0 2> /dev/null    ## reset
+}
+
 ## Usage: source_d <path>
 function source_d() {
     local source_d_path=$1
@@ -26,7 +32,7 @@ function source_d() {
 	return 1;
     fi
     
-    if [[ -n "${BASHRC_DEBUG}" ]]; then >&2 echo "$(duration)s: Sourcing ${source_d_path}/ ..." ; fi
+    if [[ -n "${BASHRC_DEBUG}" ]]; then decho "$(duration)s: Sourcing ${source_d_path}/ ..." ; fi
 	
     local source_d_files=$(find -L "${source_d_path}" -type f ! -name '*~' 2> /dev/null | LC_ALL=C sort)
     
@@ -38,11 +44,11 @@ function source_d() {
 
     local ff=
     for ff in ${source_d_files}; do
-         if [[ -n "${BASHRC_DEBUG}" ]]; then >&2 echo "$(duration)s:  - ${ff}"; fi
+         if [[ -n "${BASHRC_DEBUG}" ]]; then decho "$(duration)s:  - ${ff}"; fi
          source "${ff}"
     done
 	
-    if [[ -n "${BASHRC_DEBUG}" ]]; then >&2 echo "$(duration)s: Sourcing ${source_d_path}/ ... done"; fi
+    if [[ -n "${BASHRC_DEBUG}" ]]; then decho "$(duration)s: Sourcing ${source_d_path}/ ... done"; fi
 } ## source_d()
 
 function timestamp() {
