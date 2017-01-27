@@ -1,7 +1,7 @@
 ## Nothing to do?
-#if [[ $CBC_STARTUP_COMPLETED == *"lmod"* ]]; then
-#    return;
-#fi
+if [[ $CBC_STARTUP_COMPLETED == *"lmod"* ]]; then
+    return;
+fi
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Lua, LuaRocks and Lmod
@@ -90,7 +90,7 @@ function use_lmod() {
         ## Don't load from the Spack software stack
         MODULEPATH=$(echo $MODULEPATH | tr : '\n' | grep -vF "spack/lmod" | tr '\n' :)
 ##        mecho "module_load ${name}"
-        module load ${name}
+#        module load ${name}
         MODULEPATH=$modulepath
     }
     
@@ -101,8 +101,7 @@ function use_lmod() {
 	if [[ $? -eq 0 ]]; then echo 1; else echo 0; fi
     }
 
-    module load spack-gcc-4.9.2
-    module load spack-gcc-5.4.0
+    module load StdEnv
 }
 
 function using_lmod() {
