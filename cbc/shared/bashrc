@@ -1,24 +1,24 @@
 #!/usr/bin/env bash
 
 ###################################################################
-# Author: Henrik Bengtsson <hb@biostat.ucsf.edu>
+# Usage:
+# Add the following command to your ~/.bashrc script:
+#   source /home/shared/cbc/bashrc
 #
 # Description:
 # Sets up the PATH to use the most recent versions of software
 # installed by different users.
 #
-# Usage:
-# Add the following command to your ~/.bashrc script:
-#   source /home/shared/cbc/bashrc
+# Author: Henrik Bengtsson <henrik.bengtsson@ucsf.edu>
 ###################################################################
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Record original state
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-if test "${PATH_SYSTEM}" == ""; then
+if [[ "${PATH_SYSTEM}" == "" ]]; then
   export PATH_SYSTEM=${PATH}
 fi
-if test "${LD_LIBRARY_PATH_SYSTEM}" == ""; then
+if [[ "${LD_LIBRARY_PATH_SYSTEM}" == "" ]]; then
   export LD_LIBRARY_PATH_SYSTEM=${LD_LIBRARY_PATH}
 fi
 
@@ -36,11 +36,10 @@ export PATH=${PATH_SYSTEM}
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH_SYSTEM}
 
 # Added ~/bin/
-if ! test -d "${HOME}/bin"; then
+if [[ ! -d "${HOME}/bin" ]]; then
   mkdir ${HOME}/bin
 fi
 appendPath ${HOME}/bin
-
 
 export HOST=`uname -n`
 export HOST_SHORT=${HOST/.*/}
@@ -49,8 +48,6 @@ export ISCOMPUTENODE=0
 if [[ "${HOST_SHORT}" =~ ^n[0-9]{1,2} ]]; then
   export ISCOMPUTENODE=1
 fi
-## echo ISCOMPUTENODE=$ISCOMPUTENODE
-
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # SETUP COMPUTE NODES
@@ -64,53 +61,28 @@ if [[ "${ISCOMPUTENODE}" = "1" ]]; then
 fi
 
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# SHARED SOFTWARE
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-prependPath ${SHARED_ROOT}/bin
-prependPath ${SHARED_ROOT}/local/bin
+## FIX: Current users will use CBC Tools
+if [[ ! -f ${HOME}/.cbc ]]; then touch ${HOME}/.cbc; fi
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# CBC-shared .bashrc.d/ and ~/.bashrc.d/
+# Source different .bashrc.d/ paths
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-#if [[ -z ${CBC_STARTUP_COMPLETED+x} ]]; then
-    export CBC_STARTUP_COMPLETED=
-#fi
-
 if [[ -n "${BASHRC_DEBUG}" ]]; then
-    START_TIME=$(echo $(($(date +%s%N)/1000000)))
+    CBC_STARTUP_START_TIME=$(echo $(($(date +%s%N)/1000000)))
     function duration() {
-	local d=$(($(echo $(($(date +%s%N)/1000000))) - $START_TIME))
+	local d=$(($(echo $(($(date +%s%N)/1000000))) - $CBC_STARTUP_START_TIME))
 	d=$(echo 000$d | sed -E 's/([0-9]{3})$/.\1/' | sed -E 's/^0*([0-9])/\1/')
 	echo $d
     }
 fi
 
-for pathT in ${SHARED_ROOT} ${HOME}; do
-    if [[ -d "${pathT}/.bashrc.d" ]]; then
-	source_d "${pathT}/.bashrc.d"
-    fi
-done
+## CBC Tools?
+export CBC_STARTUP_COMPLETED=
+if [[ -f ${HOME}/.cbc ]]; then
+    source_d "$SHARED_ROOT/.bashrc.d"
+fi
 
-##for pathT in ${SHARED_ROOT} ${HOME}; do
-##    if [[ -d "${pathT}/.bashrc.d" ]]; then
-##        if [[ -n "${BASHRC_DEBUG}" ]]; then >&2 echo "$(duration)s: Sourcing ${pathT}/.bashrc.d ..." ; fi
-##	
-##        files=$(find "${pathT}/.bashrc.d/" -type f ! -name '*~' | LC_ALL=C sort)
-##	
-##        ## Not running in interactive mode?
-##        if [[ -z "$PS1" ]]; then
-##            ## Drop pathnames with interactive=TRUE
-##            files=$(printf "%s\n" ${files[@]} | grep -vF "interactive=TRUE")
-##        fi
-##	
-##        for ff in ${files}; do
-##            if [[ -n "${BASHRC_DEBUG}" ]]; then >&2 echo "$(duration)s:  - ${ff}"; fi
-##            source "${ff}"
-##        done
-##	
-##        if [[ -n "${BASHRC_DEBUG}" ]]; then >&2 echo "$(duration)s: Sourcing ${pathT}/.bashrc.d ... done"; fi
-##    fi
-##done
+## User's ~/.bashrc.d/ scripts?
+if [[ -d "$HOME/.bashrc.d" ]]; then source_d "$HOME/.bashrc.d"; fi
 
