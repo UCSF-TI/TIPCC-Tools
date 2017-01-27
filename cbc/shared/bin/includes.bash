@@ -16,36 +16,37 @@ function error() {
 
 ## Usage: source_d <path>
 function source_d() {
-    local path=$1
+    local source_d_path=$1
     
     if [[ $# -eq 0 ]]; then
 	>&2 echo "source_d: path not specified"
 	return 1;
-    elif [[ ! -d "${path}" ]]; then
-	>&2 echo "source_d: no such path: ${path}"
+    elif [[ ! -d "${source_d_path}" ]]; then
+	>&2 echo "source_d: no such path: ${source_d_path}"
 	return 1;
     fi
     
-    if [[ -n "${BASHRC_DEBUG}" ]]; then >&2 echo "$(duration)s: Sourcing ${path}/ ..." ; fi
+    if [[ -n "${BASHRC_DEBUG}" ]]; then >&2 echo "$(duration)s: Sourcing ${source_d_path}/ ..." ; fi
 	
-    local files=$(find -L "${path}" -type f ! -name '*~' 2> /dev/null | LC_ALL=C sort)
+    local source_d_files=$(find -L "${source_d_path}" -type f ! -name '*~' 2> /dev/null | LC_ALL=C sort)
     
     ## Not running in interactive mode?
     if [[ -z "$PS1" ]]; then
         ## Drop pathnames with interactive=TRUE
-        files=$(printf "%s\n" ${files[@]} | grep -vF "interactive=TRUE")
+        source_d_files=$(printf "%s\n" ${source_d_files[@]} | grep -vF "interactive=TRUE")
     fi
-	
-    for ff in ${files}; do
+
+    local ff=
+    for ff in ${source_d_files}; do
          if [[ -n "${BASHRC_DEBUG}" ]]; then >&2 echo "$(duration)s:  - ${ff}"; fi
          source "${ff}"
     done
 	
-    if [[ -n "${BASHRC_DEBUG}" ]]; then >&2 echo "$(duration)s: Sourcing ${path}/ ... done"; fi
+    if [[ -n "${BASHRC_DEBUG}" ]]; then >&2 echo "$(duration)s: Sourcing ${source_d_path}/ ... done"; fi
 } ## source_d()
 
 function timestamp() {
-  flavor="$1"
+  local flavor="$1"
   if test -z "${flavor}"; then
     flavor="full"
   fi
@@ -130,24 +131,24 @@ function prependManPath() {
 
 
 function assertUserOnlyPermissions() {
-  path=$1
+  local path=$1
 
   ## Nothing to do?
   if ! test -e ${path}; then return; fi
 
-  d=$(dirname ${path})
-  f=$(basename ${path})
+  local d=$(dirname ${path})
+  local f=$(basename ${path})
   
   ## Permissions already correct?
-  perms=$(ls -al ${d} | grep -F $f | cut -c 1-10)
-  permsGO=$(echo $perms | cut -c 5-10)
+  local perms=$(ls -al ${d} | grep -F $f | cut -c 1-10)
+  local permsGO=$(echo $perms | cut -c 5-10)
   if test "${permsGO}" == "------"; then return; fi
   
   ## Fix permissions
   chmod go-rwx ${path}
 
   ## Assert fix
-  permsT=$(ls -al ${d} | grep -F $f | cut -c 1-10)
+  local permsT=$(ls -al ${d} | grep -F $f | cut -c 1-10)
   permsGO=$(echo $permsT | cut -c 5-10)
   if test "${permsGO}" != "------"; then
     tput setaf 1 2> /dev/null ## red
@@ -166,6 +167,7 @@ function assertUserOnlyPermissions() {
 function setPrompt() {
   export PS1="$1"
 
+  local res=
   # If on the head node...
   if test "$HOSTNAME" == "cclc01.som.ucsf.edu"; then
     # If not already done...
@@ -176,18 +178,6 @@ function setPrompt() {
     fi
   fi
 } # setPrompt()
-
-function ll_xfer() {
-  ssh ${USER}@akt.ucsf.edu "ls -la www/xfer/$1"
-}
-
-function llr_xfer() {
-  ssh ${USER}@akt.ucsf.edu "ls -laR www/xfer/$1"
-}
-
-function rsync_xfer() {
-  rsync -av -r $2 ${USER}@akt.ucsf.edu:www/xfer/$1
-}
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
