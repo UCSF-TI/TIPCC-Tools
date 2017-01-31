@@ -125,7 +125,7 @@ while [[ $# > 0 ]]; do
         moab=1
         disk_usage=1
     else
-        extras="$extras $1"
+        user=$1
     fi
     shift
 done
