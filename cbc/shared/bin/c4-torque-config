@@ -3,7 +3,7 @@
 ### Creates mom_priv/config.${node} files from template
 ###
 ### Usage:
-### c4-torque-config
+### c4-torque-config <config-tmpl-file>
 ###
 ### Version: 0.0.9-9000
 ### Copyright: Henrik Bengtsson (2017)
@@ -39,7 +39,7 @@ function version() {
     grep -E "^###[ ]*Version:[ ]*" $0 | sed 's/###[ ]*Version:[ ]*//g'
 }
 
-tmpl_file=config.tmpl
+tmpl_file=
 
 # Parse command-line options
 while [[ $# > 0 ]]; do
@@ -52,11 +52,16 @@ while [[ $# > 0 ]]; do
     elif [[ "$1" == "--version" ]]; then
 	version
 	exit 0
+    else
+	tmpl_file=$1
     fi
     shift
 done
 
-if [[ ! -f ${tmpl_file} ]]; then
+if [[ -z ${tmpl_file} ]]; then
+    help
+    exit 1
+elif [[ ! -f ${tmpl_file} ]]; then
     merror "No such template file: ${tmpl_file}"
 fi
 
