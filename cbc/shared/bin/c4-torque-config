@@ -12,6 +12,7 @@ call="$0 $*"
 tool_name=$(basename $0)
 if [[ ${C4_TOOLS} -ne 0 ]]; then
     tool_name=${tool_name/-/ }
+    shift
 fi
 
 function mecho() { echo "$@" 1>&2; }
