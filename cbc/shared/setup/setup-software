@@ -230,6 +230,13 @@ lndir $SRC_CBC/htop-1.0.3/ .
 lndir htop-1.0.3 htop
 
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Imaging tools
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Fiji / ImageJ
+lndir $SRC_CBC/Fiji-2.0.0-rc-54 .
+lndir Fiji-2.0.0-rc-54 Fiji-latest
+
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Genomic tools
