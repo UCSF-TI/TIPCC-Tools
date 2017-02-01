@@ -26,6 +26,7 @@ if [[ ${C4_TOOLS} -ne 0 ]]; then
     shift
 fi
 
+
 function mecho() { echo "$@" 1>&2; }
 
 function merror() {
@@ -128,7 +129,7 @@ if [[ $what == "himem" || $what == "hicpu" ]]; then
     elif [[ $what == "hicpu" ]]; then
 	sort_by=3
     fi
-    
+
     printf '%s\n' "${bfr[@]}" | sort --key=${sort_by} -r -n | head -5
     exit 0
 fi

@@ -154,14 +154,15 @@ if [[ $cmd == "help" ]]; then
     help
     exit 0
 elif [[ $cmd == "status" ]]; then
-    c4-status
+    C4_TOOLS=0 c4-status
+    
     if [[ $(on_compute_node) -ne 0 ]]; then
         echo
         echo "### High-memory non-user processes"
-        c4-head --himem
+        C4_TOOLS=0 c4-head --himem
         echo
         echo "### High-CPU non-user processes"
-        c4-head --hicpu
+        C4_TOOLS=0 c4-head --hicpu
         echo
     fi
 elif [[ $cmd == "nodes" ]]; then
