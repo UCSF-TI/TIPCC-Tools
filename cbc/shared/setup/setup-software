@@ -286,6 +286,9 @@ lndir /opt/local/bin/blast-2.2.26/ .
 lndir blast-2.2.26 blast-latest
 
 # bowtie
+lndir /opt/local/bin/ bowtie-0.12.7
+lndir $SRC_CBC/bowtie-1.2.0 .
+lndir bowtie-1.2.0 bowtie-latest
 
 # bowtie2
 lndir /opt/local/bin/bowtie2-2.0.0-beta6 .

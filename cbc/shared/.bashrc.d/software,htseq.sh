@@ -13,6 +13,9 @@ module_load bedtools2
 module_load blast ""
 ## prependPath ${SHARED_SOFTWARE}/blast-latest
 
+module_load bowtie "/bin"
+## prependPath ${SHARED_SOFTWARE}/bowtie-latest
+
 module_load bowtie2 ""
 ## prependPath ${SHARED_SOFTWARE}/bowtie2-latest
 
