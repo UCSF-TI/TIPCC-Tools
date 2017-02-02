@@ -82,7 +82,12 @@ done
 echo "# Cluster status"
 echo
 echo "## Nodes"
+echo
+echo "### According to 'bpstat' (Scyld)"
 bpstat
+echo
+echo "### According to 'pbsnodes' (TORQUE)"
+pbsnodes -l
 echo
 bfr=$(pbsnodes | grep -B 5 -A 2 -F "ERROR")
 if [[ -n "${bfr}" ]]; then
