@@ -31,6 +31,9 @@ module_load matlab
 
 module_load R
 ##prependPath ${SHARED_SOFTWARE}/R-latest/bin
+## WORKAROUND: Some packages are hard/fail to install in R 3.2.0, e.g. 'png'.
+## These are shared by CBC.
+export R_LIBS_SITE=/home/shared/cbc/R/site-library/%p-library/%v
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # SOFTWARE: Containers

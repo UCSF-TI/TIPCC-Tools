@@ -26,10 +26,6 @@ appendPath /opt/NetCDF/NetCDF-4.3.0/bin
 #  mkdir -p ${R_LIBS}
 #fi
 
-## WORKAROUND: Some packages are hard/fail to install in R 3.2.0, e.g. 'png'.
-## These are shared by CBC.
-export R_LIBS_SITE=/home/shared/cbc/R/site-library/%p-library/%v
-
 
 alias R-2.15.3=${SHARED_SOFTWARE}/R-2.15.3/bin/R
 alias R-3.0.0=${SHARED_SOFTWARE}/R-3.0.0/bin/R
