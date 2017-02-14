@@ -146,7 +146,7 @@ id=$(id $user 2> /dev/null)
 if [[ $? -ne 0 ]]; then
     ## Maybe the email address and the personal name was specified?
     ## Try free-text search the 'name (email)' field of /etc/passwd
-    info=$(cut -d: -f5 /etc/passwd | grep -F $user)
+    info=$(cut -d: -f5 /etc/passwd | grep -i -F $user)
 
     ## No match?
     if [[ $? -ne 0 ]]; then
