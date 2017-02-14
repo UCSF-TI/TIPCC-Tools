@@ -6,10 +6,10 @@
 ###  c4-head [options]
 ###
 ### Options:
-###  --user <user>       Specify user (default: _all_)
-###  --me                Same as '--user \$USER'
-###  --filter <logical>  Exclude processes on white list (default: true)
-###  --help              This help
+###  --user <user>                Specify user (default: _all_)
+###  --me                         Same as '--user \$USER'
+###  --filter (none|user|sysadm)  Exclude processes (default: user)
+###  --help                       This help
 ###
 ### Example:
 ###  c4-head
@@ -80,7 +80,7 @@ function user_info() {
 
 what="users"
 user=_all_
-filter=1
+filter=user
 
 # Parse command-line options
 while [[ $# > 0 ]]; do
@@ -110,8 +110,6 @@ while [[ $# > 0 ]]; do
     fi
     shift
 done
-
-filter=$(as_logical $filter)
 
 ## Assert running on head node
 if [[ $(on_compute_node) -ne 0 ]]; then
@@ -147,20 +145,118 @@ else
     users=${user}
 fi
 
-	
+
+## Apply filters
+function filter_system() {
+    local res=("${@}")
+    res=$(printf '%s\n' "${res[@]}" | grep -v -E "^(68|apache|dbus|flexlm|ganglia|mongod|mysql|ntp|postgres|qpidd|rpc|smmsp|tomcat)[ ]+")
+    res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(dbus-daemon|dbus-launch)( |:|$)")
+    printf '%s\n' "${res[@]}"
+}
+
+function filter_shells() {
+    local res=("${@}")
+    res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(sh|bash|tcsh|zsh|tcsh)( |:|$)")
+    res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(ssh|ssh-agent|sshd|mosh-server)( |:|$)")
+    res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(screen|SCREEN|tmux)( |:|$)")
+    printf '%s\n' "${res[@]}"
+}
+
+function filter_transfer() {
+    local res=("${@}")
+    res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(curl|lftp|rsync|scp|wget)( |:|$)")
+    res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(sftp-server)( |:|$)")
+    printf '%s\n' "${res[@]}"
+}
+
+function filter_editors() {
+    local res=("${@}")
+    res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(emacs|nano|pico|vim)( |:|$)")
+    printf '%s\n' "${res[@]}"
+}
+
+function filter_viewers() {
+    local res=("${@}")
+    res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(head|less|more|tail)( |:|$)")
+    printf '%s\n' "${res[@]}"
+}
+
+function filter_mail() {
+    local res=("${@}")
+    res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(sendmail|fetchmail)( |:|$)")
+    printf '%s\n' "${res[@]}"
+}
+
+function filter_scyld() {
+    local res=("${@}")
+    res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(bpstat|pbsnodes)( |:|$)")
+    printf '%s\n' "${res[@]}"
+}
+
+function filter_torque() {
+    local res=("${@}")
+    res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(qdel|qsub|qstat)( |:|$)")
+    printf '%s\n' "${res[@]}"
+}
+
+function filter_utils() {
+    local res=("${@}")
+    res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(c4|htop|man|ping|ps|watch|top)( |:|$)")
+    printf '%s\n' "${res[@]}"
+#    res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(dbus-daemon|dbus-launch)( |:|$)")
+}
+
+function filter_vcs() {
+    local res=("${@}")
+    res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(git|git-credential-cache--daemon)( |:|$)")
+    printf '%s\n' "${res[@]}"
+}
+
+function filter_special() {
+    local res=("${@}")
+    ## HB's Cron jobs (calling this method)
+    res=$(printf '%s\n' "${res[@]}" | grep -v -E "scan-c4_head")
+    ## Nextflow (http://www.nextflow.io/)
+    res=$(printf '%s\n' "${res[@]}" | grep -v -E "java .* [-]Dcapsule[.]app=nextflow")
+    printf '%s\n' "${res[@]}"
+}
+
 ## Query ps + bpstat for _all_ running head-node processes
 ## Note: head node process are those without NODE information.
 res=$(ps uax | bpstat -P | grep -E "^  " | grep -E -v "^[ ]+root" | sed -E 's/^[ ]*//g' | grep -E -v "$USER .* (ps uax|grep -E |.*c4 head|sed -E)")
 
-## Apply whitelist filter?
-if [[ $filter -ne 0 ]]; then
-    res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(top|watch|qdel|qsub|qstat|bpstat|sh|bash|dbus-daemon|dbus-launch|zsh|tcsh|git|git-credential-cache--daemon|ssh|ssh-agent|sshd|sftp-server|mosh-server|SCREEN|screen|tmux|c4|less|more|emacs|vim|nano|pico|top|htop|ping|rsync|man|sendmail|fetchmail|lftp|wget|tail)( |:|$)")
-    
-    ## HB's Cron jobs (calling this method)
-    res=$(printf '%s\n' "${res[@]}" | grep -v -E "scan-c4_head")
-    
-    ## Nextflow (http://www.nextflow.io/)
-    res=$(printf '%s\n' "${res[@]}" | grep -v -E "java .* [-]Dcapsule[.]app=nextflow")
+if [[ $filter == "user" ]]; then
+    res=$(filter_system "${res[@]}")
+    res=$(filter_scyld "${res[@]}")
+    res=$(filter_torque "${res[@]}")
+    res=$(filter_shells "${res[@]}")
+    res=$(filter_transfer "${res[@]}")
+    res=$(filter_editors "${res[@]}")
+    res=$(filter_viewers "${res[@]}")
+    res=$(filter_mail "${res[@]}")
+    res=$(filter_vcs "${res[@]}")
+    res=$(filter_utils "${res[@]}")
+    res=$(filter_special "${res[@]}")
+elif [[ $filter == "sysadm" ]]; then
+    res=$(filter_system "${res[@]}")
+    res=$(filter_scyld "${res[@]}")
+    res=$(filter_torque "${res[@]}")
+    res=$(filter_shells "${res[@]}")
+    res=$(filter_transfer "${res[@]}")
+    res=$(filter_editors "${res[@]}")
+    res=$(filter_viewers "${res[@]}")
+    res=$(filter_mail "${res[@]}")
+    res=$(filter_vcs "${res[@]}")
+    res=$(filter_utils "${res[@]}")
+    res=$(filter_special "${res[@]}")
+elif [[ $filter == "core" ]]; then
+    res=$(filter_system "${res[@]}")
+    res=$(filter_scyld "${res[@]}")
+    res=$(filter_torque "${res[@]}")
+    res=$(filter_shells "${res[@]}")
+    res=$(filter_mail "${res[@]}")
+elif [[ $filter != "none" ]]; then
+    merror "Unknown --filter $filter"
 fi
 
 
