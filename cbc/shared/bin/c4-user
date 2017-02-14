@@ -141,7 +141,37 @@ filter=$(as_logical $filter)
 
 ## Identify user
 id=$(id $user 2> /dev/null)
+
+## No such user?
 if [[ $? -ne 0 ]]; then
+    ## Maybe the email address and the personal name was specified?
+    ## Try free-text search the 'name (email)' field of /etc/passwd
+    info=$(cut -d: -f5 /etc/passwd | grep -F $user)
+
+    ## No match?
+    if [[ $? -ne 0 ]]; then
+        merror "No such user (also searched person's name and email address): '${user}'"
+    fi
+    
+    ## Multiple matches?
+    ncount=$(printf '%s\n' "${info[@]}" | wc -l)
+    if [[ ${ncount} != 1 ]]; then
+        printf '%s\n' "${info[@]}" 1>&2;
+        merror "Found ${ncount} matches. Please use a more specific search string: '${user}'"
+    fi
+
+    ## Extract 'user' information for the unique match
+    line=$(cut -d: -f5 /etc/passwd | grep -n -F $user | cut -d: -f1)
+    user=$(sed "${line}q;d" /etc/passwd | cut -d: -f1)
+
+    ## Re-assert user exists (should always work)
+    id=$(id $user 2> /dev/null)
+    if [[ $? -ne 0 ]]; then   
+        merror "No such user: $user"
+    fi
+fi
+
+if [[ $? -ne 0 ]]; then   
     merror "No such user: $user"
 fi
 
