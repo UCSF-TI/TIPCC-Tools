@@ -1,7 +1,6 @@
-## Nothing to do?
-if [[ $CBC_STARTUP_COMPLETED == *"c4_head"* ]]; then
-    return;
-fi
+## Already done?
+if [[ $STARTUP_DONE == *"c4-head"* ]]; then return; fi
+if [[ $CBC_STARTUP_COMPLETED == *"c4_head"* ]]; then return; fi
 
 ## Running in interactive mode?
 if [[ "$PS1" ]]; then
