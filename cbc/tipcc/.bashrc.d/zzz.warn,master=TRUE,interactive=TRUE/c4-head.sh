@@ -1,3 +1,6 @@
+## Already done?
+if [[ $STARTUP_DONE == *"c4-head"* ]]; then return; fi
+
 ## Running in interactive mode?
 if [[ "$PS1" ]]; then
     ## ... on the head node? (c4 head only works there)
@@ -14,5 +17,6 @@ if [[ "$PS1" ]]; then
             >&2 echo
             tput sgr0 2> /dev/null    ## reset
         fi
+	STARTUP_DONE="${STARTUP_DONE}:c4-head"
     fi
 fi
