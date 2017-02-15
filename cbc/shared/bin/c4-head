@@ -169,6 +169,12 @@ function filter_transfer() {
     printf '%s\n' "${res[@]}"
 }
 
+function filter_files() {
+    local res=("${@}")
+    res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(cp|mv)( |:|$)")
+    printf '%s\n' "${res[@]}"
+}
+
 function filter_editors() {
     local res=("${@}")
     res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(emacs|nano|pico|vim)( |:|$)")
@@ -230,6 +236,7 @@ if [[ $filter == "user" ]]; then
     res=$(filter_scyld "${res[@]}")
     res=$(filter_torque "${res[@]}")
     res=$(filter_shells "${res[@]}")
+    res=$(filter_files "${res[@]}")
     res=$(filter_transfer "${res[@]}")
     res=$(filter_editors "${res[@]}")
     res=$(filter_viewers "${res[@]}")
@@ -242,6 +249,7 @@ elif [[ $filter == "sysadm" ]]; then
     res=$(filter_scyld "${res[@]}")
     res=$(filter_torque "${res[@]}")
     res=$(filter_shells "${res[@]}")
+    res=$(filter_files "${res[@]}")
     res=$(filter_transfer "${res[@]}")
     res=$(filter_editors "${res[@]}")
     res=$(filter_viewers "${res[@]}")
