@@ -19,6 +19,7 @@
 ###
 ###  - master=TRUE       sourced only if running on master (= head node)
 ###  - interactive=TRUE  sourced only if running in interactive mode
+###  - CLUSTER=tipcc     sourced only if running on TIPCC cluster
 ### 
 ### DEBUGGING:
 ### To debug what files are sourced and how long each of them takes, set
@@ -57,11 +58,11 @@ function source_d() {
     local source_d_path=$1
 
     if [[ $# -eq 0 ]]; then
-	msg_echo "source_d: path not specified"
-	return 1;
+        msg_echo "source_d: path not specified"
+        return 1;
     elif [[ ! -d "${source_d_path}" ]]; then
-	msg_echo "source_d: no such path: ${source_d_path}"
-	return 1;
+        msg_echo "source_d: no such path: ${source_d_path}"
+        return 1;
     fi
 
     local prefix=
@@ -73,26 +74,37 @@ function source_d() {
 
     ## File name filter: Not running in interactive mode?
     if [[ -z "$PS1" ]]; then
-	## Drop pathnames with interactive=TRUE
-	source_d_files=$(printf "%s\n" ${source_d_files[@]} | grep -vF "interactive=TRUE")
+        ## Drop pathnames with interactive=TRUE
+        source_d_files=$(printf "%s\n" ${source_d_files[@]} | grep -vF "interactive=TRUE")
     fi
 
     ## File name filter: Not running on master (== head node)?
-    if test "$HOSTNAME" != "cclc01.som.ucsf.edu"; then
-	## Drop pathnames with master=TRUE
-	source_d_files=$(printf "%s\n" ${source_d_files[@]} | grep -vF "master=TRUE")
+    if [[ "$HOSTNAME" != "cclc01.som.ucsf.edu" ]]; then
+        ## Drop pathnames with master=TRUE
+        source_d_files=$(printf "%s\n" ${source_d_files[@]} | grep -vF "master=TRUE")
     fi
 
+    ## File name filter: Filter based on CLUSTER=<name>?
+    if [[ -n "${CLUSTER}" ]]; then
+        ## Drop all files with CLUSTER=<value> that does not match CLUSTER=${CLUSTER}
+        ## This requires negative-lookahead regular expression, which in turn requires
+        ## an PCRE-enabled grep, hence the 'grep --perl-regexp' call.
+        local neq='!'
+        source_d_files=$(printf "%s\n" ${source_d_files[@]} | grep --perl-regexp -v "CLUSTER=(?${neq}${CLUSTER})")
+    fi
+    
     ## Source remaining files
     local ff=
     for ff in ${source_d_files}; do
         if [[ -n "${STARTUP_DEBUG}" ]]; then debug_echo "${prefix}$(startup_duration)s:  - ${ff}"; fi
-	source "${ff}"
+        source "${ff}"
     done
 
     if [[ -n "${STARTUP_DEBUG}" ]]; then debug_echo "${prefix}$(startup_duration)s: Sourcing ${source_d_path}/ ... done"; fi
 } ## source_d()
 
+
+export CLUSTER=tipcc
 
 ## ---------------------------------------------------------------------------
 ## Source the different .bashrc.d/ files
