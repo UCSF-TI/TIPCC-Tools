@@ -15,7 +15,7 @@ function error() {
 }
 
 function decho() {
-    tput setaf 8 2> /dev/null ## red
+    tput setaf 8 2> /dev/null ## gray
     >&2 echo "$*"
     tput sgr0 2> /dev/null    ## reset
 }
@@ -32,9 +32,9 @@ function source_d() {
 	return 1;
     fi
     
-    if [[ -n "${BASHRC_DEBUG}" ]]; then decho "$(duration)s: Sourcing ${source_d_path}/ ..." ; fi
+    if [[ -n "${STARTUP_DEBUG}" ]]; then decho "$(duration)s: Sourcing ${source_d_path}/ ..." ; fi
 	
-    local source_d_files=$(find -L "${source_d_path}" -type f ! -name '*~' 2> /dev/null | LC_ALL=C sort)
+    local source_d_files=$(find -L "${source_d_path}" -executable -type f ! -name '*~' 2> /dev/null | LC_ALL=C sort)
     
     ## Not running in interactive mode?
     if [[ -z "$PS1" ]]; then
@@ -44,11 +44,11 @@ function source_d() {
 
     local ff=
     for ff in ${source_d_files}; do
-         if [[ -n "${BASHRC_DEBUG}" ]]; then decho "$(duration)s:  - ${ff}"; fi
+         if [[ -n "${STARTUP_DEBUG}" ]]; then decho "$(duration)s:  - ${ff}"; fi
          source "${ff}"
     done
 	
-    if [[ -n "${BASHRC_DEBUG}" ]]; then decho "$(duration)s: Sourcing ${source_d_path}/ ... done"; fi
+    if [[ -n "${STARTUP_DEBUG}" ]]; then decho "$(duration)s: Sourcing ${source_d_path}/ ... done"; fi
 } ## source_d()
 
 function timestamp() {
@@ -184,6 +184,16 @@ function setPrompt() {
     fi
   fi
 } # setPrompt()
+
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+## Backward compatibility with /home/shared/cbc/tipcc/.bashrc
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+if [[ -n "${BASHRC_DEBUG}" && -z "${STARTUP_DEBUG}" ]]; then
+    decho "WARNING: BASHRC_DEBUG=true is deprecated. Please use STARTUP_DEBUG=true"
+    STARTUP_DEBUG=${BASHRC_DEBUG}
+fi
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
