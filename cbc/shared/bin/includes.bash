@@ -35,11 +35,26 @@ function source_d() {
     if [[ -n "${STARTUP_DEBUG}" ]]; then decho "$(duration)s: Sourcing ${source_d_path}/ ..." ; fi
 	
     local source_d_files=$(find -L "${source_d_path}" -executable -type f ! -name '*~' 2> /dev/null | LC_ALL=C sort)
-    
-    ## Not running in interactive mode?
+
+    ## File name filter: Not running in interactive mode?
     if [[ -z "$PS1" ]]; then
         ## Drop pathnames with interactive=TRUE
         source_d_files=$(printf "%s\n" ${source_d_files[@]} | grep -vF "interactive=TRUE")
+    fi
+
+    ## File name filter: Not running on master (== head node)?
+    if [[ "$HOSTNAME" != "cclc01.som.ucsf.edu" ]]; then
+        ## Drop pathnames with master=TRUE
+        source_d_files=$(printf "%s\n" ${source_d_files[@]} | grep -vF "master=TRUE")
+    fi
+
+    ## File name filter: Filter based on CLUSTER=<name>?
+    if [[ -n "${CLUSTER}" ]]; then
+        ## Drop all files with CLUSTER=<value> that does not match CLUSTER=${CLUSTER}
+        ## This requires negative-lookahead regular expression, which in turn requires
+        ## an PCRE-enabled grep, hence the 'grep --perl-regexp' call.
+        local neq='!'
+        source_d_files=$(printf "%s\n" ${source_d_files[@]} | grep --perl-regexp -v "CLUSTER=(?${neq}${CLUSTER})")
     fi
 
     local ff=
