@@ -3,6 +3,7 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ##prependPath /opt/local/bin # Python 2.6.5
 prependPath ${SHARED_SOFTWARE}/Python-2.7.4/bin
+
 # Anaconda [https://store.continuum.io/cshop/anaconda/],
 # which includes Python
 prependPath /home/shared/cbc/software_cbc/anaconda/bin

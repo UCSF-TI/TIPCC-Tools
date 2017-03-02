@@ -1,0 +1,109 @@
+#!/usr/bin/env bash
+### UCSF C4 Toolkit:
+### Cluster status summary
+###
+### Usage:
+###  c4-status [options]
+###
+### Options:
+###  --help              This help
+###
+### Example:
+###  c4-status
+###
+### Version: 0.1.0-9000
+### Copyright: Henrik Bengtsson (2016-2017)
+### License: GPL (>= 2.1) [https://www.gnu.org/licenses/gpl.html]
+call="$0 $*"
+tool_name=$(basename $0)
+if [[ ${C4_TOOLS} -ne 0 ]]; then
+    tool_name=${tool_name/-/ }
+    shift
+fi
+
+function mecho() { echo "$@" 1>&2; }
+
+function merror() {
+    mecho "ERROR in '${tool_name}': $*"
+    exit 1
+}
+
+function as_logical() {
+    if [[ $1 == "false" || $1 == "0" ]]; then echo 0; else echo 1; fi
+}
+
+function help() {
+    local res=$(grep -E "^###( .*|)$" $0 | cut -b 5-)
+    local search=$(basename $0)
+    if [[ "${search}" != "${tool_name}" ]]; then
+        res=$(printf '%s\n' "${res[@]}" | sed "s/${search}/${tool_name}/g")
+    fi
+    printf '%s\n' "${res[@]}"
+}
+
+function whatis() {
+    local res=$(grep "^### .*[^:][[:space:]]*$" $0 | head -1 | cut -b 5-)
+    printf '%s\n' "${res[@]}"
+}
+
+function version() {
+    grep -E "^###[ ]*Version:[ ]*" $0 | sed 's/###[ ]*Version:[ ]*//g'
+}
+
+## Cluster functions
+function on_compute_node() {
+    if [[ -z ${ISCOMPUTENODE+x} ]]; then
+        pbsnodes ${HOSTNAME} &> /dev/null
+        if [[ $? -eq 0 ]]; then echo 1; else echo 0; fi
+    else
+	echo $(as_logical ${ISCOMPUTENODE})
+    fi
+}
+
+
+# Parse command-line options
+while [[ $# > 0 ]]; do
+    if [[ "$1" == "--help" ]]; then
+        help
+        exit 0
+    elif [[ "$1" == "--whatis" ]]; then
+        whatis
+        exit 0
+    elif [[ "$1" == "--version" ]]; then
+        version
+        exit 0
+    else
+        extras="$extras $1"
+    fi
+    shift
+done
+
+
+echo "# Cluster status"
+echo
+echo "## Nodes"
+echo
+echo "### According to 'bpstat' (Scyld)"
+bpstat
+echo
+echo "### According to 'pbsnodes' (TORQUE)"
+pbsnodes -l
+echo
+bfr=$(pbsnodes | grep -B 5 -A 2 -F "ERROR")
+if [[ -n "${bfr}" ]]; then
+  echo "## WARNING: Problematic nodes"
+  echo ${bfr}
+  echo
+fi
+
+echo "## Disk space"
+df -h | grep -E "(Filesystem|home|data|work)"
+echo
+echo "## Job scheduler"
+echo "There are $(qstat -t -n -1 | grep -E "^[0-9]+" | wc -l) cluster jobs of which $(qme | grep -E "^[0-9]+" | wc -l) are yours (see 'qstat' and 'qme')"
+
+if [[ $(on_compute_node) -eq 0 ]]; then
+    echo "Moab status: $(service moab status)"
+else
+    echo "Moab status: <only available from the head node: ${HOSTNAME}>"
+fi

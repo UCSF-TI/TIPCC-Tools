@@ -14,5 +14,6 @@ local cbc_shared = "/home/shared/cbc"
 local cbc_software = cbc_shared .. "/software"
 
 local path = cbc_software .. "/" .. name .. "-" .. version
-
 prepend_path("PATH", path)
+set_alias("s3cmd", path .. "/s3cmd")
+

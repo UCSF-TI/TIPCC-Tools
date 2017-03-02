@@ -1,5 +1,7 @@
-## Already done?
-## if [[ ${CBC_LOADED} == *"lmod"* && -z ${CBC_FORCE} ]]; then return 0; fi
+## Nothing to do?
+if [[ $CBC_STARTUP_COMPLETED == *"lmod"* ]]; then
+    return;
+fi
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Lua, LuaRocks and Lmod
@@ -25,7 +27,19 @@ if [[ -z "${MODULEPATH_USER}" ]]; then
     fi
 fi
 
-use_lmod() {
+
+function clean_lmod() {
+    ## FIXME: Something is adding /cbc/GitHub/ duplicated paths
+    export MODULEPATH=$(echo $MODULEPATH | sed 's|/cbc/GitHub/[^:]*:||g')
+    export MODULEPATH=$(echo ${MODULEPATH} | sed -E 's/::/:/g')
+    
+    ## WORKAROUND:
+    ## 'module load StdEnv' may introduce :: in LD_LIBRARY_PATH
+    ## (which e.g. Linux brew will complain about)
+    export LD_LIBRARY_PATH=$(echo ${LD_LIBRARY_PATH} | sed -E 's/:$//')
+}
+
+function use_lmod() {
     if [[ "${PS1}" ]]; then
       >&2 echo "# Lmod environment modules (BETA)"
       >&2 echo
@@ -55,7 +69,7 @@ use_lmod() {
 	fi
         ## ability to predefine elsewhere the default list
         export LMOD_SYSTEM_DEFAULT_MODULES=${LMOD_SYSTEM_DEFAULT_MODULES:-"StdEnv"}
-#        module --initial_load restore 2> /dev/null
+        module --initial_load restore 2> /dev/null
         if [[ "${PS1}" ]]; then
             >&2 printf "."
 	fi
@@ -69,10 +83,29 @@ use_lmod() {
         module refresh
     fi
 
-    ## WORKAROUND:
-    ## 'module load StdEnv' may introduce :: in LD_LIBRARY_PATH
-    ## (which e.g. Linux brew will complain about)
-    export LD_LIBRARY_PATH=$(echo ${LD_LIBRARY_PATH} | sed -E 's/:$//')
+    function module_load() {
+        local name=$1
+        name=${name,,} ## To lower case
+        local modulepath=$MODULEPATH
+        ## Don't load from the Spack software stack
+        MODULEPATH=$(echo $MODULEPATH | tr : '\n' | grep -vF "spack/lmod" | tr '\n' :)
+##        mecho "module_load ${name}"
+#        module load ${name}
+        MODULEPATH=$modulepath
+    }
+    
+    clean_lmod
+
+    function using_lmod() {
+	type module | grep -q LMOD
+	if [[ $? -eq 0 ]]; then echo 1; else echo 0; fi
+    }
+
+    module load StdEnv
+}
+
+function using_lmod() {
+    echo 0
 }
 
 
@@ -82,4 +115,6 @@ if [[ -f "${HOME}/.lmod" && ! -f "${HOME}/.no.lmod" ]]; then
     use_lmod
 fi
 
-export CBC_LOADED="${CBC_LOADED} lmod"
+## mecho "MODULEPATH=$(echo $MODULEPATH | tr : '\n')"
+
+export CBC_STARTUP_COMPLETED="$CBC_STARTUP_COMPLETED lmod"

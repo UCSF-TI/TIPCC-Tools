@@ -6,5 +6,6 @@
 *.tmp
 .RData
 .Rhistory
+*.pyc
 
 

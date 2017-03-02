@@ -19,17 +19,28 @@ export LUA_CPATH="${HOME}/.luarocks/lib/lua/5.3/?.so;/home/shared/cbc/software_c
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 prependPath ${SHARED_SOFTWARE}_cbc/bin
 
-prependPath ${SHARED_SOFTWARE}/valgrind-latest/coregrind
-prependPath ${SHARED_SOFTWARE}/jdk-latest/bin
-prependPath ${SHARED_SOFTWARE}/matlab-latest/bin
-prependPath ${SHARED_SOFTWARE}/R-latest/bin
+if [[ $(using_lmod) -eq 0 ]]; then
+module_load valgrind "/coregrind"
+##prependPath ${SHARED_SOFTWARE}/valgrind-latest/coregrind
+
+module_load jdk
+## prependPath ${SHARED_SOFTWARE}/jdk-latest/bin
+
+module_load matlab
+## prependPath ${SHARED_SOFTWARE}/matlab-latest/bin
+
+module_load R
+##prependPath ${SHARED_SOFTWARE}/R-latest/bin
+## WORKAROUND: Some packages are hard/fail to install in R 3.2.0, e.g. 'png'.
+## These are shared by CBC.
+export R_LIBS_SITE=/home/shared/cbc/R/site-library/%p-library/%v
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # SOFTWARE: Containers
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-prependPath ${SHARED_SOFTWARE}/udocker-latest
-
-
+module_load udocker ""
+## prependPath ${SHARED_SOFTWARE}/udocker-latest
+fi
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
