@@ -113,8 +113,9 @@ function source_d() {
 export CLUSTER=tipcc
 
 ## ---------------------------------------------------------------------------
-## Source the different .bashrc.d/ files
+## Source the different .bashrc.d/ files, unless already done previously
 ## ---------------------------------------------------------------------------
-if [[ -d /home/shared/cbc/tipcc/.bashrc.d ]]; then
+if [[ -d /home/shared/cbc/tipcc/.bashrc.d && $STARTUP_DONE != *"tipcc-startup"* ]]; then
+    STARTUP_DONE=tipcc-startup
     source_d /home/shared/cbc/tipcc/.bashrc.d
 fi
