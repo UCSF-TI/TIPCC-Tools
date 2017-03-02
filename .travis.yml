@@ -1,0 +1,8 @@
+language: bash
+addons:
+  apt:
+    sources:
+    ## https://github.com/koalaman/shellcheck/
+    - debian-sid  # Grab ShellCheck from the Debian repo
+    packages:
+    - shellcheck
