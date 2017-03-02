@@ -90,6 +90,15 @@ function source_d() {
         source_d_files=$(printf "%s\n" ${source_d_files[@]} | grep -vF "master=TRUE")
     fi
 
+    ## File name filter: Running as a job or not?
+    if [[ -z ${PBS_QUEUE+x} ]]; then
+	## Not running as a job, so drop pathnames with job=TRUE
+	source_d_files=$(printf "%s\n" ${source_d_files[@]} | grep -vF "job=TRUE")
+    else
+	## Running as a job, so drop pathnames with job=FALSE
+	source_d_files=$(printf "%s\n" ${source_d_files[@]} | grep -vF "job=FALSE")
+    fi
+    
     ## File name filter: Filter based on CLUSTER=<name>?
     if [[ -n "${CLUSTER}" ]]; then
         ## Drop all files with CLUSTER=<value> that does not match CLUSTER=${CLUSTER}
