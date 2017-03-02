@@ -72,15 +72,21 @@ function source_d() {
 
     local source_d_files=$(find -L "${source_d_path}" -executable -type f ! -name '*~' 2> /dev/null | LC_ALL=C sort)
 
-    ## File name filter: Not running in interactive mode?
-    if [[ -z "$PS1" ]]; then
-        ## Drop pathnames with interactive=TRUE
+    ## File name filter: Running in interactive mode or not?
+    if [[ -n "$PS1" ]]; then
+        ## Interactive, so drop pathnames with interactive=FALSE
+        source_d_files=$(printf "%s\n" ${source_d_files[@]} | grep -vF "interactive=FALSE")
+    else
+        ## Non-interactive, so drop pathnames with interactive=TRUE
         source_d_files=$(printf "%s\n" ${source_d_files[@]} | grep -vF "interactive=TRUE")
     fi
 
-    ## File name filter: Not running on master (== head node)?
-    if [[ "$HOSTNAME" != "cclc01.som.ucsf.edu" ]]; then
-        ## Drop pathnames with master=TRUE
+    ## File name filter: Running on master (== head node) or not?
+    if [[ "$HOSTNAME" == "cclc01.som.ucsf.edu" ]]; then
+        ## On master, so drop pathnames with master=FALSE
+        source_d_files=$(printf "%s\n" ${source_d_files[@]} | grep -vF "master=FALSE")
+    else
+        ## Not on master, so drop pathnames with master=TRUE
         source_d_files=$(printf "%s\n" ${source_d_files[@]} | grep -vF "master=TRUE")
     fi
 
