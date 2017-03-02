@@ -12,6 +12,17 @@
 # Author: Henrik Bengtsson <henrik.bengtsson@ucsf.edu>
 ###################################################################
 
+function is_function() {
+    type $1 &> /dev/null
+    if [[ $? -eq 0 ]]; then echo 1; else echo 0; fi
+}
+
+## TEMPORARY WORKAROUND: Until all nodes have had /etc/bashrc copied
+## we might need to have the following resourced again
+if [[ "$(is_function source_d)" == "0" ]]; then
+    source /home/shared/cbc/tipcc/.bashrc
+fi
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Record original state
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -24,10 +35,7 @@ fi
 
 # Setup SHARED_ROOT
 export SHARED_ROOT=/home/shared/cbc
-
-# Useful functions
-source ${SHARED_ROOT}/bin/includes.bash
-
+source ${SHARED_ROOT}/bin/includes.cbc.bash
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Setup PATH depending on system
