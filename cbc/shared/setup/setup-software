@@ -398,6 +398,10 @@ lndir $SRC_CBC/bcftools-1.2 .
 lndir $SRC_CBC/bcftools-1.3.1 .
 lndir bcftools-1.3.1 bcftools-latest
 
+## bcl2fastq (Illumina)
+#lndir $SRC_CBC/bcl2fastq-2.17.1.14 .
+#lndir bcl2fastq-2.17.1.14 bcl2fastq-latest
+
 # snpEff
 lndir /home/jocostello/tools/snpEff_v2_0_2 .
 lndir snpEff_v2_0_2 snpEff-latest
