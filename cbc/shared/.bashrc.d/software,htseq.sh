@@ -56,6 +56,7 @@ module_load tophat ""
 
 module_load vcftools
 ## prependPath ${SHARED_SOFTWARE}/vcftools-latest/bin
+prependPerl5Lib ${SHARED_SOFTWARE}/vcftools-latest/lib/perl5/site_perl
 
 module_load wordspy ""
 ## prependPath ${SHARED_SOFTWARE}/wordspy-latest
