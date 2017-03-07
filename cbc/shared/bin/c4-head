@@ -204,7 +204,7 @@ function filter_torque() {
     ## TORQUE commands
     res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(qdel|qsub|qstat)( |:|$)")
     ## Queries done by software, e.g. `[sh]`
-    res=$(printf '%s\n' "${res[@]}" | grep -v -E " \[(qselect|sh)\]")
+    res=$(printf '%s\n' "${res[@]}" | grep -v -E " \[.+\]$")
     printf '%s\n' "${res[@]}"
 }
 
