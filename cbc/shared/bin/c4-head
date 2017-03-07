@@ -156,7 +156,7 @@ function filter_system() {
 
 function filter_shells() {
     local res=("${@}")
-    res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(sh|bash|tcsh|zsh|tcsh)( |:|$)")
+    res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(sh|bash|csh|zsh|tcsh)( |:|$)")
     res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(ssh|ssh-agent|sshd|mosh-server)( |:|$)")
     res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(screen|SCREEN|tmux)( |:|$)")
     printf '%s\n' "${res[@]}"
@@ -201,7 +201,10 @@ function filter_scyld() {
 
 function filter_torque() {
     local res=("${@}")
+    ## TORQUE commands
     res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(qdel|qsub|qstat)( |:|$)")
+    ## Queries done by software, e.g. `[sh]`
+    res=$(printf '%s\n' "${res[@]}" | grep -v -E " \[(qselect|sh)\]")
     printf '%s\n' "${res[@]}"
 }
 
