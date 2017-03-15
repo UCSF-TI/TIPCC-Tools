@@ -54,7 +54,6 @@ if test -d "${GCC_HOME}"; then
 fi
 
 
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # BUILDS
 #
@@ -67,5 +66,5 @@ export LDFLAGS="-L${SHARED_ROOT}/local/lib $LDFLAGS"
 
 ## TODO: Make available to all users /HB 2016-12-01
 #if test $USER == "henrik" || test $USER == "cbctest"; then
-#export LD_LIBRARY_PATH="${SHARED_ROOT}/local/lib:${LD_LIBRARY_PATH}"
+export LD_LIBRARY_PATH="${SHARED_ROOT}/local/lib:${LD_LIBRARY_PATH}"
 #fi
