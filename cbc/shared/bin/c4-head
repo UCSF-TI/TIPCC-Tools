@@ -232,7 +232,7 @@ function filter_special() {
 
 ## Query ps + bpstat for _all_ running head-node processes
 ## Note: head node process are those without NODE information.
-res=$(ps uax | bpstat -P | grep -E "^  " | grep -E -v "^[ ]+root" | sed -E 's/^[ ]*//g' | grep -E -v "$USER .* (ps uax|grep -E |.*c4 head|sed -E)")
+res=$(ps uax | bpstat -P | grep -E "^  " | grep -E -v "^[ ]+root" | sed -E 's/^[ ]*//g' | grep -E -v "($USER|$UID) .* (ps uax|grep -E |.*c4 head|sed -E)")
 
 if [[ $filter == "user" ]]; then
     res=$(filter_system "${res[@]}")
@@ -284,7 +284,7 @@ for user in ${users}; do
   fi
 
   ## Keep only those for the user of interest
-  res_ii=$(printf '%s\n' "${res[@]}" | grep -E "^($user|$uid) " | grep -v "grep -E \"$user \"")
+  res_ii=$(printf '%s\n' "${res[@]}" | grep -E "^($user|$uid) " | grep -v "grep -E \"($user|$uid) \"")
 
   ## Nothing to do?
   if [[ -z "${res_ii[@]}" ]]; then continue; fi
