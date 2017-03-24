@@ -97,7 +97,7 @@ if [[ -n "${bfr}" ]]; then
 fi
 
 echo "## Disk space"
-df -h | grep -E "(Filesystem|home|data|work)"
+df -h | grep -E "(Filesystem| /home| /data| /work)"
 echo
 echo "## Job scheduler"
 echo "There are $(qstat -t -n -1 | grep -E "^[0-9]+" | wc -l) cluster jobs of which $(qme | grep -E "^[0-9]+" | wc -l) are yours (see 'qstat' and 'qme')"
