@@ -14,3 +14,4 @@ local cbc_shared = "/home/shared/cbc"
 local cbc_software = cbc_shared .. "/software"
 
 prepend_path("PATH", cbc_software .. "/" .. name .. "-" .. version .. "/bin")
+prepend_path("LD_LIBRARY_PATH", cbc_software .. "/" .. name .. "-" .. version .. "/lib")

@@ -80,6 +80,18 @@ function prependPath() {
   uniquePath
 } # prependPath()
 
+function prependLdLibraryPath() {
+  if test -z "$1"; then
+    echo "prependLdlibraryPath(): Path is missing."
+    return;
+  fi
+  if ! test -d "$1"; then
+    error "No such path: $1"
+  fi
+  export LD_LIBRARY_PATH="$1:${LD_LIBRARY_PATH}"
+  uniquePath
+} # prependLdLibraryPath()
+
 function module_load() {
     ## mecho module_load $*
     local name=$1

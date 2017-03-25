@@ -71,6 +71,7 @@ alias igv=${SHARED_SOFTWARE}/IGV-latest/igv.sh
 module_load htslib
 ##prependPath ${SHARED_SOFTWARE}/htslib-latest/bin
 export HTSLIB_HOME=/home/shared/cbc/software/htslib-latest
+prependLdLibraryPath ${HTSLIB_HOME}/lib
 fi
 
 export PICARD_HOME=${SHARED_SOFTWARE}/picard-tools-latest
