@@ -227,6 +227,8 @@ function filter_special() {
     res=$(printf '%s\n' "${res[@]}" | grep -v -E "scan-c4_head")
     ## Nextflow (http://www.nextflow.io/)
     res=$(printf '%s\n' "${res[@]}" | grep -v -E "java .* [-]Dcapsule[.]app=nextflow")
+    ## speedtest
+    res=$(printf '%s\n' "${res[@]}" | grep -v -E "python .*/speedtest-cli")
     printf '%s\n' "${res[@]}"
 }
 
