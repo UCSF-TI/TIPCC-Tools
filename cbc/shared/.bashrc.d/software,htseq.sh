@@ -50,6 +50,7 @@ module_load samtools ""
 
 module_load bcftools ""
 ## prependPath ${SHARED_SOFTWARE}/bcftools-latest
+export BCFTOOLS_PLUGINS=/home/shared/cbc/software/bcftools-latest/plugins
 
 module_load tophat ""
 ## prependPath ${SHARED_SOFTWARE}/tophat-latest
