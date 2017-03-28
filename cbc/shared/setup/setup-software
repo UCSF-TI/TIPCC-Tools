@@ -178,17 +178,25 @@ rm -f ${what}
 lndir ${newest} ${what}
 
 
-# R 3.4.x
-what=R-3.4.0devel
+# R 3.4.0 RC
+## what=R-3.4.0rc
+## newest=`ls ${dir} | grep ${what}- | sort -ru | head -1`
+## lndir ${dir}/${newest} .
+## rm -f ${what}
+## lndir ${newest} ${what}
+
+# R 3.5.x devel
+what=R-3.5.0devel
 newest=`ls ${dir} | grep ${what}- | sort -ru | head -1`
 lndir ${dir}/${newest} .
 rm -f ${what}
 lndir ${newest} ${what}
 
 # R latest, patched and R devel
-lndir R-3.3.3patched R-patched
 lndir R-3.3.3 R-latest
+lndir R-3.3.3patched R-patched
 lndir R-3.4.0devel R-devel
+#lndir R-3.5.0devel R-devel
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -398,7 +406,7 @@ lndir BamUtil-1.0.14 BamUtil-latest
 lndir $SRC_CBC/bcftools-1.2 .
 lndir $SRC_CBC/bcftools-1.3.1 .
 lndir $SRC_CBC/bcftools-1.4 .
-lndir bcftools-1.3.1 bcftools-latest
+lndir bcftools-1.4 bcftools-latest
 
 ## bcl2fastq (Illumina)
 #lndir $SRC_CBC/bcl2fastq-2.17.1.14 .
