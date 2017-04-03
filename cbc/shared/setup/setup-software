@@ -236,7 +236,8 @@ lndir grace-unknown grace-latest
 
 # htop [http://hisham.hm/htop/]
 lndir $SRC_CBC/htop-1.0.3/ .
-lndir htop-1.0.3 htop
+lndir htop-1.0.3 htop-latest
+lndir htop-1.0.3 htop   ## Backward compatibility (TO REMOVE May 2017)
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
