@@ -1,13 +1,54 @@
 ### List User's Jobs on the Job Queue
 ###
 ### Usage:
-###  qme <option>
+###  qme [option] <user>
 ###
 ### Options:
-###  --help      : Display this help
-###  --user user : Check another user (default: $USER)
-###  --running   : Check only running jobs (not queued)
+###  --help       Display this help
+###  --all        Check all jobs (also queued)
+###  --running    Check only running jobs (not queued)
+###  <user>       Check another user (default: $USER)
+###  --user user  (deprecated alternative)
+###
+### Example:
+###  qme
+###  qme alice
+###
+### Version: 0.1.0-9000
+### Copyright: Henrik Bengtsson (2015-2017)
+### License: GPL (>= 2.1) [https://www.gnu.org/licenses/gpl.html]
+call="$0 $*"
+tool_name=$(basename $0)
 
+function mecho() { echo "$@" 1>&2; }
+
+function merror() {
+    mecho "ERROR in '${tool_name}': $*"
+    exit 1
+}
+
+function mwarn() {
+    mecho "WARNING in '${tool_name}': $*"
+}
+
+function help() {
+    local res=$(grep -E "^###( .*|)$" $0 | cut -b 5-)
+    local search=$(basename $0)
+    if [[ "${search}" != "${tool_name}" ]]; then
+        res=$(printf '%s\n' "${res[@]}" | sed "s/${search}/${tool_name}/g")
+    fi
+    printf '%s\n' "${res[@]}"
+}
+
+function whatis() {
+    local res=$(grep "^### .*[^:][[:space:]]*$" $0 | head -1 | cut -b 5-)
+    printf '%s\n' "${res[@]}"
+}
+
+function version() {
+    grep -E "^###[ ]*Version:[ ]*" $0 | sed 's/###[ ]*Version:[ ]*//g'
+}
+    
 path=$(dirname $0)
 user=$USER
 all=true
@@ -17,24 +58,28 @@ cmd=show
 while (( "$#" )); do
   ## Commands
   if test $1 == "--help" || test $1 == "-h"; then
-    cmd=help
-  elif test $1 == "--user" || test $1 == "-u"; then
-    shift
-    user=$1
+    help
+    exit 0
+  elif test $1 == "--whatis"; then
+    whatis
+    exit 0
+  elif test $1 == "--version"; then
+    version
+    exit 0
   elif test $1 == "--all" || test $1 == "-a"; then
     all=true
   elif test $1 == "--running" || test $1 == "-r"; then
     all=false
+  elif test $1 == "--user" || test $1 == "-u"; then
+    shift
+    user=$1
+    mwarn "--user <user> is deprecated; use only <user> instead"
+  else
+    user=$1
   fi
 
   shift
 done
-
-
-if test $cmd == "help"; then
-    grep "^###" $0 | grep -v "^####" | cut -b 5-
-    exit 0
-fi
 
 
 ## Collect
