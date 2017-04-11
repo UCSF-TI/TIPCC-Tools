@@ -3,24 +3,23 @@
 ### Detailed user information
 ###
 ### Usage:
-###  c4-user [options]
+###  c4-user [options] <user>
 ###
 ### Options:
 ###  --list              List all users
-###
-###  --user <user>       Specify user (default: \$USER)
-###
 ###  --jobs              List cluster jobs / tasks
 ###  --head              List head-node processes
 ###  --disk-usage        List disk usage (slow)
 ###  --all               As --jobs --head --disk-usage
 ###  --most              As --all without --disk-usage
-###
 ###  --help              This help
+###
+###  <user>              Specify user (default: \$USER)
+###  --user <user>       (deprecated alternative)
 ###
 ### Example:
 ###  c4-user
-###  c4-user --user alice
+###  c4-user alice
 ###
 ### Version: 0.1.0-9000
 ### Copyright: Henrik Bengtsson (2016-2017)
@@ -37,6 +36,9 @@ function mecho() { echo "$@" 1>&2; }
 function merror() {
     mecho "ERROR in '${tool_name}': $*"
     exit 1
+}
+function mwarn() {
+    mecho "WARNING in '${tool_name}': $*"
 }
 
 function as_logical() {
@@ -100,9 +102,6 @@ while [[ $# > 0 ]]; do
     elif [[ "$1" == "--version" ]]; then
         version
         exit 0
-    elif [[ "$1" == "--user" ]]; then
-        shift
-        user=$1
     elif [[ "$1" == "--list" ]]; then
         all_users
 	exit 0
@@ -125,6 +124,10 @@ while [[ $# > 0 ]]; do
         head=1
         moab=1
         disk_usage=1
+    elif [[ "$1" == "--user" ]]; then
+        shift
+        user=$1
+	mwarn "--user <user> is deprecated; use only <user> instead"
     else
         user=$1
     fi
