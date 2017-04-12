@@ -111,6 +111,11 @@ lndir lua-5.3.3 lua-latest
 lndir $SRC_CBC/luarocks-2.4.2 .
 lndir luarocks-2.4.2 luarocks-latest
 
+# Pandoc
+lndir $SRC_CBC/pandoc-1.19.2-0 .
+lndir pandoc-1.19.2-0 pandoc-latest
+
+
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
