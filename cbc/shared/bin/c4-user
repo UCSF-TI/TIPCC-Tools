@@ -200,20 +200,21 @@ echo "Last login      : $(finger $user | grep -E '(Last login|On since)' | sed '
 
 ## Moab information
 if [[ $moab -eq 1 ]]; then
+    config_file="/opt/moab/etc/moab.cfg"
     pattern="($(id -Gn $user | sed 's/ /|/g'))"
-    grep -qE "(${pattern})" /opt/moab/etc/moab.cfg
-    res=$(grep -E "(${pattern})" /opt/moab/etc/moab.cfg | grep -vE "^#" | grep -vE '^[[:space:]]*$' | sed 's/^/ - /g')
+    grep -qE "(${pattern})" "$config_file"
+    res=$(grep -E "(${pattern})" "$config_file" | grep -vE "^#" | grep -vE '^[[:space:]]*$' | sed 's/^/ - /g')
     if [[ -z "${res[@]}" ]]; then
-        echo "Moab privileges : <none>"
+        echo "Moab privileges ($config_file): <none>"
     else
-        echo "Moab privileges :"
+        echo "Moab privileges ($config_file):"
         printf '%s\n' "${res[@]}"
     fi
 fi
 
 ## Jobs
 if [[ $jobs -eq 1 ]]; then
-    echo "Cluster tasks   : $(qme --user $user | grep -F "Number of tasks:" | sort -u | sed 's/Number of tasks: //g')"
+    echo "Cluster tasks   : $(qme $user | grep -F "Number of tasks:" | sort -u | sed 's/Number of tasks: //g')"
 fi
 
 ## Head-node processes
