@@ -20,6 +20,9 @@ function is_function() {
 ## TEMPORARY WORKAROUND: Until all nodes have had /etc/bashrc copied
 ## we might need to have the following resourced again
 if [[ "$(is_function source_d)" == "0" ]]; then
+    if [[ "$USER" == "henrik" ]]; then
+        echo "ERROR: This line in '/home/shared/cbc/bashrc' should not be reached!"
+    fi
     source /home/shared/cbc/tipcc/.bashrc
 fi
 
@@ -76,15 +79,6 @@ if [[ ! -f ${HOME}/.cbc ]]; then touch ${HOME}/.cbc; fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source different .bashrc.d/ paths
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-if [[ -n "${BASHRC_DEBUG}" ]]; then
-    CBC_STARTUP_START_TIME=$(echo $(($(date +%s%N)/1000000)))
-    function duration() {
-	local d=$(($(echo $(($(date +%s%N)/1000000))) - $CBC_STARTUP_START_TIME))
-	d=$(echo 000$d | sed -E 's/([0-9]{3})$/.\1/' | sed -E 's/^0*([0-9])/\1/')
-	echo $d
-    }
-fi
-
 ## CBC Tools?
 export CBC_STARTUP_COMPLETED=
 if [[ -f ${HOME}/.cbc ]]; then
