@@ -17,12 +17,11 @@ function is_function() {
     if [[ $? -eq 0 ]]; then echo 1; else echo 0; fi
 }
 
-## TEMPORARY WORKAROUND: Until all nodes have had /etc/bashrc copied
-## we might need to have the following resourced again
+## '/home/shared/cbc/tipcc/.bashrc' defines several functions used here.
+## It has typically been source before (via /etc/bashrc).  However, in
+## some cases (e.g. cronjobs) this script may be sourced directly. For
+## those cases, we make sure to source the above script here.
 if [[ "$(is_function source_d)" == "0" ]]; then
-    if [[ "$USER" == "henrik" ]]; then
-        echo "ERROR: This line in '/home/shared/cbc/bashrc' should not be reached!"
-    fi
     source /home/shared/cbc/tipcc/.bashrc
 fi
 
