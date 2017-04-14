@@ -201,7 +201,7 @@ echo "Last login      : $(finger $user | grep -E '(Last login|On since)' | sed '
 ## Moab information
 if [[ $moab -eq 1 ]]; then
     config_file="/opt/moab/etc/moab.cfg"
-    pattern="($(id -Gn $user | sed 's/ /|/g'))"
+    pattern="[^a-zA-Z]($(id -Gn $user | sed 's/ /|/g'))([^a-zA-Z]|$)"
     grep -qE "(${pattern})" "$config_file"
     res=$(grep -E "(${pattern})" "$config_file" | grep -vE "^#" | grep -vE '^[[:space:]]*$' | sed 's/^/ - /g')
     if [[ -z "${res[@]}" ]]; then
