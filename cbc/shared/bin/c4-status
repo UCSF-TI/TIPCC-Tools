@@ -108,10 +108,10 @@ fi
     
 if [[ $(on_compute_node) -ne 0 ]]; then
     echo
-    echo "### High-memory non-user processes"
+    echo "### High-memory processes"
     C4_TOOLS=0 c4-head --himem
     echo
-    echo "### High-CPU non-user processes"
+    echo "### High-CPU processes"
     C4_TOOLS=0 c4-head --hicpu
     echo
 fi
