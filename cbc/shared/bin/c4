@@ -155,16 +155,6 @@ if [[ $cmd == "help" ]]; then
     exit 0
 elif [[ $cmd == "status" ]]; then
     C4_TOOLS=0 c4-status
-    
-    if [[ $(on_compute_node) -ne 0 ]]; then
-        echo
-        echo "### High-memory non-user processes"
-        C4_TOOLS=0 c4-head --himem
-        echo
-        echo "### High-CPU non-user processes"
-        C4_TOOLS=0 c4-head --hicpu
-        echo
-    fi
 elif [[ $cmd == "nodes" ]]; then
     echo "Cluster nodes (that are up): $(echo $CLUSTER_NODES_UP)"
 elif [[ $cmd == "checknodes" ]]; then

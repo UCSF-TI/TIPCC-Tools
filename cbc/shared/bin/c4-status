@@ -52,12 +52,8 @@ function version() {
 
 ## Cluster functions
 function on_compute_node() {
-    if [[ -z ${ISCOMPUTENODE+x} ]]; then
-        pbsnodes ${HOSTNAME} &> /dev/null
-        if [[ $? -eq 0 ]]; then echo 1; else echo 0; fi
-    else
-	echo $(as_logical ${ISCOMPUTENODE})
-    fi
+    pbsnodes ${HOSTNAME} &> /dev/null
+    echo $?
 }
 
 
@@ -103,7 +99,19 @@ echo "## Job scheduler"
 echo "There are $(qstat -t -n -1 | grep -E "^[0-9]+" | wc -l) cluster jobs of which $(qme | grep -E "^[0-9]+" | wc -l) are yours (see 'qstat' and 'qme')"
 
 if [[ $(on_compute_node) -eq 0 ]]; then
-    echo "Moab status: $(service moab status)"
-else
     echo "Moab status: <only available from the head node: ${HOSTNAME}>"
+else
+    echo "Moab status: $(service moab status)"
+fi
+
+
+    
+if [[ $(on_compute_node) -ne 0 ]]; then
+    echo
+    echo "### High-memory non-user processes"
+    C4_TOOLS=0 c4-head --himem
+    echo
+    echo "### High-CPU non-user processes"
+    C4_TOOLS=0 c4-head --hicpu
+    echo
 fi
