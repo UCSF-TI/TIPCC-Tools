@@ -104,6 +104,9 @@ else
     echo "Moab status: $(service moab status)"
 fi
 
+echo
+echo "Uptime $HOSTNAME:"
+uptime
 
     
 if [[ $(on_compute_node) -ne 0 ]]; then
