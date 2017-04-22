@@ -105,8 +105,8 @@ else
 fi
 
 echo
-echo "Uptime $HOSTNAME:"
-uptime
+echo "## Uptime"
+echo "$HOSTNAME: $(uptime)"
 
     
 if [[ $(on_compute_node) -ne 0 ]]; then
