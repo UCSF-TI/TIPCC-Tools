@@ -87,8 +87,10 @@ pbsnodes -l
 echo
 bfr=$(pbsnodes | grep -B 5 -A 2 -F "ERROR")
 if [[ -n "${bfr}" ]]; then
-  echo "## WARNING: Problematic nodes"
+  tput setaf 1 2> /dev/null ## red
+  echo "## ERROR: Problematic nodes"
   echo ${bfr}
+  tput sgr0 2> /dev/null    ## reset
   echo
 fi
 
