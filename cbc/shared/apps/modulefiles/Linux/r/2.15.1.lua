@@ -16,4 +16,4 @@ local cbc_software = cbc_shared .. "/software"
 -- Setting an command-line alias
 -- set_alias("foo", "echo 'Foo!'")
 
-prepend_path( "PATH",           cbc_software .. "/R-" .. version .. "/bin")
+prepend_path("PATH", cbc_software .. "/R-" .. version .. "/bin")
