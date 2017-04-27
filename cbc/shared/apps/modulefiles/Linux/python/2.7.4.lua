@@ -16,3 +16,4 @@ local cbc_software = cbc_shared .. "/software"
 local home = cbc_software .. "/" .. name .. "-" .. version
 prepend_path("PATH", home .. "/bin")
 prepend_path("LD_LIBRARY_PATH", home .. "/lib")
+prepend_path("PYTHONPATH", home .. "/lib/python2.7")
