@@ -181,9 +181,9 @@ lndir $SRC_CBC/R/R-3.4.0-20170421 R-3.4.0
 dir=$SRC_CBC/R/
 what=R-3.4.0patched
 newest=`ls ${dir} | grep ${what}- | sort -ru | head -1`
-#lndir ${dir}${newest} .
-#rm -f ${what}
-#lndir ${newest} ${what}
+lndir ${dir}${newest} .
+rm -f ${what}
+lndir ${newest} ${what}
 
 # R 3.5.x devel
 what=R-3.5.0devel
@@ -195,7 +195,6 @@ lndir ${newest} ${what}
 # R latest, patched and R devel
 lndir R-3.3.3 R-latest
 lndir R-3.3.3patched R-patched
-lndir R-3.4.0rc R-rc
 lndir R-3.5.0devel R-devel
 
 
