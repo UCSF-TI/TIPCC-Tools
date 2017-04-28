@@ -1,9 +1,13 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # SOFTWARE: System tools
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-prependPath ${SHARED_SOFTWARE}/htop-latest
+if [[ $(using_lmod) -eq 0 ]]; then
+    prependPath ${SHARED_SOFTWARE}/htop-latest
+fi
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # SOFTWARE: Text tools
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-prependPath ${SHARED_SOFTWARE}/pandoc-latest/bin
+if [[ $(using_lmod) -eq 0 ]]; then
+    prependPath ${SHARED_SOFTWARE}/pandoc-latest/bin
+fi
