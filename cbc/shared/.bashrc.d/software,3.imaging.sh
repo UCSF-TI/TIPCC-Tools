@@ -1,4 +1,6 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # SOFTWARE: Imaging tools
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-prependPath ${SHARED_SOFTWARE}/Fiji-latest
+if [[ $(using_lmod) -eq 0 ]]; then
+    prependPath ${SHARED_SOFTWARE}/Fiji-latest
+fi    

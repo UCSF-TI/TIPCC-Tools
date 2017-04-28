@@ -76,6 +76,11 @@ lndir /opt/gcc/gcc-5.1.0 .
 # LLVM
 lndir /opt/llvm/llvm-3.5.0 .
 
+# git
+lndir /opt/Git/Git-2.1.3/ git-2.1.3
+lndir $SRC_CBC/git-2.1.1 .
+lndir git-2.1.3 git-latest
+
 # git flow
 lndir $SRC_CBC/gitflow-0.4.2 .
 lndir gitflow-0.4.2 gitflow-latest
