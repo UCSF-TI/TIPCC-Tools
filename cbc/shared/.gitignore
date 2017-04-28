@@ -1,0 +1,16 @@
+apps/.spack*
+bin/a2x
+bin/asciidoc
+bin/c4-head2
+bin/c4-user-info
+bin/compute_nodes_only/
+bin/lg3
+bin/lmod_installR
+bin/man/
+bin/pshead
+bin/qbzip2
+bin/snp-pileup
+bin/speedtest-cli
+bin/speedtest-csv
+bin/speedtest.py
+bin/tree
