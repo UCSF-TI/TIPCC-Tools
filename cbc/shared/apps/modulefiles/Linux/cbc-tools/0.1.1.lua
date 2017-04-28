@@ -45,6 +45,7 @@ load("igvtools")
 load("igv")
 load("htslib")
 load("htop")
+load("pandoc")
 load("s3cmd")
 -- load("valgrind") ## Because it adds /usr/bin/ to PATH
 load("jdk")
