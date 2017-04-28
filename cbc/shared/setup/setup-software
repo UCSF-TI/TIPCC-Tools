@@ -103,6 +103,7 @@ lndir matlab-R2012a matlab-latest
 # Python
 # Python 2.6.8 is install under /opt/local/bin
 lndir /opt/Python/Python-2.7.4 .
+lndir Python-2.7.4 Python-latest
 
 # Lua and LuaRocks
 lndir $SRC_CBC/lua-5.3.3 .
