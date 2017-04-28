@@ -1,14 +1,14 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # SOFTWARE: HT-Seq
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+if [[ $(using_lmod) -eq 0 ]]; then
 prependPath ${SHARED_SOFTWARE}/BamUtil-latest/bamUtil/bin
 
-if [[ $(using_lmod) -eq 0 ]]; then
 ## https://github.com/UCSF-TI/TIPCC/issues/82
 ##module_load bcl2fastq
 ## prependPath ${SHARED_SOFTWARE}/bcl2fastq-latest/bin
 
-    module_load bedops
+module_load bedops
 ## prependPath ${SHARED_SOFTWARE}/bedops-latest/bin
 
 module_load bedtools2

@@ -25,6 +25,7 @@ load("python")
 load("anaconda")
 load("anaconda-python")
 
+load("bamutil")
 load("bedops")
 load("bedtools2")
 load("blast")
