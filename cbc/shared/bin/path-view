@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+### PATH tools:
+### List PATH elements
+###
+### Usage:
+###  path-view [options]
+###
+### Options:
+###  --numbers          Enumerate paths
+###  --help             This help
+###
+### Example:
+###  path-view
+###
+### Version: 0.1.0-9000
+### Copyright: Henrik Bengtsson (2016-2017)
+### License: GPL (>= 2.1) [https://www.gnu.org/licenses/gpl.html]
+call="$0 $*"
+tool_name=$(basename $0)
+if [[ ${C4_TOOLS} -ne 0 ]]; then
+    tool_name=${tool_name/-/ }
+    shift
+fi
+
+function mecho() { echo "$@" 1>&2; }
+
+function merror() {
+    mecho "ERROR in '${tool_name}': $*"
+    exit 1
+}
+
+function help() {
+    local res=$(grep -E "^###( .*|)$" $0 | cut -b 5-)
+    local search=$(basename $0)
+    if [[ "${search}" != "${tool_name}" ]]; then
+        res=$(printf '%s\n' "${res[@]}" | sed "s/${search}/${tool_name}/g")
+    fi
+    printf '%s\n' "${res[@]}"
+}
+
+function whatis() {
+    local res=$(grep "^### .*[^:][[:space:]]*$" $0 | head -1 | cut -b 5-)
+    printf '%s\n' "${res[@]}"
+}
+
+function version() {
+    grep -E "^###[ ]*Version:[ ]*" $0 | sed 's/###[ ]*Version:[ ]*//g'
+}
+
+prefix=numbers
+
+# Parse command-line options
+while [[ $# > 0 ]]; do
+    if [[ "$1" == "--help" ]]; then
+        help
+        exit 0
+    elif [[ "$1" == "--version" ]]; then
+        version
+        exit 0
+    elif [[ "$1" == "--numbers" ]]; then
+        prefix="numbers"
+    else
+        extras="$extras $1"
+    fi
+    shift
+done
+
+paths=$(echo ${PATH} | sed -e 's/:/\n/g' | grep -vE "^$")
+if [[ "$prefix" == "" ]]; then
+    printf "%s\n" $paths
+elif [[ "$prefix" == "numbers" ]]; then
+    printf "%s\n" $paths | awk '{printf "%3d: %s\n", NR, $0}'
+fi
+
