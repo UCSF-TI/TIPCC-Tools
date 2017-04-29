@@ -110,7 +110,7 @@ lndir matlab-R2012a matlab-latest
 lndir /opt/Python/Python-2.7.3 .
 lndir /opt/Python/Python-2.7.4 .
 lndir /opt/Python/Python-2.7.9 .
-lndir Python-2.7.4 Python-latest
+lndir Python-2.7.9 Python-latest
 
 # Lua and LuaRocks
 lndir $SRC_CBC/lua-5.3.3 .
@@ -262,11 +262,13 @@ lndir Fiji-2.0.0-rc-54 Fiji-latest
 lndir $SRC_CBC/IGV_2.1.2 .
 lndir $SRC_CBC/IGV_2.3.31 .
 lndir $SRC_CBC/IGV_2.3.68 .
+lndir $SRC_CBC/IGV_2.3.92 .
 lndir IGV_2.3.68 IGV-latest
 
 
 # IGVTools
 lndir $SRC_CBC/IGVTools-2.3.68 .
+lndir $SRC_CBC/IGVTools-2.3.91 .
 lndir IGVTools-2.3.68 IGVTools-latest
 
 
