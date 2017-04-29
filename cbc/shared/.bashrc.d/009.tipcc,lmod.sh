@@ -1,7 +1,5 @@
-## Nothing to do?
-if [[ $CBC_STARTUP_COMPLETED == *"lmod"* ]]; then
-    return;
-fi
+## Already done?
+if [[ $STARTUP_DONE == *"lmod"* ]]; then return; fi
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Lua, LuaRocks and Lmod
@@ -117,4 +115,5 @@ fi
 
 ## mecho "MODULEPATH=$(echo $MODULEPATH | tr : '\n')"
 
-export CBC_STARTUP_COMPLETED="$CBC_STARTUP_COMPLETED lmod"
+STARTUP_DONE="${STARTUP_DONE}:lmod"
+
