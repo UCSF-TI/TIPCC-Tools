@@ -9,11 +9,11 @@ whatis("Keywords: UCSF, cluster, utilities")
 whatis("URL: https://github.com/UCSF-TI/TIPCC/wiki/Software-shared-by-CBC")
 whatis("Description: CBC Tools setup via modules.")
 
+local cbc_python = os.getenv("CBC_PYTHON")
+
 load("cbc-bin")
 
 -- load("pcre")
-
--- load("git")
 -- load("curl")
 -- load("pcre")
 -- load("wget")
@@ -21,9 +21,21 @@ load("cbc-bin")
 -- load("zlib")
 -- load("emacs")
 
-load("python")
-load("anaconda")
-load("anaconda-python")
+-- WORKAROUND: The default CBC-shared setup is such that Anaconda's Python
+-- installation comes before the system one.  Env variable CBC_PYTHON=cbc
+-- allows us to swap the order.  This can be set in ~/.bashrc or ~/.tipccrc.
+-- References:
+-- * https://github.com/UCSF-TI/TIPCC-sysadm/issues/81
+-- * https://github.com/UCSF-TI/TIPCC/issues/110
+if (os.getenv("CBC_PYTHON") == "cbc") then
+  load("anaconda")
+  load("anaconda-python")
+  load("python")
+else
+  load("python")
+  load("anaconda")
+  load("anaconda-python")
+end
 
 load("git")
 load("gitflow")
@@ -51,10 +63,11 @@ load("htslib")
 load("htop")
 load("pandoc")
 load("s3cmd")
--- load("valgrind") ## Because it adds /usr/bin/ to PATH
+-- load("valgrind") -- Because it adds /usr/bin/ to PATH
 load("jdk")
 load("matlab")
 load("r")
 load("fiji")
-prepend_path("R_LIBS_SITE", "/home/shared/cbc/R/site-library/%p-library/%v")
 load("udocker")
+
+prepend_path("R_LIBS_SITE", "/home/shared/cbc/R/site-library/%p-library/%v")
