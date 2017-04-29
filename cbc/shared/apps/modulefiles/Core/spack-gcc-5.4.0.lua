@@ -3,6 +3,7 @@ local spack_root = os.getenv("SPACK_ROOT")
 
 unload("binutils")
 unload("python")
+load("spack-gcc-4.9.2")
 load("gcc/5.4.0")
 
 -- ADHOC: Hard coded for now /HB 2016-12-13
