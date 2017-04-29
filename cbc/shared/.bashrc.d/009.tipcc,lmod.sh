@@ -109,11 +109,10 @@ function using_lmod() {
 
 ## For BETA users
 ## (http://lmod.readthedocs.io/en/latest/045_transition.html?highlight=no-lmod)
-if [[ -f "${HOME}/.lmod" && ! -f "${HOME}/.no.lmod" ]]; then
+if [[ "$LMOD" = true ]] || [[ -f "${HOME}/.lmod" && ! -f "${HOME}/.no.lmod" ]]; then
     use_lmod
 fi
 
 ## mecho "MODULEPATH=$(echo $MODULEPATH | tr : '\n')"
 
 STARTUP_DONE="${STARTUP_DONE}:lmod"
-
