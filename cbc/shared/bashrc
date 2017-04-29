@@ -25,6 +25,14 @@ if [[ "$(is_function source_d)" == "0" ]]; then
     source /home/shared/cbc/tipcc/.bashrc
 fi
 
+if [[ -f "${HOME}/.tipccrc" ]]; then
+    if [[ -n "${STARTUP_DEBUG}" ]]; then debug_echo "$(startup_duration)s: Sourcing ${HOME}/.tipccrc"; fi
+    source "${HOME}/.tipccrc"
+fi
+
+
+if [[ "${CBC}" != "false" ]]; then
+    
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Record original state
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -83,6 +91,8 @@ export CBC_STARTUP_COMPLETED=
 if [[ -f ${HOME}/.cbc ]]; then
     source_d "$SHARED_ROOT/.bashrc.d"
 fi
+
+fi ## if [[ "${CBC}" != "false" ]]
 
 ## User's ~/.bashrc.d/ scripts?
 if [[ -d "$HOME/.bashrc.d" ]]; then source_d "$HOME/.bashrc.d"; fi
