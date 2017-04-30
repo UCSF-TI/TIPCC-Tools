@@ -109,7 +109,7 @@ function using_lmod() {
 
 ## For BETA users
 ## (http://lmod.readthedocs.io/en/latest/045_transition.html?highlight=no-lmod)
-if [[ "$LMOD" = true ]] || [[ -f "${HOME}/.lmod" && ! -f "${HOME}/.no.lmod" ]]; then
+if [[ "$MODULE_FRAMEWORK" = "lmod" ]] || [[ -f "${HOME}/.lmod" && ! -f "${HOME}/.no.lmod" ]]; then
     use_lmod
 fi
 
