@@ -1,0 +1,29 @@
+#! /bin/env bash
+
+## Identify all installed versions of R
+path=/cbc/shared/software
+versions=$(ls $path | grep "IGVTools[-][0-9]" | cut -c 10- | tr '\n' ' ')
+echo $versions
+
+for version in ${versions}; do
+  echo "Version: ${version}"
+## Here document for RSP template
+cat << EOF > ${version}.lua
+help([[
+IGVTools
+]])
+
+local name = "IGVTools"
+local version = "${version}"
+whatis("Version: " .. version)
+whatis("Keywords: ")
+whatis("URL: https://software.broadinstitute.org/software/igv/igvtools")
+whatis("Description: The igvtools utility provides a set of tools for pre-processing data files.")
+
+-- Local variables
+local cbc_shared = "/home/shared/cbc"
+local cbc_software = cbc_shared .. "/software"
+
+prepend_path("PATH", cbc_software .. "/" .. name .. "-" .. version)
+EOF
+done
