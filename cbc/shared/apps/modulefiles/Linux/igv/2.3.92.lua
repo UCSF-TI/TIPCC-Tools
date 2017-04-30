@@ -12,7 +12,6 @@ whatis("Description: The Integrative Genomics Viewer (IGV) is a high-performance
 -- Local variables
 local cbc_shared = "/home/shared/cbc"
 local cbc_software = cbc_shared .. "/software"
-local path = cbc_software .. "/" .. name .. "_" .. version
--- prepend_path("PATH", path)
-set_alias("igv", path .. "/igv.sh")
-
+local home = cbc_software .. "/" .. name .. "-" .. version
+prepend_path("PATH", home)
+set_alias("igv", home .. "/igv.sh")

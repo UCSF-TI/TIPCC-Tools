@@ -259,11 +259,11 @@ lndir Fiji-2.0.0-rc-54 Fiji-latest
 # Genomic tools
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # IGV
-lndir $SRC_CBC/IGV_2.1.2 .
-lndir $SRC_CBC/IGV_2.3.31 .
-lndir $SRC_CBC/IGV_2.3.68 .
-lndir $SRC_CBC/IGV_2.3.92 .
-lndir IGV_2.3.68 IGV-latest
+lndir $SRC_CBC/IGV_2.1.2 IGV-2.1.2
+lndir $SRC_CBC/IGV_2.3.31 IGV-2.3.31
+lndir $SRC_CBC/IGV_2.3.68 IGV-2.3.68
+lndir $SRC_CBC/IGV_2.3.92 IGV-2.3.92
+lndir IGV-2.3.92 IGV-latest
 
 
 # IGVTools

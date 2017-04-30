@@ -1,9 +1,20 @@
+#! /bin/env bash
+
+## Identify all installed versions of R
+path=/cbc/shared/software
+versions=$(ls $path | grep "IGV[-][0-9]" | cut -c 5- | tr '\n' ' ')
+echo $versions
+
+for version in ${versions}; do
+  echo "Version: ${version}"
+## Here document for RSP template
+cat << EOF > ${version}.lua
 help([[
 IGV: The Integrative Genomics Viewer
 ]])
 
 local name = "IGV"
-local version = "2.1.2"
+local version = "${version}"
 whatis("Version: " .. version)
 whatis("Keywords: ")
 whatis("URL: https://software.broadinstitute.org/software/igv/")
@@ -15,3 +26,5 @@ local cbc_software = cbc_shared .. "/software"
 local home = cbc_software .. "/" .. name .. "-" .. version
 prepend_path("PATH", home)
 set_alias("igv", home .. "/igv.sh")
+EOF
+done

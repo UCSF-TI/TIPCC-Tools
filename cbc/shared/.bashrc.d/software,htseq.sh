@@ -62,6 +62,9 @@ prependPerl5Lib ${SHARED_SOFTWARE}/vcftools-latest/lib/perl5/site_perl
 module_load wordspy ""
 ## prependPath ${SHARED_SOFTWARE}/wordspy-latest
 
+module_load IGV ""
+## prependPath ${SHARED_SOFTWARE}/IGV-latest
+
 module_load IGVTools ""
 ## prependPath ${SHARED_SOFTWARE}/IGVTools-latest
 
