@@ -201,8 +201,8 @@ rm -f ${what}
 lndir ${newest} ${what}
 
 # R latest, patched and R devel
-lndir R-3.3.3 R-latest
-lndir R-3.3.3patched R-patched
+lndir R-3.4.0 R-latest
+lndir R-3.4.0patched R-patched
 lndir R-3.5.0devel R-devel
 
 
@@ -269,7 +269,7 @@ lndir IGV-2.3.92 IGV-latest
 # IGVTools
 lndir $SRC_CBC/IGVTools-2.3.68 .
 lndir $SRC_CBC/IGVTools-2.3.91 .
-lndir IGVTools-2.3.68 IGVTools-latest
+lndir IGVTools-2.3.91 IGVTools-latest
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
