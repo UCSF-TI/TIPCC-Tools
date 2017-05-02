@@ -86,7 +86,7 @@ echo "### According to 'pbsnodes' (TORQUE)"
 pbsnodes -l
 echo
 pbsnodes | grep -q -F "ERROR" > /dev/null
-if [[ $? ]]; then
+if [[ $? -eq 0 ]]; then
   tput setaf 1 2> /dev/null ## red
   echo "## ERROR: Problematic nodes"
   pbsnodes | grep -B 5 -A 2 -F "ERROR" | grep -E "^(n[0-9]+|[[:space:]]+status = )"
