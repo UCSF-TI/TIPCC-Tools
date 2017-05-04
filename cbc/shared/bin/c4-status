@@ -113,7 +113,8 @@ echo "Number of users: $(echo "${jobs[0]}" | awk '{ print $3 }' | sort -u | wc -
 echo
 echo "## Uptime"
 echo "$HOSTNAME: $(uptime)"
-
+vmstat
+ 
     
 if [[ $(on_compute_node) -ne 0 ]]; then
     echo
