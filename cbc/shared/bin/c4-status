@@ -108,7 +108,7 @@ jobs=$(qstat | grep -E "^[0-9]+")
 jobsx=$(qstat -t | grep -E "^[0-9]+")
 echo "Number of jobs: $(echo "${jobs[0]}" | wc -l) ($(echo "${jobs[0]}" | grep -F ' R ' | wc -l) running, $(echo "${jobs[0]}" | grep -F ' Q ' | wc -l) queued)"
 echo "Number of individual jobs: $(echo "${jobsx[0]}" | wc -l) ($(echo "${jobsx[0]}" | grep -F ' R ' | wc -l) running, $(echo "${jobsx[0]}" | grep -F ' Q ' | wc -l) queued)"
-
+echo "Number of users: $(echo "${jobs[0]}" | awk '{ print $3 }' | sort -u | wc -l)"
 
 echo
 echo "## Uptime"
