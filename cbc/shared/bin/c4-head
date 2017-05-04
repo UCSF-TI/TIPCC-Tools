@@ -210,7 +210,7 @@ function filter_torque() {
 
 function filter_utils() {
     local res=("${@}")
-    res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(c4|htop|man|ping|ps|watch|top)( |:|$)")
+    res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(c4|htop|man|ping|ps|watch|top|mc)( |:|$)")
     printf '%s\n' "${res[@]}"
 #    res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(dbus-daemon|dbus-launch)( |:|$)")
 }
