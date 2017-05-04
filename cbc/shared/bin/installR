@@ -154,7 +154,7 @@ if ! test -d ${dirname}; then
         urlpath=http://cran.r-project.org/src/base/R-3
       fi
       url=${urlpath}/R-${flavor}.tar.gz
-      wget ${url} -O ${pathname}
+      wget --quiet ${url} -O ${pathname}
     fi
   fi
 
@@ -249,7 +249,7 @@ if ! test -d ${dirname}; then
   echo ASAN_OPTIONS=$ASAN_OPTIONS
   echo config_args=${config_args}
 
-  ldconfig -p
+  ldconfig -p 2> /dev/null  ## ldconfig only exist on master
   
   ./configure ${config_args} --prefix=${dirname2}
 
