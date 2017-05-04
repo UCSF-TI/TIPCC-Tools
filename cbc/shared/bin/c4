@@ -154,7 +154,10 @@ if [[ $cmd == "help" ]]; then
     help
     exit 0
 elif [[ $cmd == "status" ]]; then
-    C4_TOOLS=0 c4-status
+    if [[ $full == "TRUE" ]]; then
+	extras="$extras --full"
+    fi
+    C4_TOOLS=0 c4-status $extras
 elif [[ $cmd == "nodes" ]]; then
     echo "Cluster nodes (that are up): $(echo $CLUSTER_NODES_UP)"
 elif [[ $cmd == "checknodes" ]]; then

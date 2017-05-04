@@ -6,6 +6,7 @@
 ###  c4-status [options]
 ###
 ### Options:
+###  --full              Output more details
 ###  --help              This help
 ###
 ### Example:
@@ -57,6 +58,8 @@ function on_compute_node() {
 }
 
 
+full=0
+
 # Parse command-line options
 while [[ $# > 0 ]]; do
     if [[ "$1" == "--help" ]]; then
@@ -68,6 +71,8 @@ while [[ $# > 0 ]]; do
     elif [[ "$1" == "--version" ]]; then
         version
         exit 0
+    elif [[ "$1" == "--full" ]]; then
+        full=1
     else
         extras="$extras $1"
     fi
@@ -111,9 +116,12 @@ echo "Number of individual jobs: $(echo "${jobsx[0]}" | wc -l) ($(echo "${jobsx[
 echo "Number of users: $(echo "${jobs[0]}" | awk '{ print $3 }' | sort -u | wc -l)"
 
 echo
-echo "## Uptime"
+echo "## Uptime and vmstat"
 echo "$HOSTNAME: $(uptime)"
 vmstat
+if [[ "$full" != "0" ]]; then
+  vmstat -s -S M
+fi
  
     
 if [[ $(on_compute_node) -ne 0 ]]; then
