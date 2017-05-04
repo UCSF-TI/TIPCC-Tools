@@ -49,6 +49,7 @@ function version() {
 
 cmd=
 extras=
+context=10000
 # Parse command-line options
 while [[ $# > 0 ]]; do
     if [[ "$1" == "--help" ]]; then
@@ -57,8 +58,9 @@ while [[ $# > 0 ]]; do
     elif [[ "$1" == "--version" ]]; then
         version
         exit 0
-    elif [[ "$1" == "--numbers" ]]; then
-        prefix="numbers"
+    elif [[ "$1" == "-C" ]]; then
+	shift
+	context="$1"
     elif [[ -z "$cmd" ]]; then
 	cmd="$1"
     else
@@ -67,5 +69,5 @@ while [[ $# > 0 ]]; do
     shift
 done
 
-path-view | grep --colour=always -C 10000 -F "$(dirname $(which $cmd))"
+path-view $extras | grep --colour=always -C $context -F "$(dirname $(which $cmd))"
 
