@@ -98,14 +98,17 @@ echo "## Disk space"
 df -h | grep -E "(Filesystem| /home| /data| /work)"
 echo
 echo "## Job scheduler"
-echo "There are $(qstat -t -n -1 | grep -E "^[0-9]+" | wc -l) cluster jobs of which $(qme | grep -E "^[0-9]+" | wc -l) are yours (see 'qstat' and 'qme')"
-
 if [[ $(on_compute_node) -eq 0 ]]; then
     echo "Moab status: <only available from the head node: ${HOSTNAME}>"
 else
     PATH="/sbin:$PATH"  ## AD HOC: 'service' might not be on PATH
     echo "Moab status: $(service moab status)"
 fi
+jobs=$(qstat | grep -E "^[0-9]+")
+jobsx=$(qstat -t | grep -E "^[0-9]+")
+echo "Number of jobs: $(echo "${jobs[0]}" | wc -l) ($(echo "${jobs[0]}" | grep -F ' R ' | wc -l) running, $(echo "${jobs[0]}" | grep -F ' Q ' | wc -l) queued)"
+echo "Number of individual jobs: $(echo "${jobsx[0]}" | wc -l) ($(echo "${jobsx[0]}" | grep -F ' R ' | wc -l) running, $(echo "${jobsx[0]}" | grep -F ' Q ' | wc -l) queued)"
+
 
 echo
 echo "## Uptime"
