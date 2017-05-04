@@ -47,8 +47,8 @@ function version() {
     grep -E "^###[ ]*Version:[ ]*" $0 | sed 's/###[ ]*Version:[ ]*//g'
 }
 
-prefix=numbers
-
+cmd=
+extras=
 # Parse command-line options
 while [[ $# > 0 ]]; do
     if [[ "$1" == "--help" ]]; then
@@ -59,15 +59,13 @@ while [[ $# > 0 ]]; do
         exit 0
     elif [[ "$1" == "--numbers" ]]; then
         prefix="numbers"
+    elif [[ -z "$cmd" ]]; then
+	cmd="$1"
     else
         extras="$extras $1"
     fi
     shift
 done
 
-paths=$(echo ${PATH} | sed -e 's/:/\n/g' | grep -vE "^$")
-if [[ "$prefix" == "" ]]; then
-    printf "%s\n" $paths
-elif [[ "$prefix" == "numbers" ]]; then
-    printf "%s\n" $paths | awk '{printf "%3d: %s\n", NR, $0}'
-fi
+path-view | grep --colour=always -C 10000 -F "$(dirname $(which $cmd))"
+
