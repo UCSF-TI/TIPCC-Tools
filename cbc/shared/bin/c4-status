@@ -118,7 +118,7 @@ echo "Number of users: $(echo "${jobs[0]}" | awk '{ print $3 }' | sort -u | wc -
 echo
 echo "## Uptime and vmstat"
 echo "$HOSTNAME: $(uptime)"
-vmstat
+vmstat | sed 's/free/ free/' | sed 's/cache/   cache/' | sed 's/-memory-/---memory---/'
 if [[ "$full" != "0" ]]; then
   vmstat -s -S M
 fi
