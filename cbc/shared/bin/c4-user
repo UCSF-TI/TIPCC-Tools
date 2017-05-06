@@ -164,7 +164,7 @@ if [[ $? -ne 0 ]]; then
     fi
 
     ## Extract 'user' information for the unique match
-    line=$(cut -d: -f5 /etc/passwd | grep -n -i -F $user | cut -d: -f1)
+    line=$(cut -d: -f3,5 /etc/passwd | grep -n -i -F $user | cut -d: -f1)
     user=$(sed "${line}q;d" /etc/passwd | cut -d: -f1)
 
     ## Re-assert user exists (should always work)
