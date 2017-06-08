@@ -422,6 +422,10 @@ lndir bcftools-1.4 bcftools-latest
 #lndir $SRC_CBC/bcl2fastq-2.17.1.14 .
 #lndir bcl2fastq-2.17.1.14 bcl2fastq-latest
 
+## GDC Client (https://gdc.cancer.gov/access-data/gdc-data-transfer-tool)
+lndir /opt/GDC/gdc-client-1.0.1 .
+lndir gdc-client-1.0.1 gdc-client-latest
+
 # snpEff
 lndir /home/jocostello/tools/snpEff_v2_0_2 .
 lndir snpEff_v2_0_2 snpEff-latest
@@ -434,7 +438,8 @@ lndir SNVMix2-0.11.8-r3 SNVMix2-latest
 lndir $SRC_CBC/sratoolkit.2.3.4-2-centos_linux64 .
 lndir $SRC_CBC/sratoolkit.2.4.1-centos_linux64 .
 lndir $SRC_CBC/sratoolkit.2.5.7-centos_linux64 .
-lndir sratoolkit.2.5.7-centos_linux64 sratoolkit-latest
+lndir $SRC_CBC/sratoolkit.2.8.2-1-centos_linux64 .
+lndir sratoolkit.2.8.2-1-centos_linux64 sratoolkit-latest
 
 # TopHat
 #lndir /home/taylorbs/lbin/tophat-1.1.1.Linux_x86_64 .
