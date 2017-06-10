@@ -15,6 +15,7 @@
 ###  c4 disk_usage          - Summarize a user's disk usage
 ###  c4 delete_sam_with_bam - Delete SAM files with existing (newer) BAM file
 ###  c4 ganglia             - Download Ganglia graphs (as image files)
+###  c4 pm                  - Post-mortem analysis
 ###
 ### How to install:
 ### Add the following to your ~/.bashrc script:
