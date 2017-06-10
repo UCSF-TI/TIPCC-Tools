@@ -59,6 +59,7 @@ function version() {
 }
 
 
+path=figures
 debug=false
 command=
 node=
@@ -96,16 +97,30 @@ while [[ $# > 0 ]]; do
     shift
 done
 
+if [[ -z "$command" ]]; then
+    help
+    mecho
+    merror "Command not specified"
+fi
+
 if [[ -z "$node" ]]; then
-    merror "Argument --node <node number> must be specified, e.g. --node 21"
+    help
+    mecho
+    merror "Argument --node <node number> must be specified, e.g. --node 13"
 fi
 
 if [[ "$command" == "graphs" ]]; then
-    path=figures
     mkdir -p "${path}"
 
     ## Download all graphs
+    mecho "Downloading Ganglia graphs ..."
+    mecho " - output folder: ${path}"
+    mecho " - node: ${node}"
+    mecho " - since: ${since}"
+    mecho " - zoom: ${zoom}"
     for ff in load mem cpu network packet; do
-	wget "http://cclc01.ucsf.edu/ganglia/graph.php?c=cclc01&h=.${node}&m=load_one&r=${since}&s=descending&z=${zoom}&g=${ff}_report" -O "${path}/node=${node},what=${ff},since=${since},zoom=${zoom}.png"
+        mecho " - downloading graph: '$ff'"
+	wget --quiet "http://cclc01.ucsf.edu/ganglia/graph.php?c=cclc01&h=.${node}&m=load_one&r=${since}&s=descending&z=${zoom}&g=${ff}_report" -O "${path}/node=${node},what=${ff},since=${since},zoom=${zoom}.png"
     done
+    mecho "Downloading Ganglia graphs ... done"
 fi
