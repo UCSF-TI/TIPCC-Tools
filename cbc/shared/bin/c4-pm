@@ -20,7 +20,6 @@ call="$0 $*"
 tool_name=$(basename $0)
 if [[ ${C4_TOOLS} -ne 0 ]]; then
     tool_name=${tool_name/-/ }
-    shift
 fi
 
 function mecho() { echo "$@" 1>&2; }
@@ -60,6 +59,7 @@ node=
 status=
 full=
 logs=
+
 
 # Parse command-line options
 while [[ $# > 0 ]]; do
@@ -104,6 +104,12 @@ node_label="n${node}"
 echo "# Node ${node}: Post-mortem analysis"
 date +"on %Y-%m-%d %H:%M:%S"
 echo
+
+echo "## Call"
+echo '```sh'
+echo "$call"
+echo '```'
+
 
 if [[ -n "$status" ]]; then
   echo "## Status"
