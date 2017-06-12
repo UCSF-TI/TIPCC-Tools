@@ -329,6 +329,8 @@ else
 	merror "No such command: '${tool_name} ${cmd}'"
     fi
     export C4_TOOLS=1
+    ## Pop first element of 'args' because now part of 'subcmd'
+    args="${args:2}"
     ${subcmd} ${args}
     res=$?
     export C4_TOOLS=
