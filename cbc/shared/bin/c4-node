@@ -3,15 +3,13 @@
 ### Post-mortem summaries
 ###
 ### Usage:
-###  c4-pm [options]
+###  c4-node <node> [options]
 ###
 ### Options:
-###  --node <integer>    Node to inspect. [required]
-###
 ###  --help              This help
 ###
 ### Example:
-###  c4-pm --node 13
+###  c4-node n13
 ###
 ### Version: 0.1.0-9000
 ### Copyright: Henrik Bengtsson (2017)
@@ -54,7 +52,6 @@ function version() {
 
 path=reports
 debug=false
-command=gather
 node=
 status=
 full=
@@ -63,10 +60,7 @@ logs=
 
 # Parse command-line options
 while [[ $# > 0 ]]; do
-    if [[ "$1" == "--node" ]]; then
-        shift
-        node="$1"
-    elif [[ "$1" == "--path" ]]; then
+    if [[ "$1" == "--path" ]]; then
         shift
         path="$1"
     elif [[ "$1" == "--status" ]]; then
@@ -85,7 +79,7 @@ while [[ $# > 0 ]]; do
         version
         exit 0
     else
-        extras="$extras $1"
+        node="$1"
     fi
     shift
 done
@@ -109,6 +103,7 @@ echo "## Call"
 echo '```sh'
 echo "$call"
 echo '```'
+echo
 
 
 if [[ -n "$status" ]]; then
