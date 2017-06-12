@@ -94,7 +94,7 @@ pbsnodes | grep -q -F "ERROR" > /dev/null
 if [[ $? -eq 0 ]]; then
   tput setaf 1 2> /dev/null ## red
   echo "## ERROR: Problematic nodes"
-  pbsnodes | grep -B 5 -A 2 -F "ERROR" | grep -E "^(n[0-9]+|[[:space:]]+status = )"
+  pbsnodes | grep -B 7 -A 2 -F "ERROR" | grep -E "^(n[0-9]+|[[:space:]]+status = )"
   tput sgr0 2> /dev/null    ## reset
   echo
 fi
