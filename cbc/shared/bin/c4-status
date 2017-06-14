@@ -112,13 +112,12 @@ else
 fi
 echo
 echo "### TORQUE / PBS"
-echo
 if [[ $(on_compute_node) -eq 0 ]]; then
   echo "PBS Server: <only available from master, not from ${HOSTNAME}>"
   echo "PBS Authentication Daemon: <only available from master, not from ${HOSTNAME}>"
 else
   echo "PBS Server: $(service pbs_server status)"
-  echo "PBS Authentication Daemon: $(service pbs_trqauthd status)"
+  echo "PBS Authentication Daemon (on master & compute nodes): $(service pbs_trqauthd status)"
 fi
 echo "PBS Queue:"
 jobs=$(qstat | grep -E "^[0-9]+")
