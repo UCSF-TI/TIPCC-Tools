@@ -1,6 +1,5 @@
 ## Already done?
 if [[ $STARTUP_DONE == *"lmod"* ]]; then return; fi
-if [[ "$MODULE_FRAMEWORK" != "lmod2" ]]; then return; fi
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Lua, LuaRocks and Lmod
@@ -109,8 +108,9 @@ function using_lmod() {
 
 
 ## For BETA users
+## https://github.com/UCSF-TI/TIPCC/wiki/Software-Environment-Modules
 ## (http://lmod.readthedocs.io/en/latest/045_transition.html?highlight=no-lmod)
-if [[ "$MODULE_FRAMEWORK" = "lmod2" ]] || [[ -f "${HOME}/.lmod" && ! -f "${HOME}/.no.lmod" ]]; then
+if [[ "$MODULE_FRAMEWORK" = "lmod" ]]; then
     use_lmod
 fi
 
