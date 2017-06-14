@@ -23,7 +23,6 @@ call="$0 $*"
 tool_name=$(basename $0)
 if [[ ${C4_TOOLS} -ne 0 ]]; then
     tool_name=${tool_name/-/ }
-    shift
 fi
 
 
@@ -110,6 +109,7 @@ while [[ $# > 0 ]]; do
     fi
     shift
 done
+
 
 ## Assert running on head node
 if [[ $(on_compute_node) -ne 0 ]]; then
