@@ -126,9 +126,9 @@ fi
 
 echo "## Job Summary"
 echo "Node name: $node_label"
-jids=$(qstat -n -1 -t | grep -F "${node_label}/" | sed -E 's/[.].*//g')
+jids=$(qstat -n -1 -t | grep -F "${node_label}/" | sed -E 's/[.].*//g' | sort -u)
 echo "Job IDs:" ${jids}
-users=$(qstat -n -1 -t | grep -F "${node_label}/" | sed -E 's/.*[.]cclc01[.]som[.][^ ]+  //g' | sed -E 's/ .*//g' | sort -u)
+users=$(qstat -n -1 -t | grep -F "${node_label}/" | sed -E 's/^[^ ]+  //g' | sed -E 's/ .*//g' | sort -u)
 echo "Users:" ${users}
 emails=
 for user in $users; do
@@ -148,21 +148,25 @@ echo
 
 echo "## Job Details"
 echo
-for jid in ${jids}; do
-  echo "### Job $jid"
-  echo '```'
-  qstat -f $jid | grep -F "mem"
-  echo '```'
-  if [[ -n "$full" ]]; then
-    echo "<details>"  
-    echo "<pre>"
-    qstat -f $jid
-    echo "</pre>"
-    echo "</details>"  
-    echo
-  fi
+for user in ${users}; do
+  user_jids=$(qstat -n -1 -t -u ${user} | grep -F "${node_label}/" | sed -E 's/[.].*//g' | sort -u)
+  echo "### Jobs by user '$user'"
+  for jid in ${user_jids}; do
+    echo "#### Job $jid"
+    echo '```'
+    qstat -f $jid | grep -F "mem"
+    echo '```'
+    if [[ -n "$full" ]]; then
+      echo "<details>"  
+      echo "<pre>"
+      qstat -f $jid
+      echo "</pre>"
+      echo "</details>"  
+      echo
+    fi
+  done
+  echo
 done
-echo
 
 
 if [[ -n "$logs" ]]; then
