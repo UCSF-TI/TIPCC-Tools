@@ -11,7 +11,7 @@
 ### Options:
 ###  --node <integer>    Node to inspect. [required]
 ###  --since <string>    Time period; hour, day (default), week, month, year.
-###  --zoom <string>     Zoom of graphs downloaded; medium (default), large.
+###  --zoom <string>     Zoom of graphs downloaded; small, medium (default), large.
 ###  --path <string>     Directory where to download graphs. Default is figures/
 ###
 ###  --help              This help
