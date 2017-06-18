@@ -8,5 +8,5 @@ whatis("URL: https://github.com/UCSF-TI/TIPCC/wiki/Software-shared-by-CBC")
 whatis("Description: Modules shared by CBC.")
 
 local mroot = os.getenv("MODULEPATH_ROOT")
-local mpath = pathJoin(mroot, "repos", ".modulefiles", name)
+local mpath = pathJoin(mroot, "repos", "." .. name)
 prepend_path("MODULEPATH", mpath)

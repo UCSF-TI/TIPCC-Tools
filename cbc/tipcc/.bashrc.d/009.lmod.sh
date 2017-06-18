@@ -8,7 +8,6 @@ if [[ -z "${MODULEPATH_LEGACY}" ]]; then
     export MODULEPATH_LEGACY="${MODULEPATH}"
 fi
 
-
 ## WORKAROUND: When using Lmod, then `module avail` command will
 ## run in an end-less loop and consume huge amount of memory (leak?)
 ## iff we would keep /usr/share/Modules/modulefiles in MODULEPATH.
@@ -54,7 +53,8 @@ function use_lmod() {
     export MODULEPATH=
     source /home/shared/cbc/apps/lmod/lmod/init/profile
     export MODULEPATH="${MODULEPATH}:${MODULEPATH_DEFAULT}"
-
+    export MODULEPATH="$MODULEPATH_ROOT/repos/.repos-cbc:${MODULEPATH}"
+    
     if [[ -n "${MODULEPATH_USER}" ]]; then
         export MODULEPATH="${MODULEPATH_USER}:${MODULEPATH}"
     fi
