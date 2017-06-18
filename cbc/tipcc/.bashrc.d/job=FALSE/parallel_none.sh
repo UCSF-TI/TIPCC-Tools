@@ -6,3 +6,6 @@
 ###
 ### to decide the number of cores to use.
 export MC_CORES=1
+
+### Force OpenMP to use a single thread
+export OMP_NUM_THREADS=1
