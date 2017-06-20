@@ -42,9 +42,8 @@ module_load udocker ""
 ## prependPath ${SHARED_SOFTWARE}/udocker-latest
 fi
 
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Development, e.g. gcc
+# CBC Developement Settings
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #prependPath /opt/llvm/llvm-3.5.0/bin
 export GCC_HOME=/opt/gcc/gcc-4.9.2
@@ -52,7 +51,6 @@ if test -d "${GCC_HOME}"; then
     prependPath ${GCC_HOME}/bin
     export LD_LIBRARY_PATH="${GCC_HOME}/lib64:${LD_LIBRARY_PATH}"
 fi
-
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # BUILDS
@@ -64,3 +62,4 @@ fi
 export CPPFLAGS="-I${SHARED_ROOT}/local/include $CPPFLAGS"
 export LDFLAGS="-L${SHARED_ROOT}/local/lib $LDFLAGS"
 export LD_LIBRARY_PATH="${SHARED_ROOT}/local/lib:${LD_LIBRARY_PATH}"
+
