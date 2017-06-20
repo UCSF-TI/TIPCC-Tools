@@ -1,13 +1,13 @@
 help([[
-CBC Tools
+CBC-shared Software: Default Set
 ]])
 
-local name = "cbc-tools"
-local version = "0.1.1"
+local name = myModuleName()
+local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: UCSF, cluster, utilities")
 whatis("URL: https://github.com/UCSF-TI/TIPCC/wiki/Software-shared-by-CBC")
-whatis("Description: CBC Tools setup via modules.")
+whatis("Description: When loaded, this module loads the default set of CBC-shared software.")
 
 local cbc_python = os.getenv("CBC_PYTHON")
 
