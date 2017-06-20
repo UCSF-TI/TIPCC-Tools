@@ -61,7 +61,7 @@ function use_lmod() {
     . $MODULESHOME/init/profile
 
     export MODULEPATH="${MODULEPATH}:${MODULEPATH_DEFAULT}"
-    export MODULEPATH="$MODULEPATH_ROOT/repos/.repos-cbc:${MODULEPATH}"
+    export MODULEPATH="$MODULEPATH_ROOT/CBC:${MODULEPATH}"
     
     if [[ -n "${MODULEPATH_USER}" ]]; then
         export MODULEPATH="${MODULEPATH_USER}:${MODULEPATH}"
