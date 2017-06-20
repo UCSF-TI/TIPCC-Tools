@@ -2,8 +2,8 @@ help([[
 Bedtools2
 ]])
 
-local name = "bedtools2"
-local version = "2.16.2"
+local name = myModuleName()
+local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: sequencing")
 whatis("URL: https://github.com/arq5x/bedtools2/")

@@ -2,8 +2,8 @@ help([[
 R Extras: Additional software, libraries and include paths needed to build some R / Bioconductor packages
 ]])
 
-local name = "r-extras"
-local version = "0.1.0"
+local name = myModuleName()
+local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: R, Bioconductor")
 whatis("Description: Additional software, libraries and include paths needed to build some R / Bioconductor packages")

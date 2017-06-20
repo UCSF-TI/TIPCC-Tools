@@ -2,8 +2,8 @@ help([[
 WordSpy
 ]])
 
-local name = "wordspy"
-local version = "1.5"
+local name = myModuleName()
+local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: ")
 whatis("URL: http://cic.cs.wustl.edu/wordspy/dltemp.htm")

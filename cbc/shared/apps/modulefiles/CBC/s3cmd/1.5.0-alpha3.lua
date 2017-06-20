@@ -2,8 +2,8 @@ help([[
 Amazon S3 Tools: Command Line S3 Client Software and S3 Backup
 ]])
 
-local name = "s3cmd"
-local version = "1.5.0-alpha3"
+local name = myModuleName()
+local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: ")
 whatis("URL: http://s3tools.org/s3cmd")

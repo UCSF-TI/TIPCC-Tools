@@ -3,7 +3,7 @@ BamUtil - programs for working on SAM/BAM files
 ]])
 
 local name = "BamUtil"
-local version = "1.0.14"
+local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: version control")
 whatis("URL: http://genome.sph.umich.edu/wiki/BamUtil")

@@ -2,8 +2,8 @@ help([[
 Git extension Git Flow
 ]])
 
-local name = "gitflow"
-local version = "0.4.2"
+local name = myModuleName()
+local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: version control")
 whatis("URL: https://github.com/nvie/gitflow")

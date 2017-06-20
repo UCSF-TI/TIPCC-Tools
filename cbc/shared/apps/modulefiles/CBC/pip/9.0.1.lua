@@ -2,8 +2,8 @@ help([[
 pip - The PyPA recommended tool for installing Python packages
 ]])
 
-local name = "pip"
-local version = "9.0.1"
+local name = myModuleName()
+local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: python, utility")
 whatis("URL: https://pypi.python.org/pypi/pip")

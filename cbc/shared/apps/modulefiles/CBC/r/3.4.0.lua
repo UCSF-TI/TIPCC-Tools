@@ -2,8 +2,8 @@ help([[
 The R Programming Language
 ]])
 
-local name = "R"
-local version = "3.4.0"
+local name = myModuleVersion()
+local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: Programming, Statistics")
 whatis("URL: https://www.r-project.org/")

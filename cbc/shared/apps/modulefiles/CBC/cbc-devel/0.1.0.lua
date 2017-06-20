@@ -2,8 +2,8 @@ help([[
 CBC-shared Developer's Environment
 ]])
 
-local name = "cbc-devel"
-local version = "0.1.0"
+local name = myModuleName()
+local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: UCSF, cluster, configure, build, compile, install")
 whatis("URL: https://cbc.ucsf.edu/")

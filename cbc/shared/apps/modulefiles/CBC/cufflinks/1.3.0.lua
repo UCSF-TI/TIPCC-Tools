@@ -2,8 +2,8 @@ help([[
 Cufflinks: Transcriptome assembly and differential expression analysis for RNA-Seq
 ]])
 
-local name = "cufflinks"
-local version = "1.3.0"
+local name = myModuleName()
+local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: ")
 whatis("URL: http://cole-trapnell-lab.github.io/cufflinks/")

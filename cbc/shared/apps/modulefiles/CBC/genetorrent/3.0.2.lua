@@ -3,7 +3,7 @@ GeneTorrent
 ]])
 
 local name = "GeneTorrent"
-local version = "3.8.5a-94"
+local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: ")
 whatis("URL: https://hpc.nih.gov/apps/GeneTorrent.html")

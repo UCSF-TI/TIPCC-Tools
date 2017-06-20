@@ -2,8 +2,8 @@ help([[
 Bowtie2
 ]])
 
-local name = "bowtie2"
-local version = "2.2.6"
+local name = myModuleName()
+local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: sequencing")
 whatis("URL: http://bowtie-bio.sourceforge.net/bowtie2/index.shtml")

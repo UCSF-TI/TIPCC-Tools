@@ -2,8 +2,8 @@ help([[
 Samtools
 ]])
 
-local name = "htslib"
-local version = "1.3.2"
+local name = myModuleName()
+local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: ")
 whatis("URL: http://www.htslib.org/")

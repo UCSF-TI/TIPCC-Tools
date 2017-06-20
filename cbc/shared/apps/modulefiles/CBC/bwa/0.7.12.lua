@@ -2,8 +2,8 @@ help([[
 Burrows-Wheeler Aligner (BWA)
 ]])
 
-local name = "bwa"
-local version = "0.7.12"
+local name = myModuleName()
+local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: sequencing")
 whatis("URL: http://bio-bwa.sourceforge.net/")

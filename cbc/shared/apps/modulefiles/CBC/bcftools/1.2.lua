@@ -2,8 +2,8 @@ help([[
 BCFtools: utilities for variant calling and manipulating VCFs and BCFs
 ]])
 
-local name = "bcftools"
-local version = "1.2"
+local name = myModuleName()
+local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: ")
 whatis("URL: https://samtools.github.io/bcftools/bcftools.html")

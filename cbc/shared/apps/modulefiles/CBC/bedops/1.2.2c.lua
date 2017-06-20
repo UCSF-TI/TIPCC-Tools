@@ -2,8 +2,8 @@ help([[
 BEDOPS: the fast, highly scalable and easily-parallelizable genome analysis toolkit
 ]])
 
-local name = "bedops"
-local version = "1.2.2c"
+local name = myModuleName()
+local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: ")
 whatis("URL: https://bedops.readthedocs.io/")

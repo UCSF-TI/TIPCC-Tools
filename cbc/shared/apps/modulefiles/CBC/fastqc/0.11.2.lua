@@ -3,7 +3,7 @@ FastQC
 ]])
 
 local name = "FastQC"
-local version = "0.11.2"
+local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: ")
 whatis("URL: http://www.bioinformatics.babraham.ac.uk/projects/fastqc/")

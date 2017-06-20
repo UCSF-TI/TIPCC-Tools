@@ -2,8 +2,8 @@ help([[
 Pandoc - a universal document converter
 ]])
 
-local name = "pandoc"
-local version = "1.19.2-0"
+local name = myModuleName()
+local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: documentation, conversion")
 whatis("URL: http://pandoc.org/")

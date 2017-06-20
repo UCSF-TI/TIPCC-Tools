@@ -2,8 +2,9 @@ help([[
 IGVTools
 ]])
 
+-- local name = myModuleName()
 local name = "IGVTools"
-local version = "2.3.68"
+local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: ")
 whatis("URL: https://software.broadinstitute.org/software/igv/igvtools")

@@ -2,9 +2,9 @@ help([[
 Anaconda Package Manager w/ CBC-shared installations
 ]])
 
-local name = "anaconda"
-local version = "N/A"
-whatis("Version: " .. version)
+local name = myModuleName()
+--local version = myModuleVersion()
+--whatis("Version: " .. version)
 whatis("Keywords: package manager")
 whatis("URL: https://www.continuum.io/anaconda-overview")
 whatis("Description: Open Data Science Platform powered by Python")

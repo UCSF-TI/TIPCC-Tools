@@ -3,7 +3,7 @@ Anaconda: The Python Programming Language
 ]])
 
 local name = "Python"
-local version = "2.7.13"
+local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: Programming")
 whatis("URL: https://www.python.org/")

@@ -2,8 +2,8 @@ help([[
 udocker
 ]])
 
-local name = "udocker"
-local version = "1.0.0"
+local name = myModuleName()
+local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: Linux, containers")
 whatis("URL: https://github.com/indigo-dc/udocker")

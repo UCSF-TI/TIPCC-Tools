@@ -2,8 +2,8 @@ help([[
 BLAST: Basic Local Alignment Search Tool
 ]])
 
-local name = "blast"
-local version = "2.2.26"
+local name = myModuleName()
+local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: programming, scripting")
 whatis("URL: https://blast.ncbi.nlm.nih.gov/Blast.cgi")

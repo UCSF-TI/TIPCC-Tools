@@ -2,8 +2,8 @@ help([[
 Java Development Kit (JDK)
 ]])
 
-local name = "jdk"
-local version = "1.7.0"
+local name = myModuleName()
+local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: programming")
 whatis("URL: https://www.java.com/")

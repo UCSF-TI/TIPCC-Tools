@@ -2,8 +2,9 @@ help([[
 IGV: The Integrative Genomics Viewer
 ]])
 
+-- local name = myModuleName()
 local name = "IGV"
-local version = "2.1.2"
+local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: ")
 whatis("URL: https://software.broadinstitute.org/software/igv/")

@@ -2,8 +2,8 @@ help([[
 LuaRocks - the Lua package manager
 ]])
 
-local name = "luarocks"
-local version = "2.4.2"
+local name = myModuleName()
+local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: programming, scripting")
 whatis("URL: https://luarocks.org/")

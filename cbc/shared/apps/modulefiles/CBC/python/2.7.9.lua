@@ -2,8 +2,9 @@ help([[
 The Python Programming Language
 ]])
 
+-- local name = myModuleName()
 local name = "Python"
-local version = "2.7.9"
+local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: Programming")
 whatis("URL: https://www.python.org/")

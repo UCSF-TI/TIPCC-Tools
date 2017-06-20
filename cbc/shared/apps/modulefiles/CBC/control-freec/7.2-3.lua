@@ -3,7 +3,7 @@ Control FREEC: Control-FREE Copy Number and Genotype Caller
 ]])
 
 local name = "Control-FREEC"
-local version = "7.2-3"
+local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: ")
 whatis("URL: http://boevalab.com/FREEC/")

@@ -2,8 +2,8 @@ help([[
 htop - an interactive process viewer for Unix
 ]])
 
-local name = "htop"
-local version = "1.0.3"
+local name = myModuleName()
+local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: system, utility")
 whatis("URL: http://hisham.hm/htop/")

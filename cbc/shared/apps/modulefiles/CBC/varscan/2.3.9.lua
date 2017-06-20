@@ -3,7 +3,7 @@ VarScan
 ]])
 
 local name = "VarScan"
-local version = "2.3.9"
+local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: high-throughput sequencing")
 whatis("URL: http://dkoboldt.github.io/varscan/")

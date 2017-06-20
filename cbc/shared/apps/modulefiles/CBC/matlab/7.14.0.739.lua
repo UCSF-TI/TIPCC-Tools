@@ -2,7 +2,7 @@ help([[
 The Matlab Programming Language
 ]])
 
-local name = "matlab"
+local name = myModuleName()
 local version = "R2012a"
 whatis("Version: " .. version)
 whatis("Keywords: Programming")

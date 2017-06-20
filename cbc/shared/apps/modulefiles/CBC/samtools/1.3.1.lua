@@ -2,8 +2,8 @@ help([[
 Samtools
 ]])
 
-local name = "samtools"
-local version = "1.3.1"
+local name = myModuleName()
+local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: sequencing")
 whatis("URL: http://www.htslib.org/")
@@ -14,6 +14,8 @@ local cbc_shared = "/home/shared/cbc"
 local cbc_software = cbc_shared .. "/software"
 
 local home = cbc_software .. "/" .. name .. "-" .. version
+
 prepend_path("PATH", home)
-prepend_path("PATH", home .. "bcftools")
-prepend_path("PATH", home .. "misc")
+prepend_path("PATH", home .. "/bcftools")
+prepend_path("PATH", home .. "/misc")
+

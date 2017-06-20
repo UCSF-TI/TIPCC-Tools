@@ -2,8 +2,8 @@ help([[
 TopHat
 ]])
 
-local name = "tophat"
-local version = "2.1.0"
+local name = myModuleName()
+local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: Programming, Statistics")
 whatis("URL: https://ccb.jhu.edu/software/tophat/index.shtml")

@@ -2,8 +2,8 @@ help([[
 VCFtools
 ]])
 
-local name = "vcftools"
-local version = "0.1.13"
+local name = myModuleName()
+local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: ")
 whatis("URL: https://vcftools.github.io/")
