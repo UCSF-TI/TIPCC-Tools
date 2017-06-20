@@ -1,9 +1,9 @@
 help([[
-Git - distributed version control system
+Git - Distributed Version Control System
 ]])
 
-local name = "git"
-local version = "2.1.1"
+local name = myModuleName()
+local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: version control")
 whatis("URL: https://git-scm.com/")
