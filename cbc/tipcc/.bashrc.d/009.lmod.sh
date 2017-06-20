@@ -37,7 +37,12 @@ function clean_lmod() {
 }
 
 function use_lmod() {
-    if [[ "${PS1}" ]]; then
+    local verbose=false
+    if [[ "${PS1}" && "$MODULE_FRAMEWORK" != *"quiet" ]]; then
+	verbose=true
+    fi
+    
+    if [[ $verbose == "true" ]]; then
       >&2 echo "# Lmod environment modules (BETA)"
       >&2 echo
       >&2 echo "Usage:"
@@ -62,21 +67,21 @@ function use_lmod() {
     ## Default modules for all users, cf. ${MODULEPATH_ROOT}/Core/StdEnv.lua
     ## http://lmod.readthedocs.io/en/latest/070_standard_modules.html?highlight=MODULE%20DEFAULT
     if [ -z "$__Init_Default_Modules" ]; then
-        if [[ "${PS1}" ]]; then
+        if [[ $verbose == "true" ]]; then
             >&2 printf "Refreshing modules ."
 	fi
         ## ability to predefine elsewhere the default list
         export LMOD_SYSTEM_DEFAULT_MODULES=${LMOD_SYSTEM_DEFAULT_MODULES:-"StdEnv"}
         module --initial_load restore 2> /dev/null
-        if [[ "${PS1}" ]]; then
+        if [[ $verbose == "true" ]]; then
             >&2 printf "."
 	fi
 #        module restore 2> /dev/null
         export __Init_Default_Modules=1
-        if [[ "${PS1}" ]]; then
+        if [[ $verbose == "true" ]]; then
             >&2 printf ". done\n"
+            >&2 echo ""
 	fi
-        >&2 echo ""
     else
         module refresh
     fi
@@ -110,7 +115,7 @@ function using_lmod() {
 ## For BETA users
 ## https://github.com/UCSF-TI/TIPCC/wiki/Software-Environment-Modules
 ## (http://lmod.readthedocs.io/en/latest/045_transition.html?highlight=no-lmod)
-if [[ "$MODULE_FRAMEWORK" = "lmod" ]]; then
+if [[ "$MODULE_FRAMEWORK" = "lmod"* ]]; then
     use_lmod
 fi
 

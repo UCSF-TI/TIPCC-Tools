@@ -1,0 +1,130 @@
+#!/usr/bin/env bash
+### UCSF C4 Toolkit:
+### List processes running on the cluster
+###
+### Usage:
+###  c4-ps [options]
+###
+### Options:
+###  --nodes <list>      List of nodes (default: _all_ or current node)
+###  --help              This help
+###
+### Example:
+###  c4-ps
+###  c4-ps --nodes head
+###  c4-ps --nodes n6
+###  c4-ps --nodes n6,n12
+###  c4-ps --nodes "n6 n12"
+###
+### Version: 0.1.0-9000
+### Copyright: Henrik Bengtsson (2016-2017)
+### License: GPL (>= 2.1) [https://www.gnu.org/licenses/gpl.html]
+call="$0 $*"
+tool_name=$(basename $0)
+if [[ ${C4_TOOLS} -ne 0 ]]; then
+    tool_name=${tool_name/-/ }
+fi
+
+function mecho() { echo "$@" 1>&2; }
+
+function merror() {
+    mecho "ERROR in '${tool_name}': $*"
+    exit 1
+}
+
+function as_logical() {
+    if [[ $1 == "false" || $1 == "0" ]]; then echo 0; else echo 1; fi
+}
+
+function help() {
+    local res=$(grep -E "^###( .*|)$" $0 | cut -b 5-)
+    local search=$(basename $0)
+    if [[ "${search}" != "${tool_name}" ]]; then
+        res=$(printf '%s\n' "${res[@]}" | sed "s/${search}/${tool_name}/g")
+    fi
+    printf '%s\n' "${res[@]}"
+}
+
+function whatis() {
+    local res=$(grep "^### .*[^:][[:space:]]*$" $0 | head -1 | cut -b 5-)
+    printf '%s\n' "${res[@]}"
+}
+
+function version() {
+    grep -E "^###[ ]*Version:[ ]*" $0 | sed 's/###[ ]*Version:[ ]*//g'
+}
+
+## Cluster functions
+function on_compute_node() {
+    if [[ -z ${ISCOMPUTENODE+x} ]]; then
+        pbsnodes ${HOSTNAME} &> /dev/null
+        if [[ $? -eq 0 ]]; then echo 1; else echo 0; fi
+    else
+	echo $(as_logical ${ISCOMPUTENODE})
+    fi
+}
+
+function compute_nodes_up() {
+  bpstat -l | tail -n +2 | grep -F up | cut -c 1-4 | sed -e 's/ //g'
+}
+
+# Parse command-line options
+while [[ $# > 0 ]]; do
+    if [[ "$1" == "--help" ]]; then
+        help
+        exit 0
+    elif [[ "$1" == "--whatis" ]]; then
+        whatis
+        exit 0
+    elif [[ "$1" == "--version" ]]; then
+        version
+        exit 0
+    elif [[ "$1" == "--nodes" ]]; then
+        shift
+        nodes=$1
+    elif [[ "$1" == "--node" ]]; then
+        shift
+        nodes=$1
+    else
+        extras="$extras $1"
+    fi
+    shift
+done
+
+if [[ -z ${nodes} ]]; then
+    if [[ $(on_compute_node) -eq 1 ]]; then
+	nodes=${HOSTNAME}
+    else
+	nodes=_all_
+    fi
+fi
+
+if [[ ${nodes} == "_all_" ]]; then
+    nodes=head
+    for n in $(compute_nodes_up); do nodes="$nodes n$n"; done
+else
+    nodes=${nodes/-1/head}
+    nodes=${nodes/,/ }
+fi
+
+## Drop 'n' prefix
+nodes=$(echo ${nodes} | sed 's/n//g')
+
+## Other nodes can only be queried from the head node
+if [[ $(on_compute_node) -eq 1 && "n${nodes}" != "${HOSTNAME}" ]]; then
+    merror "Processes on other nodes can only be queried from the head node: ${HOSTNAME}"
+fi
+
+## Get _all_ processes on the cluster
+bfr=$(ps uax | bpstat -P | sed -E 's/^    /head/')
+
+## Filter by nodes
+nodesT=$(echo ${nodes} | sed -E 's/(,| )/|/g')
+res=$(printf '%s\n' "${bfr[@]}" | grep -E "^(${nodesT})[ ]+")
+
+## Sort
+res=$(printf '%s\n' "${res[@]}" | sort)
+
+## Display
+printf '%s\n' "${bfr[@]}" | head -1 | sed -E 's/^NODE[ ]*//g'
+printf '%s\n' "${res[@]}"
