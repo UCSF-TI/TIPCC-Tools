@@ -56,7 +56,10 @@ function use_lmod() {
     fi
     export MODULEPATH_ROOT=
     export MODULEPATH=
-    source /home/shared/cbc/apps/lmod/lmod/init/profile
+
+    export MODULESHOME="/home/shared/cbc/apps/lmod/lmod"
+    . $MODULESHOME/init/profile
+
     export MODULEPATH="${MODULEPATH}:${MODULEPATH_DEFAULT}"
     export MODULEPATH="$MODULEPATH_ROOT/repos/.repos-cbc:${MODULEPATH}"
     
