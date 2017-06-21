@@ -147,6 +147,12 @@ fi
 
 
 ## Apply filters
+function filter_zombies() {
+    local res=("${@}")
+    res=$(printf '%s\n' "${res[@]}" | grep -v -E " Z[a-z]? .* <defunct>$")
+    printf '%s\n' "${res[@]}"
+}
+
 function filter_system() {
     local res=("${@}")
     res=$(printf '%s\n' "${res[@]}" | grep -v -E "^(68|apache|dbus|flexlm|ganglia|mongod|mysql|ntp|postgres|qpidd|rpc|smmsp|tomcat)[ ]+")
@@ -237,6 +243,7 @@ function filter_special() {
 res=$(ps uax | bpstat -P | grep -E "^  " | grep -E -v "^[ ]+root" | sed -E 's/^[ ]*//g' | grep -E -v "($USER|$UID) .* (ps uax|grep -E |.*c4 head|sed -E)")
 
 if [[ $filter == "user" ]]; then
+    res=$(filter_zombies "${res[@]}")
     res=$(filter_system "${res[@]}")
     res=$(filter_scyld "${res[@]}")
     res=$(filter_torque "${res[@]}")
@@ -250,6 +257,7 @@ if [[ $filter == "user" ]]; then
     res=$(filter_utils "${res[@]}")
     res=$(filter_special "${res[@]}")
 elif [[ $filter == "sysadm" ]]; then
+    res=$(filter_zombies "${res[@]}")
     res=$(filter_system "${res[@]}")
     res=$(filter_scyld "${res[@]}")
     res=$(filter_torque "${res[@]}")
@@ -263,6 +271,7 @@ elif [[ $filter == "sysadm" ]]; then
     res=$(filter_utils "${res[@]}")
     res=$(filter_special "${res[@]}")
 elif [[ $filter == "core" ]]; then
+    res=$(filter_zombies "${res[@]}")
     res=$(filter_system "${res[@]}")
     res=$(filter_scyld "${res[@]}")
     res=$(filter_torque "${res[@]}")
