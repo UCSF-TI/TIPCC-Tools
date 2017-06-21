@@ -45,21 +45,22 @@ fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # CBC Developement Settings
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-#prependPath /opt/llvm/llvm-3.5.0/bin
-export GCC_HOME=/opt/gcc/gcc-4.9.2
-if test -d "${GCC_HOME}"; then
-    prependPath ${GCC_HOME}/bin
-    export LD_LIBRARY_PATH="${GCC_HOME}/lib64:${LD_LIBRARY_PATH}"
+if [[ $CBC_DEVEL != "true" ]]; then
+    #prependPath /opt/llvm/llvm-3.5.0/bin
+    export GCC_HOME=/opt/gcc/gcc-4.9.2
+    if test -d "${GCC_HOME}"; then
+        prependPath ${GCC_HOME}/bin
+        export LD_LIBRARY_PATH="${GCC_HOME}/lib64:${LD_LIBRARY_PATH}"
+    fi
+    
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # BUILDS
+    #
+    # ./configure --prefix=${SHARED_ROOT}/local/
+    # make
+    # make install
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    export CPPFLAGS="-I${SHARED_ROOT}/local/include $CPPFLAGS"
+    export LDFLAGS="-L${SHARED_ROOT}/local/lib $LDFLAGS"
+    export LD_LIBRARY_PATH="${SHARED_ROOT}/local/lib:${LD_LIBRARY_PATH}"
 fi
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# BUILDS
-#
-# ./configure --prefix=${SHARED_ROOT}/local/
-# make
-# make install
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-export CPPFLAGS="-I${SHARED_ROOT}/local/include $CPPFLAGS"
-export LDFLAGS="-L${SHARED_ROOT}/local/lib $LDFLAGS"
-export LD_LIBRARY_PATH="${SHARED_ROOT}/local/lib:${LD_LIBRARY_PATH}"
-

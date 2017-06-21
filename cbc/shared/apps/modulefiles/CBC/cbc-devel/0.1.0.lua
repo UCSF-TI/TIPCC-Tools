@@ -11,42 +11,37 @@ whatis("Description: Setup for building and installing software inline with the 
 
 -- Local variables
 local cbc_shared = "/home/shared/cbc"
-local t;
+local gcc_home
+local t
 
--- Development, e.g. gcc
-if mode() == "load" then
-  pushenv("GCC_HOME", "/opt/gcc/gcc-4.9.2")
-  t = os.getenv("GCC_HOME")
-  if t ~= null then
-    prepend_path("PATH", t .. "/bin")
-    prepend_path("LD_LIBRARY_PATH", t .. "/lib64")
-  end
-end
 
--- BUILDS:
+-- (a) Development, e.g. gcc
+gcc_home = "/opt/gcc/gcc-4.9.2"
+pushenv("GCC_HOME", gcc_home)
+prepend_path("PATH", gcc_home .. "/bin")
+prepend_path("LD_LIBRARY_PATH", gcc_home .. "/lib64")
+
+
+-- (b) BUILDS:
 -- ./configure --prefix=${SHARED_ROOT}/local/
 -- make
 -- make install
-if mode() == "load" then
-    local t = os.getenv("CPPFLAGS")
-    if t == nil then
-      t = ""
-    end
-    pushenv("CPPFLAGS", "-I/home/shared/cbc/local/include " .. t)
-    t = os.getenv("LDFLAGS")
-    if t == nil then
-      t = ""
-    end
-    pushenv("LDFLAGS", "-L/home/shared/cbc/local/lib " .. t)
-end
+t = os.getenv("CPPFLAGS")
+if t == nil then t = "" end
+pushenv("CPPFLAGS", "-I/home/shared/cbc/local/include " .. t)
+t = os.getenv("LDFLAGS")
+if t == nil then t = "" end
+pushenv("LDFLAGS", "-L/home/shared/cbc/local/lib " .. t)
 prepend_path("LD_LIBRARY_PATH", "/home/shared/cbc/local/lib")
 
--- R:
--- Fixes "/usr/bin/ld: cannot find -lgfortran" error when
--- building package that needs libgfortran.
--- FIXME: Should this be configured already when building R, i.e.
---        in /home/shared/cbc/bin/installR? /HB 2015-01-10
---append_path("PKG_LIBS", export PKG_LIBS="${PKG_LIBS} -L${GCC_HOME}"
 
+-- (c) R Project
+t = os.getenv("PKG_LIBS")
+--  Fixes "/usr/bin/ld: cannot find -lgfortran" error when
+--  building package that needs libgfortran.
+--  FIXME: Should this be configured already when building R, i.e.
+--         in /home/shared/cbc/bin/installR? /HB 2015-01-10
+if t == nil then t = "" end
+pushenv("PKG_LIBS", t .. " -L" .. gcc_home)
 -- 'nc-config' needs to be on the PATH in order to install R package ncdf4
---appendPath /opt/NetCDF/NetCDF-4.3.0/bin
+append_path("PATH", "/opt/NetCDF/NetCDF-4.3.0/bin")
