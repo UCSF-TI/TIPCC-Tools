@@ -53,7 +53,7 @@ function version() {
 path=reports
 debug=false
 node=
-status=
+status=true
 full=
 logs=
 
@@ -113,6 +113,15 @@ if [[ -n "$status" ]]; then
   echo '```'
   ping -c 3 ${node_label}
   echo '```'
+##  echo
+##  echo "### SSH"
+##  echo '```'
+##  echo "ssh ${node_label} \"echo TRUE\" 2>&"
+##  timeout 10s ssh ${node_label} "echo TRUE" 2>&1
+##  res="$?"
+##  echo "Result: $res"
+##  if [[ $res == "124" ]]; then echo "SSH connection timed out"; fi
+##  echo '```'
   echo
   echo "### bpstat (Scyld)"
   echo '```'
