@@ -60,7 +60,7 @@ function version() {
 
 path=figures
 debug=false
-command=
+command=graphs
 node=
 since=day
 zoom=medium
@@ -108,6 +108,9 @@ if [[ -z "$node" ]]; then
     merror "Argument --node <node number> must be specified, e.g. --node 13"
 fi
 
+## Drop prefix n, e.g. 'n13' -> '13'
+node=$(echo "$node" | sed -E 's/^n//g')
+
 if [[ "$command" == "graphs" ]]; then
     mkdir -p "${path}"
 
@@ -119,7 +122,7 @@ if [[ "$command" == "graphs" ]]; then
     mecho " - zoom: ${zoom}"
     for ff in load mem cpu network packet; do
         mecho " - downloading graph: '$ff'"
-	wget --quiet "http://cclc01.ucsf.edu/ganglia/graph.php?c=cclc01&h=.${node}&m=load_one&r=${since}&s=descending&z=${zoom}&g=${ff}_report" -O "${path}/node=${node},what=${ff},since=${since},zoom=${zoom}.png"
+	wget "http://cclc01.ucsf.edu/ganglia/graph.php?c=cclc01&h=.${node}&m=load_one&r=${since}&s=descending&z=${zoom}&g=${ff}_report" -O "${path}/node=${node},what=${ff},since=${since},zoom=${zoom}.png"
     done
     mecho "Downloading Ganglia graphs ... done"
 fi
