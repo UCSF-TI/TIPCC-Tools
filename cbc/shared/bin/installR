@@ -289,7 +289,7 @@ ${dirname}/bin/R CMD javareconf -e
 # Results
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Display version and capabilites of installed R binaries
-${dirname}/bin/R -e "capabilities()" -e "sessionInfo()"
+${dirname}/bin/R -e "capabilities()" -e "sessionInfo()" -e "try(extSoftVersion(), silent = TRUE)"
 
 # Cleanup
 cd ${opwd}
