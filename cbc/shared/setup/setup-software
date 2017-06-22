@@ -202,6 +202,7 @@ lndir ${newest} ${what}
 
 # R latest, patched and R devel
 lndir R-3.4.0 R-latest
+lndir R-3.4.0 R-release
 lndir R-3.4.0patched R-patched
 lndir R-3.5.0devel R-devel
 

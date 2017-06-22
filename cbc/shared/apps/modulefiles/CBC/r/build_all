@@ -36,4 +36,4 @@ ln -fs 3.4.0.lua release.lua
 ln -fs 3.4.0patched.lua patched.lua
 ln -fs 3.5.0devel.lua devel.lua
 
-ln -fs release.lua default
+ln -fs 3.4.0.lua default
