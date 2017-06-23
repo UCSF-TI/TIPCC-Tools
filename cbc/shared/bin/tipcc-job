@@ -139,7 +139,7 @@ echo
 session_id=$(qstat -f ${jid} | grep -F "session_id = " | sed -E 's/.*session_id = //')
 echo "Session process ID: ${session_id}"
 child_ids=$(pidtree $session_id)
-echo "Child process IDs: $(echo $child_ids | tr $'\n' ' ')"
+echo "Process IDs: (n=$(echo $child_ids | wc -w)) $(echo $child_ids | tr $'\n' ' ')"
 echo
 
 echo "### Process Details"
