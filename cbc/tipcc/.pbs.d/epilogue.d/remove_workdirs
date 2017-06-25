@@ -11,8 +11,12 @@
 ## qsub -l prologue=~/.pbs.d/prologue.d/foo.sh epilogue=~/.pbs.d/epilogue.d/bar.sh
 ##
 ## See also: http://docs.adaptivecomputing.com/torque/3-0-5/a.gprologueepilogue.php
-PBS_JOBID=$1
-USER=$2
+if [[ -z "$PBS_JOBID" ]]; then
+    PBS_JOBID=$1
+fi
+if [[ -z "$USER" ]]; then
+    USER=$2
+fi
 
 ## User-specific working directories on the compute node
 SCRATCH_USER=/scratch/$USER
@@ -26,7 +30,7 @@ VARTMP_USER_JOBID=$VARTMP_USER/jobs/$PBS_JOBID
 
 ## Remove each job-specific working directory, unless it contains a '.keep' file
 for dir in "$TMP_USER_JOBID" "$VARTMP_USER_JOBID" "$SCRATCH_USER_JOBID"; do
-  if [[ -d "$dir" && ! -f "$dir/.keep" ]]; then
-      rm -rf "$dir"
-  fi
+    if [[ -d "$dir" && ! -f "$dir/.keep" ]]; then
+        rm -rf "$dir"
+    fi
 done
