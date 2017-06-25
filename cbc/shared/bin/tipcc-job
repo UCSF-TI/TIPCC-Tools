@@ -117,7 +117,7 @@ echo
 
 echo "## Call"
 echo '```sh'
-echo "$call"
+echo "{$HOSTNAME}$ $call"
 echo '```'
 echo
 
