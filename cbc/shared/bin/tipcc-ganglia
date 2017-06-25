@@ -109,7 +109,12 @@ if [[ -z "$node" ]]; then
 fi
 
 ## Drop prefix n, e.g. 'n13' -> '13'
-node=$(echo "$node" | sed -E 's/^n//g')
+if [[ "$node" == "master" ]]; then
+    node=-1
+else
+    node=$(echo "$node" | sed -E 's/^n//g')
+fi
+
 
 if [[ "$command" == "graphs" ]]; then
     mkdir -p "${path}"
