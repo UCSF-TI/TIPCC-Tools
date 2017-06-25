@@ -1,0 +1,32 @@
+#!/bin/env bash
+
+## PBS prologue and epilogue scripts are run with almost no environment variables
+## are set. They are called with arguments that helps up identify the most important
+## settings (that we would otherwise get from environment variables).
+##
+## Furthermore, environment variables exported in these scripts are _not_ exported
+## to the job environment.
+##
+## These script can be called explicitly at job submission, e.g.
+## qsub -l prologue=~/.pbs.d/prologue.d/foo.sh epilogue=~/.pbs.d/epilogue.d/bar.sh
+##
+## See also: http://docs.adaptivecomputing.com/torque/3-0-5/a.gprologueepilogue.php
+PBS_JOBID=$1
+USER=$2
+
+## User-specific working directories on the compute node
+SCRATCH_USER=/scratch/$USER
+TMP_USER=/tmp/$USER
+VARTMP_USER=/var/tmp/$USER
+
+## Job-specific working directories on the compute node
+SCRATCH_USER_JOBID=$SCRATCH_USER/jobs/$PBS_JOBID
+TMP_USER_JOBID=$TMP_USER/jobs/$PBS_JOBID
+VARTMP_USER_JOBID=$VARTMP_USER/jobs/$PBS_JOBID
+
+## Remove each job-specific working directory, unless it contains a '.keep' file
+for dir in "$TMP_USER_JOBID" "$VARTMP_USER_JOBID" "$SCRATCH_USER_JOBID"; do
+  if [[ -d "$dir" && ! -f "$dir/.keep" ]]; then
+      rm -rf "$dir"
+  fi
+done
