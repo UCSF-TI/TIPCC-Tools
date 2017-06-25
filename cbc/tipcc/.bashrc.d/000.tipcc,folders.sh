@@ -8,15 +8,6 @@ fi
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# /var/tmp/ folders
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-export VARTMP_USER="/var/tmp/$USER"
-if [[ ! -d "$VARTMP_USER" ]]; then
-  mkdir -p "$VARTMP_USER"
-fi
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # /scratch/ folders
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Create /scratch/$USER/ (only possible on compute nodes)
@@ -32,7 +23,6 @@ fi
 # Default folders
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 export TMPDIR="$TMP_USER"
-export VARTMPDIR="$VARTMP_USER"
 if [[ -d "/scratch" ]]; then
   export SCRATCHDIR="$SCRATCH_USER"
 fi
