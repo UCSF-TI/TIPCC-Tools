@@ -18,6 +18,10 @@ if [[ -z "$USER" ]]; then
     USER=$2
 fi
 
+## Do nothing?
+if [[ -z "$USER" ]]; then return; fi
+if [[ -z "$PBS_JOBID" ]]; then return; fi
+
 ## User-specific working directories on the compute node
 SCRATCH_USER=/scratch/$USER
 TMP_USER=/tmp/$USER
