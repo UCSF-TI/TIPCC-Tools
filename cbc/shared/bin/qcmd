@@ -13,9 +13,10 @@
 ### Henrik Bengtsson, 2016
 
 action=help
-verbose=FALSE
-dryrun=FALSE
-safe=TRUE
+debug=false
+verbose=false
+dryrun=false
+safe=true
 
 qsub_options=
 cmd=
@@ -31,12 +32,14 @@ while [[ $# > 0 ]]; do
     if [[ $arg == "--help" ]]; then
       action=help
       break
+    elif [[ $arg == "--debug" ]]; then
+      debug=true
     elif [[ $arg == "--verbose" ]]; then
-      verbose=TRUE
+      verbose=true
     elif [[ $arg == "--dryrun" ]]; then
-      dryrun=TRUE
+      dryrun=true
     elif [[ $arg == "--unsafe" ]]; then
-      safe=FALSE
+      safe=false
     elif [[ $arg == "--stdout" ]]; then
       cmd_stdout=$2
       shift
@@ -60,7 +63,7 @@ while [[ $# > 0 ]]; do
   fi
 done
 
-if [[ $verbose == "TRUE" ]]; then
+if [[ $debug == "true" ]]; then
   echo "VERBOSE OUTPUT:"
   echo "qsub_defaults: $qsub_defaults"
   echo "qsub_options: $qsub_options"
@@ -77,7 +80,7 @@ elif [[ $state == 1 || $state == 2 ]]; then
   qsub_name="$(basename $cmd)_$(date +%H%M%S-%Y%m%d)"
   pwd=$(pwd)
   if [[ $pwd == *","* ]]; then
-      if [[ $safe == "TRUE" ]]; then
+      if [[ $safe == "true" ]]; then
         echo "VALIDATION ERROR: 'qsub -d <working path>' does not support paths with commas (you could try to use '--unsafe'): $pwd"
         exit 1
       fi
@@ -102,7 +105,7 @@ elif [[ $state == 1 || $state == 2 ]]; then
     exit
   fi
 
-  if [[ $verbose == "TRUE" ]]; then
+  if [[ $debug == "true" ]]; then
     echo "Manual call: echo \"$cmd_prefix $cmd ${cmd_options[@]}\" | qsub $qsub_defaults $qsub_options -"
   fi
   
@@ -113,9 +116,11 @@ elif [[ $state == 1 || $state == 2 ]]; then
   if [[ $cmd_stderr != "" ]]; then
     call="$call 2> $cmd_stderr"
   fi
-  echo "call: $call"
-  echo "echo \"$call\" | qsub $qsub_defaults $qsub_options -"
-  if [[ $dryrun == "TRUE" ]]; then
+  if [[ $verbose == "true" ]]; then
+    echo "call: $call"
+    echo "echo \"$call\" | qsub $qsub_defaults $qsub_options -"
+  fi
+  if [[ $dryrun == "true" ]]; then
     echo "Nothing evaulated (--dryrun)"
   else
     echo "$call" | qsub $qsub_defaults $qsub_options -
