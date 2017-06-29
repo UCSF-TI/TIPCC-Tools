@@ -8,9 +8,9 @@
 ### Options:
 ###  --list              List all users
 ###  --jobs              List cluster jobs / tasks
-###  --head              List head-node processes
+###  --master            List processes on master 
 ###  --disk-usage        List disk usage (slow)
-###  --all               As --jobs --head --disk-usage
+###  --all               As --jobs --master --disk-usage
 ###  --most              As --all without --disk-usage
 ###  --help              This help
 ###
@@ -87,7 +87,7 @@ function user_info() {
 user=${USER}
 moab=1
 jobs=1
-head=1
+master=1
 disk_usage=0
 
 # Parse command-line options
@@ -108,19 +108,22 @@ while [[ $# > 0 ]]; do
         user=${USER}
     elif [[ "$1" == "--jobs" ]]; then
         jobs=1
+    elif [[ "$1" == "--master" ]]; then
+        master=1
     elif [[ "$1" == "--head" ]]; then
-        head=1
+	## Backward compatible
+        master=1
     elif [[ "$1" == "--disk-usage" ]]; then
         disk_usage=1
     elif [[ "$1" == "--moab" ]]; then
         moab=1
     elif [[ "$1" == "--most" ]]; then
         jobs=1
-        head=1
+        master=1
         moab=1
     elif [[ "$1" == "--all" ]]; then
         jobs=1
-        head=1
+        master=1
         moab=1
         disk_usage=1
     elif [[ "$1" == "--user" ]]; then
@@ -135,9 +138,9 @@ done
 
 filter=$(as_logical $filter)
 
-## Assert running on head node
+## Assert running on master
 #if [[ $(on_compute_node) -ne 0 ]]; then
-#    merror "This command only works on the head node: ${HOSTNAME}"
+#    merror "This command only works on master: ${HOSTNAME}"
 #fi
 
 
@@ -216,13 +219,13 @@ if [[ $jobs -eq 1 ]]; then
     echo "Cluster tasks   : $(qme $user | grep -F "Number of tasks:" | sort -u | sed 's/Number of tasks: //g')"
 fi
 
-## Head-node processes
-if [[ $head -eq 1 ]]; then
-    res=$(c4-head --user $user | grep -E "^PIDs" | sed 's/.*: //g')
+## Processes on master
+if [[ $master -eq 1 ]]; then
+    res=$(tipcc-master --user $user | grep -E "^PIDs" | sed 's/.*: //g')
     if [[ $(echo $res | grep -E "^PIDs:") ]]; then
-        echo "Head node PIDs  : $res"
+        echo "PIDs on master  : $res"
     else
-        echo "Head node PIDs  : <none>"
+        echo "PIDs on master  : <none>"
     fi
 fi
 

@@ -111,9 +111,9 @@ while [[ $# > 0 ]]; do
 done
 
 
-## Assert running on head node
+## Assert running on master
 if [[ $(on_compute_node) -ne 0 ]]; then
-    merror "This command only works on the head node: ${HOSTNAME}"
+    merror "This command only works on master: ${HOSTNAME}"
 fi
 
 
@@ -121,7 +121,7 @@ if [[ $what == "himem" || $what == "hicpu" ]]; then
     printf "USER\tPID\t%%CPU\t%%MEM\tPROCESS\n"
     
     PATH="$(dirname $0):$PATH"
-    bfr=$(c4-ps --nodes head | grep -vE "^USER" | awk '{printf "%s\t%s\t%s\t%s\t%s\n", $2, $3, $4, $5, $12}')
+    bfr=$(tipcc-ps --nodes master | grep -vE "^USER" | awk '{printf "%s\t%s\t%s\t%s\t%s\n", $2, $3, $4, $5, $12}')
     if [[ $what == "himem" ]]; then
 	sort_by=4
     elif [[ $what == "hicpu" ]]; then
@@ -238,8 +238,8 @@ function filter_special() {
     printf '%s\n' "${res[@]}"
 }
 
-## Query ps + bpstat for _all_ running head-node processes
-## Note: head node process are those without NODE information.
+## Query ps + bpstat for _all_ running master-node processes
+## Note: master-node process are those without NODE information.
 res=$(ps uax | bpstat -P | grep -E "^  " | grep -E -v "^[ ]+root" | sed -E 's/^[ ]*//g' | grep -E -v "($USER|$UID) .* (ps uax|grep -E |.*c4 head|sed -E)")
 
 if [[ $filter == "user" ]]; then
@@ -307,7 +307,7 @@ for user in ${users}; do
   ## Display processes
   pids=$(printf "${res_ii[@]}" | sed -E 's/^[ ]*[^ ]+[ ]+([0-9]+)[ ]+.*/\1/g' | grep -E "[0-9]+")
   pids="${pids[@]}"
-  printf "PIDs (on the head node): "
+  printf "PIDs (on master): "
   echo ${pids}
   ps uax | bpstat -P | head -1 | sed -E 's/^NODE[ ]*//g'
   printf '%s\n' "${res_ii[@]}"

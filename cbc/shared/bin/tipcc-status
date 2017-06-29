@@ -138,9 +138,9 @@ fi
 if [[ $(on_compute_node) -ne 0 ]]; then
     echo
     echo "### High-memory processes"
-    C4_TOOLS=0 c4-head --himem
+    C4_TOOLS=0 tipcc-master --himem
     echo
     echo "### High-CPU processes"
-    C4_TOOLS=0 c4-head --hicpu
+    C4_TOOLS=0 tipcc-master --hicpu
     echo
 fi

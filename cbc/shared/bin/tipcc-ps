@@ -11,7 +11,7 @@
 ###
 ### Example:
 ###  c4-ps
-###  c4-ps --nodes head
+###  c4-ps --nodes master
 ###  c4-ps --nodes n6
 ###  c4-ps --nodes n6,n12
 ###  c4-ps --nodes "n6 n12"
@@ -100,23 +100,25 @@ if [[ -z ${nodes} ]]; then
 fi
 
 if [[ ${nodes} == "_all_" ]]; then
-    nodes=head
+    nodes=master
     for n in $(compute_nodes_up); do nodes="$nodes n$n"; done
 else
-    nodes=${nodes/-1/head}
+    ## Backward compatibility
+    nodes=${nodes/head/master}
+    nodes=${nodes/-1/master}
     nodes=${nodes/,/ }
 fi
 
 ## Drop 'n' prefix
 nodes=$(echo ${nodes} | sed 's/n//g')
 
-## Other nodes can only be queried from the head node
+## Other nodes can only be queried from master
 if [[ $(on_compute_node) -eq 1 && "n${nodes}" != "${HOSTNAME}" ]]; then
-    merror "Processes on other nodes can only be queried from the head node: ${HOSTNAME}"
+    merror "Processes on other nodes can only be queried from master: ${HOSTNAME}"
 fi
 
 ## Get _all_ processes on the cluster
-bfr=$(ps uax | bpstat -P | sed -E 's/^    /head/')
+bfr=$(ps uax | bpstat -P | sed -E 's/^      /master/')
 
 ## Filter by nodes
 nodesT=$(echo ${nodes} | sed -E 's/(,| )/|/g')
