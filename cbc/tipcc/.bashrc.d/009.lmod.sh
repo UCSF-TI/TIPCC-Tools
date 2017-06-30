@@ -81,8 +81,9 @@ function use_lmod() {
             >&2 printf "Refreshing modules ."
 	fi
         ## ability to predefine elsewhere the default list
-#        export LMOD_SYSTEM_DEFAULT_MODULES=${LMOD_SYSTEM_DEFAULT_MODULES:-"StdEnv"}
-        export LMOD_SYSTEM_DEFAULT_MODULES=${LMOD_SYSTEM_DEFAULT_MODULES:-}
+	##  export LMOD_SYSTEM_DEFAULT_MODULES=${LMOD_SYSTEM_DEFAULT_MODULES:-"StdEnv"}
+        ##  export LMOD_SYSTEM_DEFAULT_MODULES=${LMOD_SYSTEM_DEFAULT_MODULES:-}
+        export LMOD_SYSTEM_DEFAULT_MODULES=${LMOD_SYSTEM_DEFAULT_MODULES:-Legacy-Scyld:Legacy-etc:CBC:Personal}
         module --initial_load restore 2> /dev/null
         if [[ $verbose == "true" ]]; then
             >&2 printf "."
