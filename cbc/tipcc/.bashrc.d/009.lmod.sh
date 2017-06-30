@@ -60,7 +60,14 @@ function use_lmod() {
     export MODULESHOME="/home/shared/cbc/apps/lmod/lmod"
     . $MODULESHOME/init/profile
 
+    ## FIXME: Manually drop MODULEPATH:s added by above init/profile
+    ## * $MODULEPATH_ROOT/Core
+    ## * /home/shared/cbc/apps/lmod/lmod/modulefiles/Core
+    export MODULEPATH="$(echo ${MODULEPATH} | sed "s|:$MODULEPATH_ROOT/Core||g")"
+    export MODULEPATH="$(echo ${MODULEPATH} | sed 's|:/home/shared/cbc/apps/lmod/lmod/modulefiles/Core||g')"
+    
     export MODULEPATH="${MODULEPATH}:${MODULEPATH_DEFAULT}"
+    export MODULEPATH="$MODULEPATH:/home/shared/cbc/apps/modulefiles/repos"
     export MODULEPATH="$MODULEPATH_ROOT/CBC:${MODULEPATH}"
     
     if [[ -n "${MODULEPATH_USER}" ]]; then
@@ -74,7 +81,8 @@ function use_lmod() {
             >&2 printf "Refreshing modules ."
 	fi
         ## ability to predefine elsewhere the default list
-        export LMOD_SYSTEM_DEFAULT_MODULES=${LMOD_SYSTEM_DEFAULT_MODULES:-"StdEnv"}
+#        export LMOD_SYSTEM_DEFAULT_MODULES=${LMOD_SYSTEM_DEFAULT_MODULES:-"StdEnv"}
+        export LMOD_SYSTEM_DEFAULT_MODULES=${LMOD_SYSTEM_DEFAULT_MODULES:-}
         module --initial_load restore 2> /dev/null
         if [[ $verbose == "true" ]]; then
             >&2 printf "."
@@ -107,7 +115,7 @@ function use_lmod() {
 	if [[ $? -eq 0 ]]; then echo 1; else echo 0; fi
     }
 
-    module load StdEnv
+#    module load StdEnv
 }
 
 function using_lmod() {
