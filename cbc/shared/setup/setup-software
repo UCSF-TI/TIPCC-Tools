@@ -184,6 +184,7 @@ lndir $SRC_CBC/R/R-3.3.3-20170307 R-3.3.3
 
 # R 3.4.x
 lndir $SRC_CBC/R/R-3.4.0-20170421 R-3.4.0
+lndir $SRC_CBC/R/R-3.4.1-20170630 R-3.4.1
 
 # R 3.4.x patched
 dir=$SRC_CBC/R/
