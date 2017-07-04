@@ -1,0 +1,125 @@
+#!/usr/bin/env bash
+### UCSF HPC TIPCC:
+### Scan for potential security leaks by user
+###
+### Usage:
+###  tipcc-security [options]
+###
+### Options:
+###  --users <users> (optional) comma-separated user names
+###  --me            Short for --users $USER
+###  --processes     Check running processes
+###  --mask          Try to mask credential in output
+###  --help          This help
+###
+### Example:
+###  tipcc-security
+###  tipcc-security --user alice,bob
+###  tipcc-security --processes
+###
+### Version: 0.1.0-9000
+### Copyright: Henrik Bengtsson (2016-2017)
+### License: GPL (>= 2.1) [https://www.gnu.org/licenses/gpl.html]
+call="$0 $*"
+tool_name=$(basename $0)
+if [[ ${TIPCC_TOOLS} -ne 0 ]]; then
+    tool_name=${tool_name/-/ }
+fi
+
+function mecho() { echo "$@" 1>&2; }
+
+function merror() {
+    mecho "ERROR in '${tool_name}': $*"
+    exit 1
+}
+
+function as_logical() {
+    if [[ $1 == "false" || $1 == "0" ]]; then echo 0; else echo 1; fi
+}
+
+function help() {
+    local res=$(grep -E "^###( .*|)$" $0 | cut -b 5-)
+    local search=$(basename $0)
+    if [[ "${search}" != "${tool_name}" ]]; then
+        res=$(printf '%s\n' "${res[@]}" | sed "s/${search}/${tool_name}/g")
+    fi
+    printf '%s\n' "${res[@]}"
+}
+
+function whatis() {
+    local res=$(grep "^### .*[^:][[:space:]]*$" $0 | head -1 | cut -b 5-)
+    printf '%s\n' "${res[@]}"
+}
+
+function version() {
+    grep -E "^###[ ]*Version:[ ]*" $0 | sed 's/###[ ]*Version:[ ]*//g'
+}
+
+
+users=
+files=
+processes=
+mask=
+fake=
+
+# Parse command-line options
+while [[ $# > 0 ]]; do
+    if [[ "$1" == "--help" ]]; then
+        help
+        exit 0
+    elif [[ "$1" == "--version" ]]; then
+        version
+        exit 0
+    elif [[ "$1" == "--processes" ]]; then
+        processes=true
+    elif [[ "$1" == "--me" ]]; then
+        users=$USER
+    elif [[ "$1" == "--mask" ]]; then
+        mask=true
+    elif [[ "$1" == "--files" ]]; then
+        files=true
+    elif [[ "$1" == "--user" ]]; then
+        shift
+        users=$1
+    elif [[ "$1" == "--users" ]]; then
+        shift
+        users=$1
+    elif [[ "$1" == "--fake" ]]; then
+        fake=true
+    fi
+    shift
+done
+
+
+function fake_processes() {
+    echo "master alice  2418 52.1  0.0 155236 14900 ?        S    Jun30   2321:53 lftp -u alice.aliceson@ucsf.edu,SecretPwd2017 ftps://ftp.box.com:990"
+    echo "master alice  2418 52.1  0.0 155236 14900 ?        S    Jun30   2321:53 lftp -u alice.aliceson@ucsf.edu,SecretPwd2017 another ftps://ftp.box.com:990"
+}
+
+
+## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+## Check information of running processes
+## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+if [[ "$processes" == "true" ]]; then
+    ## Get _all_ processes for the user
+    if [[ "$fake" == "true" ]]; then
+        bfr=$(fake_processes)
+    else
+        bfr=$(tipcc-ps)
+    fi
+    if [[ -n "$users" ]]; then
+	users=${users/,/|}
+	pattern="( ${users/|/ | } )"
+        bfr=$(echo "$bfr" | grep -E "$pattern")
+    fi
+
+    ## Check LFTP -u <USER>,<PWD>
+    res=$(echo "$bfr" | grep -E "lftp .*-u[ ]+[^,]+,[^ ]+")
+    if [[ -n "$res" ]]; then
+        if [[ "$mask" == "true" ]]; then
+            res=$(echo "$res" | sed -E 's/(-u[ ]+)([^,]+),([^ ]+)/\1<MASKED_CREDENTIALS>/g')
+	fi
+	echo "$res"
+    fi
+fi
+
