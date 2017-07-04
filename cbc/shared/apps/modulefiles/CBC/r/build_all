@@ -32,7 +32,7 @@ EOF
 done
 
 ln -fs 3.3.3.lua oldrel.lua
-ln -fs 3.4.0.lua release.lua
+ln -fs 3.4.1.lua release.lua
 ln -fs 3.4.1patched.lua patched.lua
 ln -fs 3.5.0devel.lua devel.lua
-ln -fs 3.4.0.lua default
+ln -fs 3.4.1.lua default
