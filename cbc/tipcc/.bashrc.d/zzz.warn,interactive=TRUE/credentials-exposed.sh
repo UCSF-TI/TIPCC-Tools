@@ -3,8 +3,8 @@ if [[ $STARTUP_DONE == *"warn-credentials"* ]]; then return; fi
 
 ## Running in interactive mode?
 if [[ "$PS1" ]]; then
-    if [[ -x /home/shared/cbc/tipcc/bin/tipcc-ps ]]; then
-        bfr=$(/home/shared/cbc/tipcc/bin/tipcc-ps | grep -F $USER | grep -E "lftp .*-u[ ]+[^,]+,[^ ]+"| sed -E 's/(-u[ ]+)([^,]+),([^ ]+)/\1<MASKED_CREDENTIALS>/g')
+    if [[ -x /home/shared/cbc/tipcc/bin/tipcc ]]; then
+        bfr=$(/home/shared/cbc/tipcc/bin/tipcc security --processes --mask --users $USER)
         if [[ -n "${bfr}" ]]; then
             tput setaf 1 2> /dev/null ## red
             >&2 echo

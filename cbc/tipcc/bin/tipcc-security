@@ -105,7 +105,7 @@ if [[ "$processes" == "true" ]]; then
     if [[ "$fake" == "true" ]]; then
         bfr=$(fake_processes)
     else
-        bfr=$(tipcc-ps)
+        bfr=$(tipcc ps)
     fi
     if [[ -n "$users" ]]; then
 	users=${users/,/|}
