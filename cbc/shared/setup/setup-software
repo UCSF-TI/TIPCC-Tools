@@ -135,6 +135,17 @@ for ff in $SHARED_SOFTWARE/R-*; do
   if [ -L "$ff" ] && ! [ -e "$ff" ]; then rm -- "$ff"; fi;
 done
 
+#R-2.4.0-20170704
+
+# R 2.7.x
+lndir $SRC_CBC/R/R-2.7.0-20170704 R-2.7.0
+
+# R 2.8.x
+lndir $SRC_CBC/R/R-2.8.0-20170704 R-2.8.0
+
+# R 2.10.x
+lndir $SRC_CBC/R/R-2.10.0-20170704 R-2.10.0
+
 # R 2.11.x
 lndir /opt/local/lib64/R R-2.11.0
 lndir $SRC_CBC/R/R-2.11.1-20150918 R-2.11.1
