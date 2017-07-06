@@ -85,6 +85,10 @@ lndir git-2.1.3 git-latest
 lndir $SRC_CBC/gitflow-0.4.2 .
 lndir gitflow-0.4.2 gitflow-latest
 
+# Go
+lndir $SRC_CBC/go-1.8.3 .
+lndir go-1.8.3 go-latest
+
 # valgrind
 ## lndir /usr/bin/valgrind valgrind-3.8.1 
 lndir $SRC_CBC/valgrind-3.10.0 .
