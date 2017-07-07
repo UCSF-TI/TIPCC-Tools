@@ -1,4 +1,8 @@
-## Highlight, in command-line prompt, that user is on master
+## Description: Highlight, in command-line prompt, that user is on master
+##
+## Note: In addition to PS1 there's also PS2 (for continuation)
+##
+## See also: A neat PS1 generator (http://bashrcgenerator.com/)
 if [[ "$PS1" && "$HOSTNAME" == "cclc01.som.ucsf.edu" ]]; then
     case $TERM in
         xterm*)
