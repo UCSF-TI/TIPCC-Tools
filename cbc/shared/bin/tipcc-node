@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 ### UCSF C4 Toolkit:
-### Post-mortem summaries
+### Compute-node summaries
 ###
 ### Usage:
 ###  c4-node <node> [options]
@@ -95,7 +95,7 @@ fi
 
 
 node_label="n${node}"
-echo "# Node ${node}: Post-mortem analysis"
+echo "# Node ${node}: Compute-node summaries"
 date +"on %Y-%m-%d %H:%M:%S"
 echo
 
