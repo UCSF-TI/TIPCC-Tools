@@ -4,7 +4,12 @@ if [[ $STARTUP_DONE == *"warn-credentials"* ]]; then return; fi
 ## Running in interactive mode?
 if [[ "$PS1" ]]; then
     if [[ -x /home/shared/cbc/tipcc/bin/tipcc ]]; then
-        bfr=$(/home/shared/cbc/tipcc/bin/tipcc security --processes --mask --users $USER)
+	## This check can be rather time-consuming, especially on clogged-up nodes.
+	## We'll allow it to timeout if taking too long.
+        bfr=$(timeout 5s /home/shared/cbc/tipcc/bin/tipcc security --processes --mask --users $USER)
+	## Timeout?
+	if [[ $? -eq 124 ]]; then return; fi
+	
         if [[ -n "${bfr}" ]]; then
             tput setaf 1 2> /dev/null ## red
             >&2 echo
