@@ -444,8 +444,9 @@ lndir /opt/GDC/gdc-client-1.0.1 .
 lndir gdc-client-1.0.1 gdc-client-latest
 
 # snpEff
-lndir /home/jocostello/tools/snpEff_v2_0_2 .
-lndir snpEff_v2_0_2 snpEff-latest
+lndir /home/jocostello/tools/snpEff_v2_0_2 snpEff-2.0.2
+lndir snpEff-2.0.2 snpEff_v2_0_2 ## Deprecated 2017-07-09
+lndir snpEff-2.0.2 snpEff-latest
 
 # SNVMix2
 lndir /opt/local/SNVMix2-0.11.8-r3 .
