@@ -1,5 +1,5 @@
 help([[
-Anaconda: The Python Programming Language
+[DEPRECATED] Anaconda: The Python Programming Language
 ]])
 
 local name = "Python"

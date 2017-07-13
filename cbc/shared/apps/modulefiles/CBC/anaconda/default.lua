@@ -1,5 +1,5 @@
 help([[
-Anaconda Package Manager w/ CBC-shared installations
+[DEPRECATED] Anaconda Package Manager w/ CBC-shared installations
 ]])
 
 local name = myModuleName()
