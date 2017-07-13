@@ -88,6 +88,7 @@ while [[ $# > 0 ]]; do
     shift
 done
 
+HOSTNAME=$(hostname)
 mdebug "Subcommand: $cmd"
 mdebug "Called by USER: $USER"
 mdebug "HOSTNAME: $HOSTNAME"
