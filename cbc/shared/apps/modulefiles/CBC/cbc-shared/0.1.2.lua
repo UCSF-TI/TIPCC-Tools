@@ -7,7 +7,7 @@ local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: UCSF, cluster, utilities")
 whatis("URL: https://github.com/UCSF-TI/TIPCC/wiki/Software-shared-by-CBC")
-whatis("Description: When loaded, this module loads the default set of CBC-shared software.")
+whatis("Description: When loaded, this module loads the default set of CBC-shared software.  This replaces and is backward compatible with the deprecated usage of `source /home/shared/cbc/bashrc`.")
 
 local cbc_python = os.getenv("CBC_PYTHON")
 
