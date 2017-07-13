@@ -68,7 +68,9 @@ function use_lmod() {
     
     export MODULEPATH="${MODULEPATH}:${MODULEPATH_DEFAULT}"
     export MODULEPATH="$MODULEPATH:/home/shared/cbc/apps/modulefiles/repos"
-    export MODULEPATH="$MODULEPATH_ROOT/CBC:${MODULEPATH}"
+
+    ## Module repository: CBC
+    ## export MODULEPATH="$MODULEPATH_ROOT/CBC:${MODULEPATH}"
     
     if [[ -n "${MODULEPATH_USER}" ]]; then
         export MODULEPATH="${MODULEPATH_USER}:${MODULEPATH}"
@@ -83,7 +85,8 @@ function use_lmod() {
         ## ability to predefine elsewhere the default list
 	##  export LMOD_SYSTEM_DEFAULT_MODULES=${LMOD_SYSTEM_DEFAULT_MODULES:-"StdEnv"}
         ##  export LMOD_SYSTEM_DEFAULT_MODULES=${LMOD_SYSTEM_DEFAULT_MODULES:-}
-        export LMOD_SYSTEM_DEFAULT_MODULES=${LMOD_SYSTEM_DEFAULT_MODULES:-Legacy-Scyld:Legacy-etc:CBC:Personal}
+#        export LMOD_SYSTEM_DEFAULT_MODULES=${LMOD_SYSTEM_DEFAULT_MODULES:-Legacy-Scyld:Legacy-etc:CBC:Personal}
+        export LMOD_SYSTEM_DEFAULT_MODULES=${LMOD_SYSTEM_DEFAULT_MODULES:-Legacy-Scyld:Legacy-etc:Personal}
         module --initial_load restore 2> /dev/null
         if [[ $verbose == "true" ]]; then
             >&2 printf "."
