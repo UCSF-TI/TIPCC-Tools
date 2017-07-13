@@ -1,0 +1,171 @@
+#!/usr/bin/env bash
+### UCSF HPC TIPCC:
+### Cleanup utilities
+###
+### Usage:
+###  tipcc-cleanup <subcommand> [options]
+###
+### Options:
+###  --help              This help
+###
+### Example:
+###  tipcc-cleanup scratch --debug --dryrun
+###  ssh n17 tipcc-cleanup scratch
+###  sudo ssh n17 tipcc-cleanup scratch --user johndoe
+###
+### Version: 0.1.0-9000
+### Copyright: Henrik Bengtsson (2017)
+### License: GPL (>= 2.1) [https://www.gnu.org/licenses/gpl.html]
+call="$0 $*"
+tool_name=$(basename $0)
+if [[ ${TIPCC_TOOLS} -ne 0 ]]; then
+    tool_name=${tool_name/-/ }
+fi
+
+function mecho() { echo "$@" 1>&2; }
+
+function merror() {
+    mecho "ERROR in '${tool_name}': $*"
+    exit 1
+}
+
+function mdebug() {
+    if [[ "$debug" == "true" ]]; then
+        mecho "[DEBUG] $*"
+    fi
+}
+
+function as_logical() {
+    if [[ $1 == "false" || $1 == "0" ]]; then echo 0; else echo 1; fi
+}
+
+function help() {
+    local res=$(grep -E "^###( .*|)$" $0 | cut -b 5-)
+    local search=$(basename $0)
+    if [[ "${search}" != "${tool_name}" ]]; then
+        res=$(printf '%s\n' "${res[@]}" | sed "s/${search}/${tool_name}/g")
+    fi
+    printf '%s\n' "${res[@]}"
+}
+
+function whatis() {
+    local res=$(grep "^### .*[^:][[:space:]]*$" $0 | head -1 | cut -b 5-)
+    printf '%s\n' "${res[@]}"
+}
+
+function version() {
+    grep -E "^###[ ]*Version:[ ]*" $0 | sed 's/###[ ]*Version:[ ]*//g'
+}
+
+
+        
+debug=false
+dryrun=false
+user=$USER
+cmd=
+
+# Parse command-line options
+while [[ $# > 0 ]]; do
+    if [[ "$1" == "--debug" ]]; then
+        debug=true
+    elif [[ "$1" == "--dryrun" ]]; then
+        dryrun=true
+    elif [[ "$1" == "--user" ]]; then
+        shift
+        user=$1
+    elif [[ "$1" == "--help" ]]; then
+        help
+        exit 0
+    elif [[ "$1" == "--whatis" ]]; then
+        whatis
+        exit 0
+    elif [[ "$1" == "--version" ]]; then
+        version
+        exit 0
+    else
+        cmd="$1"
+    fi
+    shift
+done
+
+mdebug "Subcommand: $cmd"
+mdebug "Called by USER: $USER"
+mdebug "HOSTNAME: $HOSTNAME"
+mdebug "User to cleanup: $user"
+
+if [[ -z "$cmd" ]]; then
+    help
+    mecho
+    merror "Subcommand is missing"
+fi
+
+if [[ -z "$user" ]]; then
+    help
+    mecho
+    merror "User must not be empty"
+fi
+
+
+if [[ $cmd == "scratch" ]]; then
+    if [[ ! -d "/scratch" ]]; then
+        mdebug "Skipping because no such folder: $HOSTNAME:/scratch"
+        exit 0
+    fi
+
+    path="/scratch/$user/jobs"
+    mdebug "Scratch folder holding job-specific folders: $HOSTNAME:$path"
+    if [[ ! -d "$path" ]]; then
+        mdebug "Skipping because no such folder: $HOSTNAME:$path"
+        exit 0
+    fi
+    
+    ## Identify any job-specific scratch folder
+    jobs_on_scratch=($(ls "$path"))
+    mdebug "Number of job-specific scratch folders: ${#jobs_on_scratch[@]}"
+    if [[ ${#jobs_on_scratch[@]} -eq 0 ]]; then
+        mdebug "Skipping because no job-specific folders: $HOSTNAME:$path"
+        exit 0
+    fi
+    
+    ## Identify all jobs on the queue
+    jobs_on_queue=($(qstat -tf | grep -F "Job Id: " | sed 's/Job Id: //'))
+    mdebug "Number of jobs on queue: ${#jobs_on_queue[@]}"
+    for job in ${jobs_on_scratch[@]}; do
+        ## Is the job still on the queue? Then keep it.
+        echo ${jobs_on_queue[@]} | grep -q -F "$job"
+        if [[ $? -eq 0 ]]; then
+            mdebug "Skipping job '$job' because it is still on the queue"
+            continue
+        fi
+
+        ## Is there a .dont-remove file?  Then keep it.
+        if [[ -f "$path/$job/.dont-remove" ]]; then
+            mdebug "Skipping job '$job' because detected $path/$job/.dont-remove: $job"
+            continue
+        fi
+
+        ## Sanity checks
+        if [[ ! -d "$path/$job" ]]; then
+            mdebug "INTERNAL ERROR: Cannot remove job '$job', because $path/$job is not a directory"
+            continue
+        fi
+
+        if [[ ! "$path/$job" == /scratch/$user/jobs/* ]]; then
+            mdebug "INTERNAL ERROR: Cannot remove job '$job', because it's path is not under /scratch/$user/jobs/"
+            continue
+        fi
+        
+        mdebug "Job '$job' is not on queue - removing folder: $path/$job"
+
+        ## Otherwise, remove the job-specific scratch folder
+        if [[ $dryrun == false ]]; then
+            mdebug "Command: rm -rf \"$path/$job\""
+            rm -rf "$path/$job"
+            if [[ -d "$path/$job" ]]; then
+                 mdebug "ERROR: Failed to remove folder: $path/$job"
+            fi
+	else
+            echo "[DRYRUN]: rm -rf \"$path/$job\""
+        fi
+    done
+fi
