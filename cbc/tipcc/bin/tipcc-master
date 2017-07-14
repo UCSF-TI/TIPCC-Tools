@@ -189,7 +189,7 @@ function filter_editors() {
 
 function filter_viewers() {
     local res=("${@}")
-    res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(head|less|more|tail)( |:|$)")
+    res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(head|less|more|tail|groff|grotty)( |:|$)")
     printf '%s\n' "${res[@]}"
 }
 
