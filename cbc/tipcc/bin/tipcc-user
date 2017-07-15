@@ -217,6 +217,9 @@ fi
 ## Jobs
 if [[ $jobs -eq 1 ]]; then
     echo "Cluster tasks   : $(qme $user | grep -F "Number of tasks:" | sort -u | sed 's/Number of tasks: //g')"
+    nodes=$(qstat -f -u $user | grep -F "exec_host = " | sed -E 's/.*exec_host = //')
+    nodes=($(echo $nodes | sed -E 's|/[0-9]+||g' | sed 's/+/\n/g' | sed 's/ /\n/g' | sort -u))
+    echo "Compute nodes   : ${nodes[@]}"
 fi
 
 ## Processes on master
