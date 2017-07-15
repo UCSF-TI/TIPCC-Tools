@@ -146,12 +146,12 @@ child_ids=$(pidtree $session_id)
 echo "Process IDs: (n=$(echo $child_ids | wc -w)) $(echo $child_ids | tr $'\n' ' ')"
 echo
 
-if [[ -n "$access" ]]; then
-    ## FIXME: If more than one node, just use the first node
-    node=$(echo $nodes | head -1)
-    precmd="$access $node"
-else
+node=$(echo $nodes | head -1)
+if [[ -z "$access" || "$node" == "$(hostname)" ]]; then
     precmd=""
+else
+    ## FIXME: If more than one node, just use the first node
+    precmd="$access $node"
 fi
 
 echo "### Process Details"
