@@ -1,0 +1,147 @@
+### List User's Jobs on the Job Queue
+###
+### Usage:
+###  qme [option] <user>
+###
+### Options:
+###  --help       Display this help
+###  --all        Check all jobs (also queued)
+###  --running    Check only running jobs (not queued)
+###  <user>       Check another user (default: $USER)
+###  --user user  (deprecated alternative)
+###
+### Example:
+###  qme
+###  qme alice
+###
+### Version: 0.1.0-9000
+### Copyright: Henrik Bengtsson (2015-2017)
+### License: GPL (>= 2.1) [https://www.gnu.org/licenses/gpl.html]
+call="$0 $*"
+tool_name=$(basename $0)
+
+function mecho() { echo "$@" 1>&2; }
+
+function merror() {
+    mecho "ERROR in '${tool_name}': $*"
+    exit 1
+}
+
+function mwarn() {
+    mecho "WARNING in '${tool_name}': $*"
+}
+
+function help() {
+    local res=$(grep -E "^###( .*|)$" $0 | cut -b 5-)
+    local search=$(basename $0)
+    if [[ "${search}" != "${tool_name}" ]]; then
+        res=$(printf '%s\n' "${res[@]}" | sed "s/${search}/${tool_name}/g")
+    fi
+    printf '%s\n' "${res[@]}"
+}
+
+function whatis() {
+    local res=$(grep "^### .*[^:][[:space:]]*$" $0 | head -1 | cut -b 5-)
+    printf '%s\n' "${res[@]}"
+}
+
+function version() {
+    grep -E "^###[ ]*Version:[ ]*" $0 | sed 's/###[ ]*Version:[ ]*//g'
+}
+    
+path=$(dirname $0)
+user=$USER
+all=true
+
+## Parse command-line options
+cmd=show
+while (( "$#" )); do
+  ## Commands
+  if test $1 == "--help" || test $1 == "-h"; then
+    help
+    exit 0
+  elif test $1 == "--whatis"; then
+    whatis
+    exit 0
+  elif test $1 == "--version"; then
+    version
+    exit 0
+  elif test $1 == "--all" || test $1 == "-a"; then
+    all=true
+  elif test $1 == "--running" || test $1 == "-r"; then
+    all=false
+  elif test $1 == "--user" || test $1 == "-u"; then
+    shift
+    user=$1
+    mwarn "--user <user> is deprecated; use only <user> instead"
+  else
+    user=$1
+  fi
+
+  shift
+done
+
+
+## Collect
+jobs=$(qstat -t -n -1 -u $user | grep $user)
+if test $all == "false"; then
+  jobs=$(echo "$jobs" | grep -v ' C ' | grep -v ' E ')
+fi
+
+## Prune
+jobs=$(echo "$jobs" | sed -E 's/[.]cclc01[.]?(som)?[.]?(ucsf|ucs|uc|u)?[ ]*/ /g')
+jobs=$(echo "$jobs" | sed "s/batch[ ]*/ /g")
+jobs=$(echo "$jobs" | sed "s/$user[ ]*/ /g")
+jobs=$(echo "$jobs" | grep -v '^$')
+jobs=$(echo "$jobs" | sed -E "s/^([0-9]+)\[([0-9])\]/\\1[\\2]  /g")
+jobs=$(echo "$jobs" | sed -E "s/^([0-9]+)\[([0-9]{2})\]/\\1[\\2] /g")
+
+## Identify nodes
+nodes=$(echo "$jobs" | sed -E 's/.* [0-9]+:[0-9]+:[0-9]+ +//g' | sed -E 's|/[0-9]+||g' | sed 's/+/\n/g' | sed -E 's/(--|Q|R|C|E|H)//g' | sort -u)
+nodes=$(echo "$nodes" | sort -n -t n -k 2)  ## Sort mixed numerals
+nodes=$(echo $nodes) ## Paste to one string
+nnodes=$(echo $nodes | wc -w)
+
+## Count
+njobs=$(echo "$jobs" | grep -v '^$' | wc -l)
+rjobs=$(echo "$jobs" | grep ' R ' | wc -l)
+qjobs=$(echo "$jobs" | grep -E ' [QH] ' | wc -l)
+ntasks=$(echo "$jobs" | grep -v '^$' | tr -s ' ' | cut -d ' ' -f 5 | paste -sd+ | bc)
+rtasks=$(echo "$jobs" | grep ' R ' | tr -s ' ' | cut -d ' ' -f 5 | paste -sd+ | bc)
+qtasks=$(echo "$jobs" | grep -E ' [QH] ' | tr -s ' ' | cut -d ' ' -f 5 | paste -sd+ | bc)
+if test -z $ntasks; then ntasks=0; fi
+if test -z $rtasks; then rtasks=0; fi
+if test -z "$qtasks"; then qtasks=0; fi
+
+if test $all == "false"; then
+  jobs=$(echo "$jobs" | grep -v '[HQE][ \t]*--[ \t]*--')
+fi
+
+## Jobs stats
+stats="Number of jobs: $njobs ($rjobs running, $qjobs queued/held)"
+stats="$stats\nNumber of tasks: $ntasks ($rtasks running, $qtasks tasks queued/held)\n"
+
+## Report
+echo "Username: $user"
+if test "$njobs" != "0"; then
+    echo "Nodes used ($nnodes): $nodes"
+    printf "$stats"
+fi
+
+if test "$#" == "0"; then
+  if test "$njobs" != "0"; then
+    echo "Job ID  Job name         PID      NDS    TSK    RAM      Time S     Since   Nodes/cores"
+    echo "------- ---------------- ------ ----- ------ ------ --------- - ---------   -----------"
+    ##### 269203  async1262705617- 476252     1      1    --   99:23:59 R  00:10:56   n9/6
+    echo "$jobs"
+  fi
+else
+  tjobs=$(echo "$jobs" | cut -d '.' -f 1)
+  echo "qstat $* $jobs"
+  qstat $* $tjobs
+fi
+
+if test "$njobs" != "0"; then
+    echo "Nodes used ($nnodes): $nodes"
+fi
+printf "$stats"
