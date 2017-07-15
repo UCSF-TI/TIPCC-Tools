@@ -134,16 +134,18 @@ echo
 
 echo "## Session Details"
 echo
+nodes=$(qstat -f ${jid} | grep -F "exec_host = " | sed -E 's/.*exec_host = //')
+nodes=$(echo $nodes | sed -E 's|/[0-9]+||g' | sed 's/+/\n/g' | sort -u)
+echo "Compute node(s): $nodes"
 session_id=$(qstat -f ${jid} | grep -F "session_id = " | sed -E 's/.*session_id = //')
 echo "Session process ID: ${session_id}"
 child_ids=$(pidtree $session_id)
 echo "Process IDs: (n=$(echo $child_ids | wc -w)) $(echo $child_ids | tr $'\n' ' ')"
 echo
 
-node=$(qstat -f ${jid} | grep -F "exec_host = " | sed -E 's/.*exec_host = //')
-node=$(echo $node | sed -E 's|/[0-9]+||g' | sed 's/+/\n/g' | sort -u | head -1)
-
 if [[ "$on_node" == "true" ]]; then
+    ## FIXME: If more than one node, just use the first node
+    node=$(echo $nodes | head -1)
     precmd="bpsh $node"
 else
     precmd=""
