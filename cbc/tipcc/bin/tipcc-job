@@ -6,6 +6,8 @@
 ###  tipcc-job <id> [options]
 ###
 ### Options:
+###  --on-node           Gather stats on job node (default) or not
+###  --not-on-node       More details with --on-node
 ###  --help              This help
 ###
 ### Example:
@@ -72,10 +74,8 @@ function pidtree() (
 )
         
 debug=false
+on_node=true
 jid=
-status=true
-full=
-logs=
 
 
 # Parse command-line options
@@ -83,12 +83,10 @@ while [[ $# > 0 ]]; do
     if [[ "$1" == "--path" ]]; then
         shift
         path="$1"
-    elif [[ "$1" == "--status" ]]; then
-        status=true
-    elif [[ "$1" == "--full" ]]; then
-        full=true
-    elif [[ "$1" == "--logs" ]]; then
-        logs=true
+    elif [[ "$1" == "--on-node" ]]; then
+        on_node=true
+    elif [[ "$1" == "--not-on-node" ]]; then
+        on_node=false
     elif [[ "$1" == "--help" ]]; then
         help
         exit 0
@@ -142,10 +140,19 @@ child_ids=$(pidtree $session_id)
 echo "Process IDs: (n=$(echo $child_ids | wc -w)) $(echo $child_ids | tr $'\n' ' ')"
 echo
 
+node=$(qstat -f ${jid} | grep -F "exec_host = " | sed -E 's/.*exec_host = //')
+node=$(echo $node | sed -E 's|/[0-9]+||g' | sed 's/+/\n/g' | sort -u | head -1)
+
+if [[ "$on_node" == "true" ]]; then
+    precmd="bpsh $node"
+else
+    precmd=""
+fi
+
 echo "### Process Details"
 pattern="($(echo $child_ids | sed 's/ /|/g')|^USER)"
 echo '```'
-ps aux | grep -E "$pattern" | grep -vF "grep -E $pattern"
+$precmd ps aux | grep -E "$pattern" | grep -vF "grep -E $pattern"
 echo
 echo '```'
 echo
@@ -153,13 +160,13 @@ echo
 echo "### Process Tree"
 echo '```'
 echo "$ ps --forest -o pid,tty,stat,time,cmd -g $session_id"
-ps --forest -o pid,tty,stat,time,cmd -g $session_id
+$precmd ps --forest -o pid,tty,stat,time,cmd -g $session_id
 echo '```'
 echo
 echo "<details>"  
 echo "<pre>"
 echo "$ pstree -anclpUh $session_id"
-pstree -anclpUh $session_id
+$precmd pstree -anclpUh $session_id
 echo "</pre>"
 echo "</details>"  
 echo
