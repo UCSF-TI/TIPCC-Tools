@@ -6,6 +6,12 @@
 ###  tipcc-node <node> [options]
 ###
 ### Options:
+###  --status            Report on ping, bpstat, and pbsnodes (default)
+###  --no-status         or not
+###  --full              Report on full job details (qstat -f)
+###  --no-full           or not (default)
+###  --logs              Report on system logs (/var/log/messages)
+###  --no-logs           or not (default)
 ###  --help              This help
 ###
 ### Example:
@@ -54,8 +60,8 @@ path=reports
 debug=false
 node=
 status=true
-full=
-logs=
+full=false
+logs=false
 
 
 # Parse command-line options
@@ -65,10 +71,16 @@ while [[ $# > 0 ]]; do
         path="$1"
     elif [[ "$1" == "--status" ]]; then
         status=true
+    elif [[ "$1" == "--no-status" ]]; then
+        status=false
     elif [[ "$1" == "--full" ]]; then
         full=true
+    elif [[ "$1" == "--no-full" ]]; then
+        full=false
     elif [[ "$1" == "--logs" ]]; then
         logs=true
+    elif [[ "$1" == "--no-logs" ]]; then
+        logs=false
     elif [[ "$1" == "--help" ]]; then
         help
         exit 0
@@ -106,7 +118,7 @@ echo '```'
 echo
 
 
-if [[ -n "$status" ]]; then
+if [[ "$status" == "true" ]]; then
   echo "## Status"
   echo
   echo "### ping"
@@ -165,7 +177,7 @@ for user in ${users}; do
     echo '```'
     qstat -f $jid | grep -F "mem"
     echo '```'
-    if [[ -n "$full" ]]; then
+    if [[ "$full" == "true" ]]; then
       echo "<details>"  
       echo "<pre>"
       qstat -f $jid
@@ -178,7 +190,7 @@ for user in ${users}; do
 done
 
 
-if [[ -n "$logs" ]]; then
+if [[ "$logs" == "true" ]]; then
   echo "## System Logs"
   echo '```'  
   sudo grep -F " ${node_label} " /var/log/messages | grep -v -F "Accepted publickey" | grep -v -F "Received disconnect" | tail -10
