@@ -6,9 +6,10 @@
 ###  tipcc-job <id> [options]
 ###
 ### Options:
-###  --on-node           Gather stats on job node (default) or not
-###  --not-on-node       More details with --on-node
-###  --help              This help
+###  --bpsh        Gather stats on job node (default) via 'bpsh'
+###  --ssh         Gather stats on job node 'ssh'
+###  --no-login    Gather stats from the current machine (less details)
+###  --help        This help
 ###
 ### Example:
 ###  tipcc-job 876066
@@ -74,19 +75,21 @@ function pidtree() (
 )
         
 debug=false
-on_node=true
+access=bpsh
 jid=
-
+on_node=true
 
 # Parse command-line options
 while [[ $# > 0 ]]; do
     if [[ "$1" == "--path" ]]; then
         shift
         path="$1"
-    elif [[ "$1" == "--on-node" ]]; then
-        on_node=true
-    elif [[ "$1" == "--not-on-node" ]]; then
-        on_node=false
+    elif [[ "$1" == "--bpsh" ]]; then
+        access=bpsh
+    elif [[ "$1" == "--ssh" ]]; then
+        access=ssh
+    elif [[ "$1" == "--no-login" ]]; then
+        access=
     elif [[ "$1" == "--help" ]]; then
         help
         exit 0
@@ -143,10 +146,10 @@ child_ids=$(pidtree $session_id)
 echo "Process IDs: (n=$(echo $child_ids | wc -w)) $(echo $child_ids | tr $'\n' ' ')"
 echo
 
-if [[ "$on_node" == "true" ]]; then
+if [[ -n "$access" ]]; then
     ## FIXME: If more than one node, just use the first node
     node=$(echo $nodes | head -1)
-    precmd="bpsh $node"
+    precmd="$access $node"
 else
     precmd=""
 fi
