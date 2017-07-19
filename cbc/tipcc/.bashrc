@@ -107,7 +107,16 @@ function source_d() {
         local neq='!'
         source_d_files=$(printf "%s\n" ${source_d_files[@]} | grep --perl-regexp -v "CLUSTER=(?${neq}${CLUSTER})")
     fi
-    
+
+    ## File name filter: Filter based on USER=<name>?
+    if [[ -n "${USER}" ]]; then
+        ## Drop all files with USER=<value> that does not match USER=${USER}
+        ## This requires negative-lookahead regular expression, which in turn requires
+        ## an PCRE-enabled grep, hence the 'grep --perl-regexp' call.
+        local neq='!'
+        source_d_files=$(printf "%s\n" ${source_d_files[@]} | grep --perl-regexp -v "USER=(?${neq}${USER})")
+    fi
+
     ## Source remaining files
     local ff=
     for ff in ${source_d_files}; do
