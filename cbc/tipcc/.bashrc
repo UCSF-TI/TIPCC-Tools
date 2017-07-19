@@ -118,6 +118,32 @@ function source_d() {
     if [[ -n "${STARTUP_DEBUG}" ]]; then debug_echo "${prefix}$(startup_duration)s: Sourcing ${source_d_path}/ ... done"; fi
 } ## source_d()
 
+function fix_permissions_to_user_only() {
+  ## Nothing to do?
+  if [[ ! -e $1 ]]; then return; fi
+
+  ## Permissions already correct?
+  local perms=$(stat --format=%A $1)
+  local perms_go=$(echo $perms | cut -c 5-10)
+  if [[ "$perms_go" == "------" ]]; then return; fi
+  
+  ## Fix permissions
+  chmod go-rwx $1
+
+  ## Assert fix
+  local permsT=$(stat --format=%A $1)
+  perms_go=$(echo $permsT | cut -c 5-10)
+  if [[ "$perms_go" != "------" ]]; then
+    tput setaf 1 2> /dev/null ## red
+    >&2 echo "SECURITY ERROR: Detected that '$1' was accessible by others (ugo=$perms). Tried to reset permissions (chmod go-rwx '$1'), but failed. They are still accessible by others; ugo=$permsT"
+    tput sgr0 2> /dev/null    ## reset
+    return
+  fi
+
+  tput setaf 3 2> /dev/null ## yellow
+  >&2 echo "SECURITY WARNING: Detected that '$1' was accessible by others (ugo=$perms). Permissions were reset (chmod go-rwx '$1') such only you can access it. New permissions: ugo=$perms}"
+  tput sgr0 2> /dev/null    ## reset
+}
 
 export CLUSTER=tipcc
 
