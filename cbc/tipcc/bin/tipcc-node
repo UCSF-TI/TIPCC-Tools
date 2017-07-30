@@ -8,6 +8,8 @@
 ### Options:
 ###  --status            Report on ping, bpstat, and pbsnodes (default)
 ###  --no-status         or not
+###  --disk              Report on local disk (/tmp and /scratch) usage
+###  --no-disk           or not (default)
 ###  --full              Report on full job details (qstat -f)
 ###  --no-full           or not (default)
 ###  --logs              Report on system logs (/var/log/messages)
@@ -60,6 +62,7 @@ path=reports
 debug=false
 node=
 status=true
+disk=false
 full=false
 logs=false
 
@@ -73,6 +76,10 @@ while [[ $# > 0 ]]; do
         status=true
     elif [[ "$1" == "--no-status" ]]; then
         status=false
+    elif [[ "$1" == "--disk" ]]; then
+        disk=true
+    elif [[ "$1" == "--no-disk" ]]; then
+        disk=false
     elif [[ "$1" == "--full" ]]; then
         full=true
     elif [[ "$1" == "--no-full" ]]; then
@@ -142,6 +149,16 @@ if [[ "$status" == "true" ]]; then
   echo
   echo "### pbsnodes (TORQUE)"
   pbsnodes ${node_label}
+  echo
+fi
+
+if [[ "$disk" == "true" ]]; then
+  echo "## Local Disk Usage"
+  echo
+  echo '```'
+  bpsh $node df -h /tmp /scratch | sed -E 's| /$| /tmp|'
+  echo '```'
+  echo
   echo
 fi
 
