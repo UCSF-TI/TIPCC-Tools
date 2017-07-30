@@ -6,6 +6,7 @@
 ###  tipcc-status [options]
 ###
 ### Options:
+###  --local-disk        Report on nodes' local disk usage
 ###  --full              Output more details
 ###  --help              This help
 ###
@@ -57,6 +58,7 @@ function on_compute_node() {
 }
 
 
+local_disk=false
 full=0
 
 # Parse command-line options
@@ -70,6 +72,8 @@ while [[ $# > 0 ]]; do
     elif [[ "$1" == "--version" ]]; then
         version
         exit 0
+    elif [[ "$1" == "--local-disk" ]]; then
+        local_disk=true
     elif [[ "$1" == "--full" ]]; then
         full=1
     else
@@ -100,6 +104,12 @@ fi
 
 echo "## Disk space"
 df -h /home /data /work
+echo
+echo "## Local /scratch usage (on nodes)"
+sed '/NODES:/h;//!H;$!d;x' ~monitor/logs/today/nodes/disk_space-scratch.log | grep -E "(^NODE |/scratch$)" | tr $'\n' ':' | sed 's| /scratch|\n|g' | grep -v -E "^:$" | sed -E 's/^(|:)NODE //g' | sed -E 's/::[^ ]+[ ]+/ /g' | awk '{ avail=$4/1024; printf("%3s: %7.1f GiB (%4s)\n",$1,avail,$5) }'
+echo
+#echo "## Local /tmp usage (on nodes)"
+#sed '/NODES:/h;//!H;$!d;x' ~monitor/logs/today/nodes/disk_space-tmp.log | grep -E "(^NODE |% /$)" | tr $'\n' ':' | sed 's| /|\n|g' | grep -v -E "^:$" | sed -E 's/^(|:)NODE //g' | sed -E 's/::[^ ]+[ ]+/ /g' | awk '{ avail=$4/1024; printf("%3s: %7.1f GiB (%4s)\n",$1,avail,$5) }'
 echo
 echo "## Job scheduler"
 echo
