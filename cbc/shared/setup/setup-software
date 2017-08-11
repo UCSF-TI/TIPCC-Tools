@@ -459,6 +459,9 @@ lndir $SRC_CBC/sratoolkit.2.5.7-centos_linux64 .
 lndir $SRC_CBC/sratoolkit.2.8.2-1-centos_linux64 .
 lndir sratoolkit.2.8.2-1-centos_linux64 sratoolkit-latest
 
+# STAR [https://github.com/alexdobin/STAR]
+lndir $SRC_CBC/STAR-2.5.3a .
+
 # TopHat
 #lndir /home/taylorbs/lbin/tophat-1.1.1.Linux_x86_64 .
 lndir /opt/local/bin/tophat-1.3.0.Linux_x86_64 .
