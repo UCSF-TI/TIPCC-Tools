@@ -14,6 +14,8 @@
 ###  --no-full           or not (default)
 ###  --logs              Report on system logs (/var/log/messages)
 ###  --no-logs           or not (default)
+###  --privs             Report on access privileges (/opt/moab/etc/moab.cfg) (default)
+###  --no-privs          or not
 ###  --help              This help
 ###
 ### Example:
@@ -65,6 +67,7 @@ status=true
 disk=false
 full=false
 logs=false
+privs=true
 
 
 # Parse command-line options
@@ -88,6 +91,10 @@ while [[ $# > 0 ]]; do
         logs=true
     elif [[ "$1" == "--no-logs" ]]; then
         logs=false
+    elif [[ "$1" == "--privs" ]]; then
+        privs=true
+    elif [[ "$1" == "--no-privs" ]]; then
+        privs=false
     elif [[ "$1" == "--help" ]]; then
         help
         exit 0
@@ -149,6 +156,16 @@ if [[ "$status" == "true" ]]; then
   echo
   echo "### pbsnodes (TORQUE)"
   pbsnodes ${node_label}
+  echo
+fi
+
+if [[ "$privs" == "true" ]]; then
+  echo "## Access Privileges (Moab)"
+  echo
+  echo '```'
+  grep -v -E "^[ ]*#" /opt/moab/etc/moab.cfg | grep -E "(=|,|^)$node_label(|,|$)$"
+  echo '```'
+  echo
   echo
 fi
 
