@@ -53,6 +53,8 @@ function use_lmod() {
       >&2 echo "Documentation:"
       >&2 echo " https://github.com/UCSF-TI/TIPCC/wiki/Software-Environment-Modules"
       >&2 echo
+      >&2 echo "(to silence this message, set MODULE_FRAMEWORK=lmod,quiet in ~/.bashrc)"
+      >&2 echo
     fi
     export MODULEPATH_ROOT=
     export MODULEPATH=
@@ -130,7 +132,14 @@ function using_lmod() {
 ## For BETA users
 ## https://github.com/UCSF-TI/TIPCC/wiki/Software-Environment-Modules
 ## (http://lmod.readthedocs.io/en/latest/045_transition.html?highlight=no-lmod)
-if [[ "$MODULE_FRAMEWORK" = "lmod"* ]]; then
+if [[ "$MODULE_FRAMEWORK" = "tcl"* ]]; then
+    if [[ "$MODULE_FRAMEWORK" != *"quiet" ]]; then
+        tput setaf 3 2> /dev/null ## yellow
+        >&2 echo "WARNING: MODULE_FRAMEWORK='tcl' is deprecated in favor of 'lmod'"
+        >&2 echo "         To silence this warning, use MODULE_FRAMEWORK='tcl,quiet'"
+        tput sgr0 2> /dev/null    ## reset
+    fi
+elif [[ "$MODULE_FRAMEWORK" = "lmod"* ]]; then
     use_lmod
 fi
 
