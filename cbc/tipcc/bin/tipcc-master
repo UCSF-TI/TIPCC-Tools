@@ -177,7 +177,7 @@ function filter_transfer() {
 
 function filter_files() {
     local res=("${@}")
-    res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(cp|mv|rm)( |:|$)")
+    res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(ls|cp|mv|rm)( |:|$)")
     printf '%s\n' "${res[@]}"
 }
 
