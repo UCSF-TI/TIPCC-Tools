@@ -1,3 +1,6 @@
+## The default module framework for TIPCC is now 'lmod' (was 'tcl') /HB 2017-09-19
+MODULE_FRAMEWORK=${MODULE_FRAMEWORK:-lmod}
+
 ## Already done?
 if [[ $STARTUP_DONE == *"lmod"* ]]; then return; fi
 
@@ -51,7 +54,7 @@ function use_lmod() {
       >&2 echo " module list          - your loaded modules"
       >&2 echo
       >&2 echo "Documentation:"
-      >&2 echo " https://github.com/UCSF-TI/TIPCC/wiki/Software-Environment-Modules"
+      >&2 echo " https://ucsf-ti.github.io/tipcc-web/software/software-modules.html"
       >&2 echo
       >&2 echo "(to silence this message, set MODULE_FRAMEWORK=lmod,quiet in ~/.bashrc)"
       >&2 echo
@@ -129,9 +132,8 @@ function using_lmod() {
 }
 
 
-## For BETA users
-## https://github.com/UCSF-TI/TIPCC/wiki/Software-Environment-Modules
-## (http://lmod.readthedocs.io/en/latest/045_transition.html?highlight=no-lmod)
+## ENVIRONMENT MODULES:
+## https://ucsf-ti.github.io/tipcc-web/software/software-modules.html
 if [[ "$MODULE_FRAMEWORK" = "tcl"* ]]; then
     if [[ "$MODULE_FRAMEWORK" != *"quiet" ]]; then
         tput setaf 3 2> /dev/null ## yellow
