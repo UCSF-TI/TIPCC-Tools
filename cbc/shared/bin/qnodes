@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 
-pbsnodes -l free | cut -d ' ' -f 1
+TMPFILE=/tmp/qnodes.$$.tmp
+pbsnodes -l free | cut -d ' ' -f 1 > $TMPFILE
+pbsnodes -l job-exclusive | cut -d ' ' -f 1 >> $TMPFILE
+cat $TMPFILE | sort -t n -k 2 -g
+rm $TMPFILE
+
 
 
 
