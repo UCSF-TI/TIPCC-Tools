@@ -287,7 +287,8 @@ lndir IGV-2.4.0 IGV-latest
 # IGVTools
 lndir $SRC_CBC/IGVTools-2.3.68 .
 lndir $SRC_CBC/IGVTools-2.3.91 .
-lndir IGVTools-2.3.91 IGVTools-latest
+lndir $SRC_CBC/IGVTools-2.3.98 .
+lndir IGVTools-2.3.98 IGVTools-latest
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
