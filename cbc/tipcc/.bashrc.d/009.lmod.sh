@@ -46,7 +46,7 @@ function use_lmod() {
     fi
     
     if [[ $verbose == "true" ]]; then
-      >&2 echo "# Lmod environment modules (BETA)"
+      >&2 echo "# Lmod Environment Modules"
       >&2 echo
       >&2 echo "Usage:"
       >&2 echo " module avail         - list available modules"
@@ -56,7 +56,8 @@ function use_lmod() {
       >&2 echo "Documentation:"
       >&2 echo " https://ucsf-ti.github.io/tipcc-web/software/software-modules.html"
       >&2 echo
-      >&2 echo "(to silence this message, set MODULE_FRAMEWORK=lmod,quiet in ~/.bashrc)"
+      >&2 echo "(This message will be show until 2017-09-30. To silence it before,"
+      >&2 echo " set MODULE_FRAMEWORK=lmod,quiet in your ~/.bashrc)"
       >&2 echo
     fi
     export MODULEPATH_ROOT=
