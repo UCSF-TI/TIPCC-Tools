@@ -1,7 +1,8 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # /tmp/ folders
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-export TMP_USER="/tmp/$USER"
+export TMP_ROOT="/tmp"
+export TMP_USER="$TMP_ROOT/$USER"
 if [[ ! -d "$TMP_USER" ]]; then
   mkdir -p "$TMP_USER"
 fi
@@ -12,7 +13,8 @@ fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Create /scratch/$USER/ (only possible on compute nodes)
 if [[ -d "/scratch" ]]; then
-  export SCRATCH_USER="/scratch/$USER"
+  export SCRATCH_ROOT="/scratch"
+  export SCRATCH_USER="$SCRATCH_ROOT/$USER"
   if [[ ! -d "$SCRATCH_USER" ]]; then
     mkdir -p "$SCRATCH_USER"
   fi
