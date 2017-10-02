@@ -41,7 +41,7 @@ function clean_lmod() {
 
 function use_lmod() {
     local verbose=false
-    if [[ "${PS1}" && "$MODULE_FRAMEWORK" != *"quiet" ]]; then
+    if [[ "${PS1}" && "$MODULE_FRAMEWORK" == *"debug" ]]; then
 	verbose=true
     fi
     
@@ -56,10 +56,11 @@ function use_lmod() {
       >&2 echo "Documentation:"
       >&2 echo " https://ucsf-ti.github.io/tipcc-web/software/software-modules.html"
       >&2 echo
-      >&2 echo "(This message will be show until 2017-09-30. To silence it before,"
+      >&2 echo "(This message will be shown until 2017-09-30. To silence it before,"
       >&2 echo " set MODULE_FRAMEWORK=lmod,quiet in your ~/.bashrc)"
       >&2 echo
     fi
+    
     export MODULEPATH_ROOT=
     export MODULEPATH=
 
