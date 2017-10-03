@@ -22,17 +22,34 @@ fi
 if [[ -z "$USER" ]]; then return; fi
 if [[ -z "$PBS_JOBID" ]]; then return; fi
 
+## Root folders
+SCRATCH_ROOT=/scratch
+TMP_ROOT=/tmp
+
 ## User-specific working directories on the compute node
-SCRATCH_USER=/scratch/$USER
-TMP_USER=/tmp/$USER
+SCRATCH_USER="$SCRATCH_ROOT/$USER"
+TMP_USER="$TMP_ROOT/$USER"
 
-## Job-specific working directories on the compute node
-SCRATCH_USER_JOBID=$SCRATCH_USER/jobs/$PBS_JOBID
-TMP_USER_JOBID=$TMP_USER/jobs/$PBS_JOBID
-
-## Remove each job-specific working directory, unless it contains a '.keep' file
-for dir in "$TMP_USER_JOBID" "$SCRATCH_USER_JOBID"; do
+## Create user-specific folders
+for dir in "$TMP_USER" "$SCRATCH_USER"; do
     if [[ ! -d "$dir" ]]; then
         mkdir -p "$dir"
     fi
 done
+
+## Job-specific working directories on the compute node
+JOB_PATH="jobs/$PBS_JOBID"
+SCRATCH_JOB="$SCRATCH_USER/$JOB_PATH"
+TMP_JOB="$TMP_USER/$JOB_PATH"
+
+## Create each job-specific folders
+for dir in "$TMP_JOB" "$SCRATCH_JOB"; do
+    if [[ ! -d "$dir" ]]; then
+        mkdir -p "$dir"
+    fi
+done
+
+
+FOOBAR=abc
+export BARFOO=def
+
