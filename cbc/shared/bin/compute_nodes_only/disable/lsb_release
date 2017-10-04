@@ -1,0 +1,9 @@
+## Making it possible to call `lsb_release` from compute nodes
+## (https://github.com/UCSF-TI/cluster-management/issues/46)
+## Needed for: spack
+
+if [[ "${HOST}" == "cclc01.som.ucsf.edu" ]]; then
+  >&2 echo "INTERNAL ERROR: Should never be called on the head node: $0"
+else
+  ssh "${CLUSTER_HEADNODE}" lsb_release $* 2> /dev/null
+fi
