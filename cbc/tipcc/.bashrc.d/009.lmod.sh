@@ -140,7 +140,7 @@ if [[ "$MODULE_FRAMEWORK" = "tcl"* ]]; then
     if [[ "$MODULE_FRAMEWORK" != *"quiet" ]]; then
         tput setaf 3 2> /dev/null ## yellow
         >&2 echo "WARNING: MODULE_FRAMEWORK='tcl' is deprecated in favor of 'lmod'"
-        >&2 echo "         To silence this warning, use MODULE_FRAMEWORK='tcl,quiet'"
+        >&2 echo "         (To silence this warning, use MODULE_FRAMEWORK='tcl,quiet')"
         tput sgr0 2> /dev/null    ## reset
     fi
 elif [[ "$MODULE_FRAMEWORK" = "lmod"* ]]; then
