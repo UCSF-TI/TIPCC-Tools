@@ -1,4 +1,11 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Aliases
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+alias ll="ls -l"
+alias lll="ls -la"
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Create aliases 'n0, 'n1', etc. to ssh into corresponding node 
 # preserving the current working directory.
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

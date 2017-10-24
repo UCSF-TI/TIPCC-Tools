@@ -1,11 +1,4 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Aliases
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-alias ll="ls -l"
-alias lll="ls -la"
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Default editor
 # Needed by for instance 'svn commit' etc
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
