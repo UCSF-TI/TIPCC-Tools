@@ -117,6 +117,15 @@ function source_d() {
         source_d_files=$(printf "%s\n" ${source_d_files[@]} | grep --perl-regexp -v "USER=(?${neq}${USER})")
     fi
 
+    ## File name filter: Filter based on lmod=FALSE?
+    ## (temporary while migrating away from source /home/shared/cbc/bashrc)
+    if [[ $STARTUP_DONE == *"lmod"* ]]; then
+	if [[ $(using_lmod) -eq 1 ]]; then
+	    ## Drop all files with lmod=FALSE
+  	    source_d_files=$(printf "%s\n" ${source_d_files[@]} | grep -vF "lmod=FALSE")
+	fi
+    fi
+    
     ## Source remaining files
     local ff=
     for ff in ${source_d_files}; do
