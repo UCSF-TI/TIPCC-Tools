@@ -101,6 +101,15 @@ if (is_interactive) then
   
   -- Easy login to each node
   for kk=1,30 do
-     set_alias("n" .. kk, "pwd=$(pwd); ssh -Y -t n" .. kk .. " \"cd $pwd; $SHELL\"")
+    set_alias("n" .. kk, "pwd=$(pwd); ssh -Y -t n" .. kk .. " \"cd $pwd; $SHELL\"")
+  end
+
+  -- Never use /usr/libexec/openssh/gnome-ssh-askpass
+  unsetenv("SSH_ASKPASS")
+
+  -- Set EDITOR is unset
+  local editor = os.getenv("EDITOR")
+  if (not editor or editor == "") then
+    setenv("EDITOR", "emacs -nw")
   end
 end
