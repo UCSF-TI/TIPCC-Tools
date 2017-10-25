@@ -1,5 +1,6 @@
-export PICARD_HOME=${SHARED_SOFTWARE}/picard-tools-latest
-export GATK_HOME=${SHARED_SOFTWARE}/GATK-latest
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Aliases
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 ## TODO: Replace these aliases with warnings
 ## to use 'module load r/x.y.z instead.
@@ -26,8 +27,15 @@ alias R-devel=${SHARED_SOFTWARE}/R-devel/bin/R
 ## to use 'module load r/x.y.z instead.
 alias useR=". ${SHARED_ROOT}/bin/useR"
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Miscellaneous
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Mirror website
 alias wmirror="wget --no-host-directories --recursive --no-parent --reject='index.html*'"
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Useful env vars
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+export PICARD_HOME=${SHARED_SOFTWARE}/picard-tools-latest
+export GATK_HOME=${SHARED_SOFTWARE}/GATK-latest
+## Costello Lab specific
+export LG3_HOME=/home/henrik/projects/CostelloJ_2014-LG3-Exome-Pipeline/pbs
+
