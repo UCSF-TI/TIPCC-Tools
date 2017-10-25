@@ -74,5 +74,7 @@ load("r")
 load("fiji")
 load("udocker")
 
+load("ruby/2.2.0p0")
+
 prepend_path("R_LIBS_SITE", "/home/shared/cbc/R/site-library/%p-library/%v")
 

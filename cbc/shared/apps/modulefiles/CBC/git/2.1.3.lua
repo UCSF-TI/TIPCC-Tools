@@ -14,3 +14,6 @@ local cbc_shared = "/home/shared/cbc"
 local cbc_software = cbc_shared .. "/software"
 
 prepend_path("PATH", cbc_software .. "/" .. name .. "-" .. version .. "/bin")
+
+-- Unset alias 'git', iff set
+set_alias("git")

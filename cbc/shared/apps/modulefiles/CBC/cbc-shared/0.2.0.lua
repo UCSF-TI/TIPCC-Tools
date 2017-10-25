@@ -37,10 +37,6 @@ else
   load("anaconda-python")
 end
 
-if (os.getenv("CBC_DEVEL") ~= "false") then
-  load("cbc-devel")
-end
-
 load("git")
 load("gitflow")
 
@@ -73,6 +69,6 @@ load("matlab")
 load("r")
 load("fiji")
 load("udocker")
+load("cbc-devel")
 
 prepend_path("R_LIBS_SITE", "/home/shared/cbc/R/site-library/%p-library/%v")
-
