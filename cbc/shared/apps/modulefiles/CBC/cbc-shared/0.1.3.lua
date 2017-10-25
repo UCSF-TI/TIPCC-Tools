@@ -82,3 +82,25 @@ setenv("LG3_HOME", "/home/henrik/projects/CostelloJ_2014-LG3-Exome-Pipeline/pbs"
 
 prepend_path("R_LIBS_SITE", "/home/shared/cbc/R/site-library/%p-library/%v")
 
+----------------------------------------------------------
+-- Interactive mode only
+----------------------------------------------------------
+local is_interactive = not not os.getenv("PS1")
+if (is_interactive) then
+  -- 'll' is already created in the sitewide setup
+  set_alias("lll", "ls -la")
+  
+  -- Cluster tools
+  set_alias("ganglia", "lynx -accept_all_cookies http://localhost/ganglia/")
+  -- ## set_alias("gmem", 'free -g | echo "      `head -1`"; gsh free -g | egrep -e "Mem"')
+  set_alias("gswap", 'free -g | echo "      `head -1`"; gsh free -g | egrep -e "Swap"')
+  set_alias("gmem", "gsh vmstatmem")
+  set_alias("topme", "top -U ${USER}")
+  set_alias("htopme", "htop -u ${USER}")
+  set_alias("psme", "ps -ef | grep ${USER}")
+  
+  -- Easy login to each node
+  for kk=1,30 do
+     set_alias("n" .. kk, "pwd=$(pwd); ssh -Y -t n" .. kk .. " \"cd $pwd; $SHELL\"")
+  end
+end
