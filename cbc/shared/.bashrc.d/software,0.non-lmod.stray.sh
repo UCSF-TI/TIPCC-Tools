@@ -1,11 +1,13 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Lua, LuaRocks and Lmod
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-## module load lua
-prependPath ${SHARED_SOFTWARE}/lua-latest/bin
-
-## module load luarocks
-prependPath ${SHARED_SOFTWARE}/luarocks-latest/bin
+if [[ $(using_lmod) -eq 0 ]]; then
+    ## module load lua
+    prependPath ${SHARED_SOFTWARE}/lua-latest/bin
+    
+    ## module load luarocks
+    prependPath ${SHARED_SOFTWARE}/luarocks-latest/bin
+fi
 
 ## TODO: Add this to the 'luarocks' module
 ## Find also Lua modules installed via luarocks install --local
@@ -15,6 +17,9 @@ export LUA_CPATH="${HOME}/.luarocks/lib/lua/5.3/?.so;/home/shared/cbc/software_c
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Ruby
+# Ruby (and other tools)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-prependPath ${SHARED_SOFTWARE}_cbc/bin
+if [[ $(using_lmod) -eq 0 ]]; then
+    prependPath ${SHARED_SOFTWARE}_cbc/bin
+fi
+x
