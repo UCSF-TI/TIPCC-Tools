@@ -12,6 +12,7 @@ if [[ $USER == "cbctest" ]]; then
     >&2 echo "*"
     >&2 echo "*   module load CBC cbc-shared"
     >&2 echo "*"
+    >&2 echo "* and you are good to go. Everything should work the same as before."
     >&2 echo "******************************************************************************"
     tput sgr0 2> /dev/null    ## reset
 fi
