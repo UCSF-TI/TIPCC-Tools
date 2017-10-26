@@ -160,10 +160,10 @@ if [[ "$status" == "true" ]]; then
 fi
 
 if [[ "$privs" == "true" ]]; then
-  echo "## Access Privileges (Moab)"
+  echo "## Access Privileges and more (Moab)"
   echo
   echo '```'
-  grep -v -E "^[ ]*#" /opt/moab/etc/moab.cfg | grep -E "(=|,|^)$node_label(|,|$)$"
+  grep -v -E "^[ ]*#" /opt/moab/etc/moab.cfg | grep -E "(\[$node_label\]|(=|,|^)$node_label(|,|$)$)"
   echo '```'
   echo
   echo
