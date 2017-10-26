@@ -26,7 +26,12 @@ if [[ "$(is_function source_d)" == "0" ]]; then
 fi
 
 if [[ -f "${HOME}/.tipccrc" ]]; then
-    if [[ -n "${STARTUP_DEBUG}" ]]; then debug_echo "$(startup_duration)s: Sourcing ${HOME}/.tipccrc"; fi
+    tput setaf 3 2> /dev/null ## yellow
+    >&2 echo "WARNING: The use of ~/.tipccrc will be defunct on 2017-10-31."
+    tput sgr0 2> /dev/null    ## reset
+    if [[ -n "${STARTUP_DEBUG}" ]]; then
+	debug_echo "$(startup_duration)s: Sourcing ${HOME}/.tipccrc"
+    fi
     source "${HOME}/.tipccrc"
 fi
 
@@ -70,6 +75,7 @@ fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # SETUP COMPUTE NODES
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+## Set by module cbc-shared (>= 0.1.3)
 export CLUSTER_SCHEDULER="TORQUE"
 export CLUSTER_HEADNODE="cclc01"
 export CLUSTER_NODES="n0 n1 n2 n3 n4 n5 n6 n7 n8 n9 n10 n11 n12 n13 n14 n15 n17 n18 n19 n20 n21 n22 n23 n24 n25 n26 n27 n28 n29 n30"
@@ -80,7 +86,9 @@ fi
 
 
 ## FIX: Current users will use CBC Tools
-if [[ ! -f ${HOME}/.cbc ]]; then touch ${HOME}/.cbc; fi
+if [[ ! -f ${HOME}/.cbc ]]; then
+    touch ${HOME}/.cbc
+fi
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -93,7 +101,4 @@ if [[ -f ${HOME}/.cbc ]]; then
 fi
 
 fi ## if [[ "${CBC}" != "false" ]]
-
-## User's ~/.bashrc.d/ scripts?
-if [[ -d "$HOME/.bashrc.d" ]]; then source_d "$HOME/.bashrc.d"; fi
 

@@ -117,7 +117,7 @@ if (is_interactive) then
   set_alias("psme", "ps -ef | grep ${USER}")
   
   -- Easy login to each node
-  for kk=1,30 do
+  for kk=1,29 do
     set_alias("n" .. kk, "pwd=$(pwd); ssh -Y -t n" .. kk .. " \"cd $pwd; $SHELL\"")
   end
 
@@ -130,3 +130,9 @@ if (is_interactive) then
     setenv("EDITOR", "emacs -nw")
   end
 end
+
+
+-- From old /home/shared/cbc/bashrc
+setenv("CLUSTER_SCHEDULER", "TORQUE")
+setenv("CLUSTER_HEADNODE", "cclc01")
+setenv("CLUSTER_NODES", "n0 n1 n2 n3 n4 n5 n6 n7 n8 n9 n10 n11 n12 n13 n14 n15 n17 n18 n19 n20 n21 n22 n23 n24 n25 n26 n27 n28 n29")
