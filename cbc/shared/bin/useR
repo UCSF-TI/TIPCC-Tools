@@ -2,7 +2,7 @@
 #
 
 tput setaf 3
-echo "WARNING: 'useR' is deprecated. Instead use 'module load r/<version>' to use a specific version of R"
+>&2 echo "WARNING: 'useR' is deprecated. Instead use 'module load r/<version>' to use a specific version of R"
 tput sgr0
 
 ## Parse command-line options

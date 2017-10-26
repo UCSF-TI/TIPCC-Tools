@@ -91,12 +91,12 @@ local versions = {"2.15.3", "3.0.0", "3.0.1", "3.0.2", "3.0.3", "3.1.0",
                    "3.3.0", "3.3.1", "3.3.2", "3.3.3",
                    "latest", "patched", "devel"}
 for i, vv in pairs(versions) do
-  set_alias("R-" .. vv, "tput setaf 3; echo \"WARNING: alias R-" .. vv .. " is deprecated - instead use module load r/" .. vv .."\"; tput sgr0; ${SHARED_SOFTWARE}/R-" .. vv .. "/bin/R")
+  set_alias("R-" .. vv, "tput setaf 3; >&2 echo \"WARNING: alias R-" .. vv .. " is deprecated - instead use module load r/" .. vv .."\"; tput sgr0; ${SHARED_SOFTWARE}/R-" .. vv .. "/bin/R")
 end
 
 
 -- DEPRECATED
-set_alias("wmirror", "tput setaf 3; echo \"WARNING: wmirror is deprecated\"; tput sgr0; wget --no-host-directories --recursive --no-parent --reject='index.html*'")
+set_alias("wmirror", "tput setaf 3; >&2 echo \"WARNING: wmirror is deprecated\"; tput sgr0; wget --no-host-directories --recursive --no-parent --reject='index.html*'")
  
 
 ----------------------------------------------------------
