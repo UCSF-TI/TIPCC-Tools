@@ -45,7 +45,7 @@ fi
 
 if test $cmd == "usage"; then
   echo "Listing total disk usage under $tmppath on each of the computer nodes ..."
-  echo "Current machine: $HOST"  
+  echo "Current machine: $HOSTNAME"  
   du -h '$tmppath'
   $path/scannodes "du -h '$tmppath'"
   echo "Listing total disk usage under $tmppath on each of the computer nodes ... DONE"
@@ -61,7 +61,7 @@ fi
 
 if test $cmd == "cleanup"; then
   echo "Cleaning up all your files under $tmppath on each of the computer nodes ..."
-  echo "Current machine: $HOST"  
+  echo "Current machine: $HOSTNAME"  
   rm -rf $tmppath/*
   rm -rf $tmppath/.*
   mkdir -p /tmp/$USER

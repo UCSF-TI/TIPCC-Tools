@@ -285,7 +285,7 @@ elif [[ $cmd == "sync-to-scratch" ]]; then
     fi
 
     if [[ ! -d "$srcdir" ]]; then
-	echo "WARNING: Cannot sync $srcdir to $destdir on local disk on compute node $HOST, because source directory does not exist. Skipping."
+	echo "WARNING: Cannot sync $srcdir to $destdir on local disk on compute node $HOSTNAME, because source directory does not exist. Skipping."
 	exit 1
     fi
 
@@ -297,7 +297,7 @@ elif [[ $cmd == "sync-to-scratch" ]]; then
     fi
     
     call="rsync -vLropgtD --delete --exclude='*~' --exclude='*.bak' --exclude='*.log' --exclude='*.out' --exclude='*.err' --exclude='*.logs/' --exclude='*.HIDE*/' --exclude=downloads/ --exclude=.async/ $xopts $srcdir $destdir"
-    echo "Node: $HOST"
+    echo "Node: $HOSTNAME"
     echo "Command: $call"
     $call
 elif [[ $cmd == "software" ]]; then
