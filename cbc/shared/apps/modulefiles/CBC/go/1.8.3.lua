@@ -6,7 +6,7 @@ local name = myModuleName()
 local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: programming, language, Go")
-whatis("URL: https://golang.org//")
+whatis("URL: https://golang.org/")
 whatis("Description: Go is a cross-platform open-source programming language that makes it easy to build simple, reliable, and efficient software.")
 
 -- Local variables
