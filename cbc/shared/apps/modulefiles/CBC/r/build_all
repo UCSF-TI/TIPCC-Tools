@@ -2,7 +2,7 @@
 
 ## Identify all installed versions of R
 path=/cbc/shared/software
-versions=$(ls $path | grep "R[-][0-9]" | grep -v "[-]20[0-9]" | cut -c 3- | tr '\n' ' ')
+versions=$(ls $path | grep "^R[-][0-9]" | grep -v "[-]20[0-9]" | cut -c 3- | tr '\n' ' ')
 echo $versions
 
 for version in ${versions}; do
