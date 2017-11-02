@@ -153,13 +153,13 @@ function fix_permissions_to_user_only() {
   perms_go=$(echo $permsT | cut -c 5-10)
   if [[ "$perms_go" != "------" ]]; then
     tput setaf 1 2> /dev/null ## red
-    >&2 echo "SECURITY ERROR: Detected that '$1' was accessible by others (ugo=$perms). Tried to reset permissions (chmod go-rwx '$1'), but failed. They are still accessible by others; ugo=$permsT"
+    >&2 echo "SECURITY ALERT: '$1' may be accessible by others (ugo=$perms). Tried to reset permissions (chmod go-rwx '$1'), but failed. The file/directory may still be accessible by others; ugo=$permsT"
     tput sgr0 2> /dev/null    ## reset
     return
   fi
 
   tput setaf 3 2> /dev/null ## yellow
-  >&2 echo "SECURITY WARNING: Detected that '$1' was accessible by others (ugo=$perms). Permissions were reset (chmod go-rwx '$1') such only you can access it. New permissions: ugo=$perms}"
+  >&2 echo "SECURITY WARNING: '$1' may have been accessible by others (ugo=$perms). Permissions were reset (chmod go-rwx '$1') such only you can access it. New permissions: ugo=$perms}"
   tput sgr0 2> /dev/null    ## reset
 }
 
