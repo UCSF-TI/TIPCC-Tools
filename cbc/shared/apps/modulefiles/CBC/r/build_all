@@ -13,7 +13,7 @@ help([[
 The R Programming Language
 ]])
 
-local name = myModuleVersion()
+local name = myModuleName()
 local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: Programming, Statistics")
