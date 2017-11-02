@@ -91,8 +91,8 @@ elif test $cmd == "envvars"; then
   echo "** Environment variable set by $SHARED_ROOT/bashrc:"
   grep --no-filename "^export" -r $SHARED_ROOT/bashrc $SHARED_ROOT/.bashrc.d/ 2> /dev/null | cut -b 8- | cut -d = -f 1 | sort -u
 elif test $cmd == "motd"; then
-    if test $HOST != $HEAD_NODE; then
-	echo "ERROR: cbc --motd is only supported on the head node ($HEAD_NODE): $HOST"
+    if test $HOSTNAME != $HEAD_NODE; then
+	echo "ERROR: cbc --motd is only supported on the head node ($HEAD_NODE): $HOSTNAME"
         exit 1
     fi
     cat /etc/motd

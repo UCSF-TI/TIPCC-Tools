@@ -62,16 +62,6 @@ function version() {
     grep -E "^###[ ]*Version:[ ]*" $0 | sed 's/###[ ]*Version:[ ]*//g'
 }
 
-## Cluster functions
-function on_compute_node() {
-    if [[ -z ${ISCOMPUTENODE+x} ]]; then
-        pbsnodes ${HOSTNAME} &> /dev/null
-        if [[ $? -eq 0 ]]; then echo 1; else echo 0; fi
-    else
-	echo $(as_logical ${ISCOMPUTENODE})
-    fi
-}
-
 function all_users() {
   cat /etc/passwd | grep -F "/home/" | grep -E "(@|inactive)" | cut -d':' -f1 | sort -u
 }
@@ -137,11 +127,6 @@ while [[ $# > 0 ]]; do
 done
 
 filter=$(as_logical $filter)
-
-## Assert running on master
-#if [[ $(on_compute_node) -ne 0 ]]; then
-#    merror "This command only works on master: ${HOSTNAME}"
-#fi
 
 
 ## Identify user

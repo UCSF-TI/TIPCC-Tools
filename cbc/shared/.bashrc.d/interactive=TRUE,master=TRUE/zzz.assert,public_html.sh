@@ -30,6 +30,6 @@ if test $ISCOMPUTENODE == 0; then
 
   # Check file permissions
   if test -d "${HOME}/public_html"; then
-    check-public_html
+    $SHARED_ROOT/bin/check-public_html
   fi
 fi

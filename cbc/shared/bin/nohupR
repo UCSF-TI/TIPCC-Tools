@@ -13,7 +13,7 @@ Rver=R
 name=${pathname/.Rex/}
 name=${name/.R/}
 if test "${tags}" == ""; then
-  tags="${HOST/.*/},`date +%Y%m%d-%H%M%S`"
+  tags="${HOSTNAME/.*/},`date +%Y%m%d-%H%M%S`"
 fi
 logfile=${name},${tags}.log
 

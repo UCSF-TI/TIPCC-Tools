@@ -56,12 +56,8 @@ function version() {
 
 ## Cluster functions
 function on_compute_node() {
-    if [[ -z ${ISCOMPUTENODE+x} ]]; then
-        pbsnodes ${HOSTNAME} &> /dev/null
-        if [[ $? -eq 0 ]]; then echo 1; else echo 0; fi
-    else
-	echo $(as_logical ${ISCOMPUTENODE})
-    fi
+    pbsnodes ${HOSTNAME} &> /dev/null
+    if [[ $? -eq 0 ]]; then echo 1; else echo 0; fi
 }
 
 function compute_nodes_up() {
