@@ -5,7 +5,7 @@
 ## RULE: Home directory must not be writable by anyone but the user in
 ##       order for SSH to work.
 ## TEST: ls -la /home/ | grep -E "^d....w....$"
-## fix_permissions ${HOME} d....-..-. go-w
+## fix_permissions ${HOME} d....-..-. go-w "Neither SSH key-pair login nor SSH to n6 works if others have write permissions to your home directory."
 
 ## All users (5 affected)
 ## RULE: ~/.ssh/ must not be accessible by any others user.
@@ -32,8 +32,8 @@
 #TODO# fix_permissions ${HOME}/.netrc -...------ go-rwx
 
 ## 0 users
-fix_permissions ${HOME}/.pgpass -...------ go-rwx
-fix_permissions ${HOME}/.lftprc -...------ go-rwx
-fix_permissions ${HOME}/.lftp/rc -...------ go-rwx
-fix_permissions ${HOME}/.lftp/bookmarks -...------ go-rwx
-fix_permissions ${HOME}/.local/share/lftp/bookmarks -...------ go-rwx
+fix_permissions ${HOME}/.pgpass -...------ go-rwx "This file contains private authentication credentials of yours!"
+fix_permissions ${HOME}/.lftprc -...------ go-rwx "This file contains private authentication credentials of yours!"
+fix_permissions ${HOME}/.lftp/rc -...------ go-rwx "This file contains private authentication credentials of yours!"
+fix_permissions ${HOME}/.lftp/bookmarks -...------ go-rwx "This file may contains private authentication credentials of yours!"
+fix_permissions ${HOME}/.local/share/lftp/bookmarks -...------ go-rwx "This file may contains private authentication credentials of yours!"
