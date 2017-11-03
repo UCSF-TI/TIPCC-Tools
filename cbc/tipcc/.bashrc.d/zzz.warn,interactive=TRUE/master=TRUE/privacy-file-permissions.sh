@@ -29,7 +29,7 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ## 3 users (1 affected)
 ## TEST: ls -la /home/*/.netrc | grep -vE "[-][-][-]"
-#TODO# fix_permissions ${HOME}/.netrc -...------ go-rwx
+fix_permissions ${HOME}/.netrc -...------ go-rwx "This file may contains private authentication credentials of yours!"
 
 ## 0 users
 fix_permissions ${HOME}/.pgpass -...------ go-rwx "This file contains private authentication credentials of yours!"
