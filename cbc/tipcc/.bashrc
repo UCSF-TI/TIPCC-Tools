@@ -136,6 +136,86 @@ function source_d() {
     if [[ -n "${STARTUP_DEBUG}" ]]; then debug_echo "${prefix}$(startup_duration)s: Sourcing ${source_d_path}/ ... done"; fi
 } ## source_d()
 
+
+### fix_permissions - fix file permission
+###
+### Usage:
+###   fix_permissions <file> <target> <action> [<warn>]
+###
+### Arguments:
+###   file    the file/directory of interest
+###   target  the target permission as a regular expression
+###   action  the chmod action string
+###   warn    if 'true' (default) a warning message is produced if
+###           the permissions were changed, otherwise not
+###
+### Example:
+### fix_permissions tmp.txt -...------ go-rwx
+###
+### Details:
+### Then function returns silently if the file permissions are met,
+### if the 'file' does not exist, or argument 'target' or 'action' is
+### not specified.
+### If the file permissions are not sufficent also after trying to
+### apply the 'action', then an error message is produced.
+###
+### Copyright: Henrik Bengtsson (2016-2017)
+### License: GPL (>= 2.1) [https://www.gnu.org/licenses/gpl.html]
+function fix_permissions() {
+    local file="$1"
+    local target="$2"
+    local action="$3"
+    local warn="${4:-true}"
+
+    if [[ $DEBUG == true ]]; then
+	echo "file='$file'"
+	echo "target='$target'"
+	echo "action='$action'"
+	echo "warn='$warn'"
+    fi
+
+    ## Nothing to do?
+    if [[ ! -e $file ]]; then
+	return;
+    fi
+    if [[ -z $target ]]; then
+	return;
+    fi
+    if [[ -z $action ]]; then
+	return;
+    fi
+
+    ## Permissions already correct?
+    local perms=$(stat --format=%A $file)
+    if [[ $DEBUG == true ]]; then
+	echo "perms='$perms'"
+    fi
+    if [[ "$perms" =~ $target ]]; then return; fi
+
+    ## Fix permissions
+    chmod $action $file
+
+    ## Assert fix
+    local perms_0=$perms
+    local perms=$(stat --format=%A $file)
+    if [[ $DEBUG == true ]]; then
+	echo "perms='$perms'"
+    fi
+    if [[ "$perms" =~ $target ]]; then
+	if [[ $warn == true ]]; then
+	    tput setaf 3 2> /dev/null ## yellow
+	    >&2 echo "WARNING: '$file' had access permissions ($perms_0) that were insufficient (target regexp=$target). Permissions were modified (chmod $action '$file') resulting in new permissions ($perms)."
+	    tput sgr0 2> /dev/null    ## reset
+	fi
+	return
+    fi
+
+    ## ERROR: Failed to set sufficient permissions
+    tput setaf 1 2> /dev/null ## red
+    >&2 echo "ALERT: '$file' had access permissions ($perms_0) that were insufficient (target regexp=$target). Tried to reset permissions (chmod $action '$file'), but failed; permissions are still insuffient ($perms)."
+    tput sgr0 2> /dev/null    ## reset
+} ## fix_permissions()
+
 function fix_permissions_to_user_only() {
   ## Nothing to do?
   if [[ ! -e $1 ]]; then return; fi
