@@ -29,11 +29,11 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ## 3 users (1 affected)
 ## TEST: ls -la /home/*/.netrc | grep -vE "[-][-][-]"
-fix_permissions ${HOME}/.netrc -...------ go-rwx "This file may contains private authentication credentials of yours!"
+fix_permissions ${HOME}/.netrc -...------ go-rwx "This file may contain private authentication credentials of yours!"
 
 ## 0 users
 fix_permissions ${HOME}/.pgpass -...------ go-rwx "This file contains private authentication credentials of yours!"
 fix_permissions ${HOME}/.lftprc -...------ go-rwx "This file contains private authentication credentials of yours!"
 fix_permissions ${HOME}/.lftp/rc -...------ go-rwx "This file contains private authentication credentials of yours!"
-fix_permissions ${HOME}/.lftp/bookmarks -...------ go-rwx "This file may contains private authentication credentials of yours!"
-fix_permissions ${HOME}/.local/share/lftp/bookmarks -...------ go-rwx "This file may contains private authentication credentials of yours!"
+fix_permissions ${HOME}/.lftp/bookmarks -...------ go-rwx "This file may contain private authentication credentials of yours!"
+fix_permissions ${HOME}/.local/share/lftp/bookmarks -...------ go-rwx "This file may contain private authentication credentials of yours!"
