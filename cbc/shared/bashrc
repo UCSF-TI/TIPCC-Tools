@@ -22,6 +22,29 @@ function is_function() {
 ## some cases (e.g. cronjobs) this script may be sourced directly. For
 ## those cases, we make sure to source the above script here.
 if [[ "$(is_function source_d)" == "0" ]]; then
+    tput setaf 3 2> /dev/null ## yellow
+    >&2 echo "******************************************************************************"
+    >&2 echo "* DEPRECATION WARNING (since 2017-10-28)"
+    >&2 echo "*"
+    >&2 echo "* It looks like you are calling the following:"
+    >&2 echo "*"
+    >&2 echo "*   source /home/shared/cbc/bashrc"
+    >&2 echo "*"
+    >&2 echo "* without first having called:"
+    >&2 echo "*"
+    >&2 echo "*   if [ -f /etc/bashrc ]; then"
+    >&2 echo "*   . /etc/bashrc"
+    >&2 echo "*   fi"
+    >&2 echo "*"
+    >&2 echo "* in your ~/.bashrc."
+    >&2 echo "*"
+    >&2 echo "* This usage will produce an error starting 2017-11-15."
+    >&2 echo "*"
+    >&2 echo "* Regardless, 'source /home/shared/cbc/bashrc' itself is deprecated and"
+    >&2 echo "* will soon become defunct, so please follow our instructions (mentioned"
+    >&2 echo "* elsewhere) on how to use the module framwork instead.";
+    >&2 echo "******************************************************************************"
+    tput sgr0 2> /dev/null    ## reset
     source /home/shared/cbc/tipcc/.bashrc
 fi
 
