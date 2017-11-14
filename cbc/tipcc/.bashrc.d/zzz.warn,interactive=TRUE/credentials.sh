@@ -1,6 +1,9 @@
 ## Already done?
 if [[ $STARTUP_DONE == *"warn-credentials"* ]]; then return; fi
 
+## AD HOC WORKAROUND: Don't run the below on non-Scyld nodes /HB+JJ 2017-11-13
+if [[ $HOSTNAME =~ ^(n29|n30)$ ]]; then return; fi
+
 ## Running in interactive mode?
 if [[ "$PS1" ]]; then
     if [[ -x /home/shared/cbc/tipcc/bin/tipcc ]]; then
