@@ -48,17 +48,6 @@ if [[ "$(is_function source_d)" == "0" ]]; then
     source /home/shared/cbc/tipcc/.bashrc
 fi
 
-if [[ -f "${HOME}/.tipccrc" ]]; then
-    tput setaf 3 2> /dev/null ## yellow
-    >&2 echo "WARNING: The use of ~/.tipccrc will be defunct on 2017-10-31."
-    tput sgr0 2> /dev/null    ## reset
-    if [[ -n "${STARTUP_DEBUG}" ]]; then
-	debug_echo "$(startup_duration)s: Sourcing ${HOME}/.tipccrc"
-    fi
-    source "${HOME}/.tipccrc"
-fi
-
-
 
 
 if [[ "${CBC}" != "false" ]]; then
