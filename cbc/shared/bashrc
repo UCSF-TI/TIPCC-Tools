@@ -59,6 +59,8 @@ if [[ -f "${HOME}/.tipccrc" ]]; then
 fi
 
 
+
+
 if [[ "${CBC}" != "false" ]]; then
     
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -122,6 +124,29 @@ export CBC_STARTUP_COMPLETED=
 if [[ -f ${HOME}/.cbc ]]; then
     source_d "$SHARED_ROOT/.bashrc.d"
 fi
+
+tput setaf 3 2> /dev/null ## yellow
+>&2 echo "******************************************************************************"
+>&2 echo "* DEPRECATION WARNING (since 2017-10-28)"
+>&2 echo "*"
+>&2 echo "* You are using:"
+>&2 echo "*"
+>&2 echo "*   source /home/shared/cbc/bashrc"
+>&2 echo "*"
+>&2 echo "* in your startup (e.g. in ~/.bashrc). This will become defunct on 2017-11-15"
+>&2 echo "* and then result in an error message. Instead, replace the above with:"
+>&2 echo "*"
+>&2 echo "*   module load CBC cbc-shared"
+>&2 echo "*"
+>&2 echo "* somewhere after:"
+>&2 echo "*"
+>&2 echo "*   if [ -f /etc/bashrc ]; then"
+>&2 echo "*   . /etc/bashrc"
+>&2 echo "*   fi"
+>&2 echo "*"
+>&2 echo "* and you are good to go. Everything should work the same as before."
+>&2 echo "******************************************************************************"
+tput sgr0 2> /dev/null    ## reset
 
 fi ## if [[ "${CBC}" != "false" ]]
 
