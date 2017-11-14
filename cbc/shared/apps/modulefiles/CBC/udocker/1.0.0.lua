@@ -5,7 +5,7 @@ udocker
 local name = myModuleName()
 local version = myModuleVersion()
 whatis("Version: " .. version)
-whatis("Keywords: Linux, containers")
+whatis("Keywords: Linux, containers, LXC")
 whatis("URL: https://github.com/indigo-dc/udocker")
 whatis("Description: A basic user tool to execute simple containers in batch or interactive systems without root privileges.")
 
