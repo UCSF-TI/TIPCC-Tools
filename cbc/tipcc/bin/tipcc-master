@@ -214,7 +214,6 @@ function filter_utils() {
     local res=("${@}")
     res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(tipcc|htop|man|ping|ps|watch|top|mc)( |:|$)")
     printf '%s\n' "${res[@]}"
-#    res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(dbus-daemon|dbus-launch)( |:|$)")
 }
 
 function filter_vcs() {
@@ -225,6 +224,8 @@ function filter_vcs() {
 
 function filter_special() {
     local res=("${@}")
+    ## System monitoring tools
+    res=$(printf '%s\n' "${res[@]}" | grep -v -E "(sadc|sar)( |:|$)")
     ## HB's Cron jobs (calling this method)
     res=$(printf '%s\n' "${res[@]}" | grep -v -E "scan-tipcc_head")
     ## Nextflow (http://www.nextflow.io/)
