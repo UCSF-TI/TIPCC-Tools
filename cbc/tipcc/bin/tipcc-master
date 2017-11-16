@@ -191,7 +191,7 @@ function filter_viewers() {
 
 function filter_mail() {
     local res=("${@}")
-    res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(sendmail|fetchmail)( |:|$)")
+    res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(sendmail|fetchmail|/usr/bin/write)( |:|$)")
     printf '%s\n' "${res[@]}"
 }
 
