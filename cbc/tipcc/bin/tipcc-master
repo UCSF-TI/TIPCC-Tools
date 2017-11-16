@@ -9,6 +9,7 @@
 ###  --user <user>                Specify user (default: _all_)
 ###  --me                         Same as '--user \$USER'
 ###  --filter (none|user|sysadm)  Exclude processes (default: user)
+###  --short                      Report also on brief processes (TIME <= 0:02)
 ###  --help                       This help
 ###
 ### Example:
@@ -76,6 +77,7 @@ function user_info() {
 what="users"
 user=_all_
 filter=user
+short=false
 
 # Parse command-line options
 while [[ $# > 0 ]]; do
@@ -97,6 +99,8 @@ while [[ $# > 0 ]]; do
         user=$1
     elif [[ "$1" == "--me" ]]; then
         user=${USER}
+    elif [[ "$1" == "--short" ]]; then
+        short=true
     elif [[ "$1" == "--filter" ]]; then
         shift
         filter=$1
@@ -235,9 +239,19 @@ function filter_special() {
     printf '%s\n' "${res[@]}"
 }
 
+function filter_short() {
+    ## Drop processes reported to have run for '0:00' time
+    res=$(printf '%s\n' "${res[@]}" | grep -v -E " 0:0[012] ")
+    printf '%s\n' "${res[@]}"
+}
+
 ## Query ps + bpstat for _all_ running master-node processes
 ## Note: master-node process are those without NODE information.
 res=$(ps uax | bpstat -P | grep -E "^  " | grep -E -v "^[ ]+root" | sed -E 's/^[ ]*//g' | grep -E -v "($USER|$UID) .* (ps uax|grep -E |.*tipcc head|sed -E)")
+
+if [[ $short == false ]]; then
+    res=$(filter_short "${res[@]}")
+fi
 
 if [[ $filter == "user" ]]; then
     res=$(filter_zombies "${res[@]}")
