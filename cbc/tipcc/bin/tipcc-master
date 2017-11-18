@@ -9,7 +9,7 @@
 ###  --user <user>                Specify user (default: _all_)
 ###  --me                         Same as '--user \$USER'
 ###  --filter (none|user|sysadm)  Exclude processes (default: user)
-###  --short                      Report also on brief processes (TIME <= 0:02)
+###  --short                      Report also on brief processes (< 30s)
 ###  --help                       This help
 ###
 ### Example:
@@ -241,7 +241,7 @@ function filter_special() {
 
 function filter_short() {
     ## Drop processes reported to have run for '0:00' time
-    res=$(printf '%s\n' "${res[@]}" | grep -v -E " 0:0[012] ")
+    res=$(printf '%s\n' "${res[@]}" | grep -v -E " 0:[0-2][0-9] ")
     printf '%s\n' "${res[@]}"
 }
 
