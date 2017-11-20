@@ -7,7 +7,7 @@ local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: programming, language, Go")
 whatis("URL: https://golang.org/")
-whatis("Description: Go is a cross-platform open-source programming language that makes it easy to build simple, reliable, and efficient software.")
+whatis("Description: Go is a cross-platform open-source programming language that makes it easy to build simple, reliable, and efficient software. Example: `go version`")
 
 -- Local variables
 local cbc_shared = "/home/shared/cbc"
