@@ -239,6 +239,11 @@ function filter_special() {
     printf '%s\n' "${res[@]}"
 }
 
+function filter_builds() {
+    res=$(printf '%s\n' "${res[@]}" | grep -v -E "/R/R-.*_tmp/R-")
+    printf '%s\n' "${res[@]}"
+}
+
 function filter_short() {
     ## Drop processes reported to have run for '0:00' time
     res=$(printf '%s\n' "${res[@]}" | grep -v -E " 0:[0-2][0-9] ")
@@ -281,6 +286,7 @@ elif [[ $filter == "sysadm" ]]; then
     res=$(filter_vcs "${res[@]}")
     res=$(filter_utils "${res[@]}")
     res=$(filter_special "${res[@]}")
+    res=$(filter_builds "${res[@]}")
 elif [[ $filter == "core" ]]; then
     res=$(filter_zombies "${res[@]}")
     res=$(filter_system "${res[@]}")
