@@ -120,7 +120,7 @@ if (is_interactive) then
   set_alias("psme", "ps -ef | grep ${USER}")
   
   -- Easy login to each node
-  for kk=1,29 do
+  for kk=0,29 do
     set_alias("n" .. kk, "pwd=$(pwd); ssh -Y -t n" .. kk .. " \"cd $pwd; $SHELL\"")
   end
 
