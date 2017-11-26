@@ -17,4 +17,5 @@ local cbc_software = cbc_shared .. "/software_cbc"
 
 local path = cbc_software .. "/" .. name .. "-" .. version
 prepend_path("PATH", path .. "/bin")
-prepend_path("PERL5LIB", path .. "/lib/perl5/site_perl")
+prepend_path("MANPATH", path .. "/share/man")
+prepend_path("PERL5LIB", path .. "/share/perl5")
