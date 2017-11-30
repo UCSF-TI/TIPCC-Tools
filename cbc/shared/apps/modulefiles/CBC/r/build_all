@@ -1,11 +1,16 @@
 #! /bin/env bash
 
 ## Identify all installed versions of R
-path=/cbc/shared/software
-versions=$(ls $path | grep "^R[-][0-9]" | grep -v "[-]20[0-9]" | cut -c 3- | tr '\n' ' ')
-echo $versions
+path=/cbc/shared/software_cbc/R
+releases=$(ls $path | grep -E "^R[-][0-9][.][0-9][.][0-9]-20[0-9]+$")
+patched=$(ls $path | grep -E "^R[-][0-9][.][0-9][.][0-9]patched-20[0-9]+$" | tail -1)
+devel=$(ls $path | grep -E "^R[-][0-9][.][0-9][.][0-9]devel-20[0-9]+$" | tail -1)
+subdirs="$releases"$'\n'"$patched"$'\n'"$devel"
+echo $subdirs
 
-for version in ${versions}; do
+for subdir in ${subdirs}; do
+  version=$(echo $subdir | sed -E 's/^R-//g' | sed -E 's/-20[0-9]+$//g')
+  echo "R installation: ${subdir}"
   echo "R version: ${version}"
 ## Here document for RSP template
 cat << EOF > ${version}.lua
@@ -22,14 +27,14 @@ whatis("Description: The R programming language. Example: \`R --version\`.")
 
 -- Local variables
 local cbc_shared = "/home/shared/cbc"
-local path = cbc_shared .. "/software/R-" .. version
+local path = cbc_shared .. "/software_cbc/R/${subdir}"
 prepend_path("PATH", path .. "/bin")
 prepend_path("MANPATH", path .. "/share/man")
 EOF
 done
 
 ln -fs 3.3.3.lua oldrel.lua
-ln -fs 3.4.2.lua release.lua
+ln -fs 3.4.3.lua release.lua
 ln -fs 3.4.2patched.lua patched.lua
 ln -fs 3.5.0devel.lua devel.lua
-ln -fs 3.4.2.lua default
+ln -fs 3.4.3.lua default

@@ -11,6 +11,6 @@ whatis("Description: The R programming language. Example: `R --version`.")
 
 -- Local variables
 local cbc_shared = "/home/shared/cbc"
-local path = cbc_shared .. "/software/R-" .. version
+local path = cbc_shared .. "/software_cbc/R/R-3.4.1-20170630"
 prepend_path("PATH", path .. "/bin")
 prepend_path("MANPATH", path .. "/share/man")
