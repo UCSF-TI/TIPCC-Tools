@@ -6,8 +6,8 @@ local name = myModuleName()
 local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: UCSF, cluster, configure, build, compile, install")
-whatis("URL: https://cbc.ucsf.edu/")
-whatis("Description: Setup for building and installing software inline with the CBC-shared setup.")
+whatis("URL: http://cbi.ucsf.edu/")
+whatis("Description: Setup for building and installing software inline with the CBI-shared setup (formerly CBC-shared setup).")
 
 -- Local variables
 local cbc_shared = "/home/shared/cbc"
