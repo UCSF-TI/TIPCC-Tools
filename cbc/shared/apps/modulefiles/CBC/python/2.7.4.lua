@@ -8,7 +8,7 @@ local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: Programming")
 whatis("URL: https://www.python.org/")
-whatis("Description: Python is a programming language that lets you work quickly and integrate systems more effectively.  Example: `python --version`.")
+whatis("Description: Python is a programming language that lets you work quickly and integrate systems more effectively.  Example: `python --version` and `pip install --user {module}`.")
 
 local path = "/home/shared/cbc/software_cbc"
 local home = path .. "/" .. name .. "-" .. version
