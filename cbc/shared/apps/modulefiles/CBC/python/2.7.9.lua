@@ -1,5 +1,5 @@
 help([[
-The Python Programming Language
+Python - The Python Programming Language
 ]])
 
 -- local name = myModuleName()
@@ -8,13 +8,11 @@ local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: Programming")
 whatis("URL: https://www.python.org/")
-whatis("Description: The Python programming language")
+whatis("Description: Python is a programming language that lets you work quickly and integrate systems more effectively.  Example: `python --version`.")
 
--- Local variables
-local cbc_shared = "/home/shared/cbc"
-local cbc_software = cbc_shared .. "/software"
-
+local path = "/home/shared/cbc/software"
 local home = cbc_software .. "/" .. name .. "-" .. version
+
 prepend_path("PATH", home .. "/bin")
 prepend_path("LD_LIBRARY_PATH", home .. "/lib")
 prepend_path("PYTHONPATH", home .. "/lib/python2.7")
