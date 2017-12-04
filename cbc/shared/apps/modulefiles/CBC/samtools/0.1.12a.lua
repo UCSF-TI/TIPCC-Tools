@@ -1,5 +1,5 @@
 help([[
-Samtools: Tools (written in C using htslib) for Manipulating Next-Generation Sequencing Data
+SAMtools: Tools (written in C using htslib) for Manipulating Next-Generation Sequencing Data
 ]])
 
 local name = myModuleName()
@@ -7,7 +7,7 @@ local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: sequencing")
 whatis("URL: http://www.htslib.org/")
-whatis("Description: Samtools is a suite of programs for interacting with high-throughput sequencing data.  Example: `samtools --version`")
+whatis("Description: SAMtools is a suite of programs for interacting with high-throughput sequencing data.  Example: `samtools --version`")
 
 load("cbc-devel")
 
