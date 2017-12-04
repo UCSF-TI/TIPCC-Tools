@@ -14,4 +14,5 @@ local path = "/home/shared/cbc/software_cbc"
 local home = path .. "/" .. name .. "-" .. version
 prepend_path("PATH", home .. "/bin")
 prepend_path("LD_LIBRARY_PATH", home .. "/lib")
+prepend_path("C_INCLUDE_PATH",  home .. "/include")
 prepend_path("MANPATH", home .. "/share/man")
