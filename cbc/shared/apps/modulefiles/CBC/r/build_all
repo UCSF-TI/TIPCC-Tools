@@ -35,6 +35,6 @@ done
 
 ln -fs 3.3.3.lua oldrel.lua
 ln -fs 3.4.3.lua release.lua
-ln -fs 3.4.2patched.lua patched.lua
+ln -fs 3.4.3patched.lua patched.lua
 ln -fs 3.5.0devel.lua devel.lua
 ln -fs 3.4.3.lua default
