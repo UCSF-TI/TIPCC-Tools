@@ -137,6 +137,17 @@ function source_d() {
 } ## source_d()
 
 
+## BETA TESTING
+if [[ "$STARTUP_FLAVOR" == "bash-startup" ]]; then
+    ## Predefined startup variables
+    master=false; [[ "$HOSTNAME" == "cclc01.som.ucsf.edu" ]] && master=true
+    job=false; [[ -n ${PBS_QUEUE+x} ]] && job=true
+    lmod=false; [[ $STARTUP_DONE == *"lmod"* ]] && lmod=true
+    ## Load bash-startup which provides source_d() et al.
+    . /home/shared/cbc/tipcc/bash-startup/bash-startup
+fi
+
+
 ### fix_permissions - fix file permission
 ###
 ### Usage:
