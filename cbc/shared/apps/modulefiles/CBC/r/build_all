@@ -2,9 +2,9 @@
 
 ## Identify all installed versions of R
 path=/cbc/shared/software_cbc/R
-releases=$(ls $path | grep -E "^R[-][0-9][.][0-9][.][0-9]-20[0-9]+$")
-patched=$(ls $path | grep -E "^R[-][0-9][.][0-9][.][0-9]patched-20[0-9]+$" | tail -1)
-devel=$(ls $path | grep -E "^R[-][0-9][.][0-9][.][0-9]devel-20[0-9]+$" | tail -1)
+releases=$(ls $path | grep -E "^R[-][0-9][.][0-9]+[.][0-9]-20[0-9]+$")
+patched=$(ls $path | grep -E "^R[-][0-9][.][0-9]+[.][0-9]patched-20[0-9]+$" | tail -1)
+devel=$(ls $path | grep -E "^R[-][0-9][.][0-9]+[.][0-9]devel-20[0-9]+$" | tail -1)
 subdirs="$releases"$'\n'"$patched"$'\n'"$devel"
 echo $subdirs
 
