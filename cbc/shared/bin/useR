@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
-#
 
-tput setaf 3
->&2 echo "WARNING: 'useR' is deprecated. Instead use 'module load r/<version>' to use a specific version of R"
+tput setaf 1
+>&2 echo "ERROR: 'useR' is defunct. Instead use 'module load r/<version>' to use a specific version of R"
 tput sgr0
 
+if false; then
+    
 ## Parse command-line options
 version=
 verbose=false
@@ -75,4 +76,6 @@ echo Now using:
 which R
 which Rscript
 R --version | head -3 | grep -v Copyright
+
+fi
 
