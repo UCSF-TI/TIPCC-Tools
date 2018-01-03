@@ -2,14 +2,15 @@
 
 ## Identify all installed versions of R
 path=/cbc/shared/software_cbc/R
+system=$(ls $path | grep -E "^R[-][0-9][.][0-9]+[.][0-9]-system$")
 releases=$(ls $path | grep -E "^R[-][0-9][.][0-9]+[.][0-9]-20[0-9]+$")
 patched=$(ls $path | grep -E "^R[-][0-9][.][0-9]+[.][0-9]patched-20[0-9]+$" | tail -1)
 devel=$(ls $path | grep -E "^R[-][0-9][.][0-9]+[.][0-9]devel-20[0-9]+$" | tail -1)
-subdirs="$releases"$'\n'"$patched"$'\n'"$devel"
+subdirs="$system"$'\n'"$releases"$'\n'"$patched"$'\n'"$devel"
 echo $subdirs
 
 for subdir in ${subdirs}; do
-  version=$(echo $subdir | sed -E 's/^R-//g' | sed -E 's/-20[0-9]+$//g')
+  version=$(echo $subdir | sed -E 's/^R-//g' | sed -E 's/-(20[0-9]+|system)$//g')
   echo "R installation: ${subdir}"
   echo "R version: ${version}"
 ## Here document for RSP template
