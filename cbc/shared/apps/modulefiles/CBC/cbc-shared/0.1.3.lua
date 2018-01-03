@@ -77,7 +77,7 @@ load("udocker")
 load("ruby/2.2.0p0")
 
 setenv("PICARD_HOME", "/home/shared/cbc/software/picard-tools-latest")
-setenv("GATK_HOME", "/home/shared/cbc/software/GenomeAnalysisTK-latest")
+load("gatk/3.6.0")
 setenv("LG3_HOME", "/home/henrik/projects/CostelloJ_2014-LG3-Exome-Pipeline/pbs")
 
 ----------------------------------------------------------
