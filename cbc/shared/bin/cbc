@@ -21,6 +21,10 @@
 ### Add the following to your ~/.bashrc script:
 ###  source ${SHARED_ROOT}/bashrc
 
+tput setaf 3
+>&2 echo "WARNING: 'cbc' is deprecated"
+tput sgr0
+
 HEAD_NODE="cclc01.som.ucsf.edu"
 
 if test -z "$SHARED_SOFTWARE"; then

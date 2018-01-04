@@ -204,11 +204,13 @@ if test -n "${SHARED_ROOT}"; then
   export SHARED_LOCAL=${SHARED_ROOT}/local
   mkdir -p "${SHARED_LOCAL}"
 
-  export SHARED_SOFTWARE=${SHARED_ROOT}/software
-  mkdir -p "${SHARED_SOFTWARE}"
   export SHARED_SOFTWARE_FROZEN=${SHARED_ROOT}/software_frozen
   mkdir -p "${SHARED_SOFTWARE_FROZEN}"
 
+  # DEFUNCT /HB 2018-01-03
+  export SHARED_SOFTWARE=${SHARED_ROOT}/software_defunct_use_modules
+  mkdir -p "${SHARED_SOFTWARE}"
+  
   # GNU compiler variables
   export SHARED_PREFIX=${SHARED_LOCAL}
 #  export SHARED_PKG_CONFIG_PATH=${SHARED_PREFIX}/lib/pkgconfig
