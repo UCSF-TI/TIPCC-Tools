@@ -10,8 +10,6 @@ whatis("URL: https://github.com/indigo-dc/udocker")
 whatis("Description: A basic user tool to execute simple containers in batch or interactive systems without root privileges.")
 
 -- Local variables
-local cbc_shared = "/home/shared/cbc"
-local cbc_software = cbc_shared .. "/software"
-
+local path = "/home/shared/cbc/software_cbc"
+prepend_path("PATH", path .. "/" .. name .. "-" .. version)
 set_alias("udocker", "udocker.py")
-prepend_path("PATH", cbc_software .. "/" .. name .. "-" .. version)

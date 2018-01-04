@@ -13,7 +13,7 @@ load("cbc-devel")
 
 -- Local variables
 local cbc_shared = "/home/shared/cbc"
-local cbc_software = cbc_shared .. "/software"
+local cbc_software = cbc_shared .. "/software_cbc"
 
 local home = cbc_software .. "/" .. name .. "-" .. version
 prepend_path("PATH", home)

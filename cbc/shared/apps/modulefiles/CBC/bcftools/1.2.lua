@@ -11,7 +11,7 @@ whatis("Description: BCFtools is a set of utilities that manipulate variant call
 
 -- Local variables
 local cbc_shared = "/home/shared/cbc"
-local cbc_software = cbc_shared .. "/software"
+local cbc_software = cbc_shared .. "/software_cbc"
 local home = cbc_software .. "/" .. name .. "-" .. version
 prepend_path("PATH", home)
 setenv("BCFTOOLS_PLUGINS", home .. "/" .. "plugins")

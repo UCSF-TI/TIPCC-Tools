@@ -9,11 +9,8 @@ whatis("Keywords: ")
 whatis("URL: http://s3tools.org/s3cmd")
 whatis("Description: ommand Line S3 Client and Backup for Linux and Mac")
 
--- Local variables
-local cbc_shared = "/home/shared/cbc"
-local cbc_software = cbc_shared .. "/software"
-
-local path = cbc_software .. "/" .. name .. "-" .. version
-prepend_path("PATH", path)
-set_alias("s3cmd", path .. "/s3cmd")
+local path = "/home/shared/cbc/software_cbc"
+local home = path .. "/" .. name .. "-" .. version
+prepend_path("PATH", home)
+set_alias("s3cmd", home .. "/s3cmd")
 
