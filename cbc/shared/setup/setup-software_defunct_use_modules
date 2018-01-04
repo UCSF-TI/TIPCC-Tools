@@ -4,7 +4,7 @@
 #
 # See also /home/GenomeData/INSTALLATION_LOG
 ###################################################################
-dest=$SHARED_SOFTWARE
+dest=$SHARED_ROOT/software
 SRC_CBC=$SHARED_ROOT/software_cbc
 
 
