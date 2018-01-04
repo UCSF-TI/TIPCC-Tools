@@ -1,17 +1,14 @@
 help([[
-WordSpy
+WordSpy: A Steganalysis-based, Genome Scale Motif Finding Method
 ]])
 
 local name = myModuleName()
 local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: ")
-whatis("URL: http://cic.cs.wustl.edu/wordspy/dltemp.htm")
-whatis("Description: A steganalysis-based approach to comprehensive identification and characterization of functional regulatory elements.")
+whatis("URL: http://www.cs.wustl.edu/~zhang/")
+whatis("Description: A steganalysis-based approach to comprehensive identification and characterization of functional regulatory elements. Example: `wordspy`.")
 
--- Local variables
-local cbc_shared = "/home/shared/cbc"
-local cbc_software = cbc_shared .. "/software"
-
-local home = cbc_software .. "/" .. name .. "-" .. version
+local path = "/opt/local/bin/"
+local home = path .. "/" .. name .. version
 prepend_path("PATH", home)
