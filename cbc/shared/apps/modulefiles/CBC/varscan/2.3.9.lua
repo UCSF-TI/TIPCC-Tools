@@ -1,19 +1,17 @@
 help([[
-VarScan
+VarScan: Variant Detection in Massively Parallel Sequencing Data
 ]])
 
-local name = "VarScan"
+local name = myModuleName()
 local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: high-throughput sequencing")
-whatis("URL: http://dkoboldt.github.io/varscan/")
-whatis("Description: Variant detection in massively parallel sequencing data")
+whatis("URL: https://dkoboldt.github.io/varscan/")
+whatis("Description: VarScan is a platform-independent mutation caller for targeted, exome, and whole-genome resequencing data generated on Illumina, SOLiD, Life/PGM, Roche/454, and similar instruments. Example: `java -jar $VARSCAN`.")
 
--- Local variables
-local cbc_shared = "/home/shared/cbc"
-local cbc_software = cbc_shared .. "/software"
-
-local path = cbc_software .. "/" .. name .. "-" .. version
-local pathname = path .. "/" .. name .. ".v" .. version .. ".jar"
-set_alias("varscan", "java -jar " .. pathname)
--- prepend_path("PATH", path)
+local path = "/home/shared/cbc/software_cbc"
+name = "VarScan"
+local home = path .. "/" .. name .. "-" .. version
+local jarfile = home .. "/" .. name .. ".v" .. version .. ".jar"
+setenv("VARSCAN", jarfile)
+set_alias("varscan", "java -jar " .. jarfile)
