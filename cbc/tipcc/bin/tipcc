@@ -300,9 +300,6 @@ elif [[ $cmd == "sync-to-scratch" ]]; then
     echo "Node: $HOSTNAME"
     echo "Command: $call"
     $call
-elif [[ $cmd == "software" ]]; then
-  echo "** Software in $SHARED_SOFTWARE/:"
-  ls $SHARED_SOFTWARE | grep -v "~$"
 elif [[ $cmd == "utils" ]]; then
   echo "** Command-line utilities in $SHARED_BIN/:"
   ls $SHARED_BIN | grep -v "~$"
