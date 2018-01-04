@@ -1,0 +1,503 @@
+#/usr/bin/env bash
+###################################################################
+# Author: Henrik Bengtsson
+#
+# See also /home/GenomeData/INSTALLATION_LOG
+###################################################################
+dest=$SHARED_SOFTWARE
+SRC_CBC=$SHARED_ROOT/software_cbc
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Local functions
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+function error() {
+  echo "ERROR: $*"
+#  exit 1
+}
+
+function lndir() {
+  link="$2";
+  if test "$link" == "."; then
+    link=`basename "$1"`
+  fi
+
+#  echo ls "$1";
+#  ls "$1"
+  if ! test -d "$1"; then
+    # Remove any previous link to non-existing target
+    if test -L "$link"; then
+      rm "$link"
+    fi
+    error "Cannot link to '$1'. No such directory."
+    return
+  fi
+
+  # Already linked to?
+  if test -d "$link"; then
+    return
+  fi
+  
+  ln -s "$1" "$2" &> /dev/null
+} # lndir()
+
+
+# Record the current working directory
+opwd=$(pwd)
+trap 'cd ${opwd}; exit' INT TERM EXIT
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Permissions
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+chmod ugo+rx $SHARED_ROOT
+chmod ugo+rx $SHARED_ROOT/*
+chmod ugo+rx $SRC_CBC/* 2> /dev/null
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Setup software/
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+mkdir -p $dest
+cd $dest
+
+# Cleanup
+rm -f *-latest
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Programming tools
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# GCC
+lndir /opt/gcc/gcc-4.8.1 .
+lndir /opt/gcc/gcc-4.8.4 .
+lndir /opt/gcc/gcc-4.9.2 .
+lndir /opt/gcc/gcc-5.1.0 .
+
+# LLVM
+lndir /opt/llvm/llvm-3.5.0 .
+
+# git
+lndir /opt/Git/Git-2.1.3/ git-2.1.3
+lndir $SRC_CBC/git-2.1.1 .
+lndir git-2.1.3 git-latest
+
+# git flow
+lndir $SRC_CBC/gitflow-0.4.2 .
+lndir gitflow-0.4.2 gitflow-latest
+
+# Go
+lndir $SRC_CBC/go-1.8.3 .
+lndir go-1.8.3 go-latest
+
+# valgrind
+## lndir /usr/bin/valgrind valgrind-3.8.1 
+lndir $SRC_CBC/valgrind-3.10.0 .
+lndir valgrind-3.10.0 valgrind-latest
+
+# Java
+lndir /opt/java/jre1.6.0_latest jre-1.6.0
+lndir /opt/java/jre1.7.0_latest jre-1.7.0
+lndir /opt/java/jre1.8.0_latest jre-1.8.0
+lndir /opt/java/jdk1.6.0_latest jdk-1.6.0
+lndir /opt/java/jdk1.7.0_latest jdk-1.7.0
+lndir /opt/java/jdk1.8.0_latest jdk-1.8.0
+lndir jre-1.8.0 jre-latest
+lndir jdk-1.8.0 jdk-latest
+
+# Matlab
+lndir /opt/local/MATLAB/R2010b matlab-R2010b
+lndir /opt/local/MATLAB/R2012a matlab-R2012a
+lndir matlab-R2012a matlab-latest
+
+# Python
+# Python 2.6.8 is install under /opt/local/bin
+lndir /opt/Python/Python-2.7.3 .
+lndir /opt/Python/Python-2.7.4 .
+lndir /opt/Python/Python-2.7.9 .
+lndir Python-2.7.9 Python-latest
+
+# Lua and LuaRocks
+lndir $SRC_CBC/lua-5.3.3 .
+lndir lua-5.3.3 lua-latest
+
+lndir $SRC_CBC/luarocks-2.4.2 .
+lndir luarocks-2.4.2 luarocks-latest
+
+# Pandoc
+lndir $SRC_CBC/pandoc-1.19.2-0 .
+lndir pandoc-1.19.2-0 pandoc-latest
+
+
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# R
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Cleanup up broken R links
+# (typically happens when old patched/devel versions are removed)
+for ff in $SHARED_SOFTWARE/R-*; do
+  if [ -L "$ff" ] && ! [ -e "$ff" ]; then rm -- "$ff"; fi;
+done
+
+#R-2.4.0-20170704
+
+# R 2.7.x
+lndir $SRC_CBC/R/R-2.7.0-20170704 R-2.7.0
+
+# R 2.8.x
+lndir $SRC_CBC/R/R-2.8.0-20170704 R-2.8.0
+
+# R 2.10.x
+lndir $SRC_CBC/R/R-2.10.0-20170704 R-2.10.0
+
+# R 2.11.x
+lndir /opt/local/lib64/R R-2.11.0
+lndir $SRC_CBC/R/R-2.11.1-20150918 R-2.11.1
+
+# R 2.12.x
+lndir $SRC_CBC/R/R-2.12.2-20150918 R-2.12.2
+
+# R 2.13.x
+lndir $SRC_CBC/R/R-2.13.1-20150918 R-2.13.1
+lndir $SRC_CBC/R/R-2.13.2-20150918 R-2.13.2
+
+# R 2.14.x
+lndir $SRC_CBC/R/R-2.14.0-20150918 R-2.14.0
+
+# R 2.15.x
+lndir /opt/R/R-2.15.0 .
+lndir /opt/R/R-2.15.1 .
+lndir /opt/R/R-2.15.2 .
+lndir /opt/R/R-2.15.3 .
+
+# R 3.0.x
+lndir /opt/R/R-3.0.0 .
+lndir /opt/R/R-3.0.1 .
+lndir /opt/R/R-3.0.2 .
+## lndir /opt/R/R-3.0.3 .                  # BROKEN: Uses invalid directives when
+lndir $SRC_CBC/R/R-3.0.3-20141129 R-3.0.3  # building packages with native code.
+
+# R 3.1.x
+lndir /opt/R/R-3.1.0 R-3.1.0
+lndir /opt/R/R-3.1.1 R-3.1.1
+lndir $SRC_CBC/R/R-3.1.2-20141102 R-3.1.2
+lndir $SRC_CBC/R/R-3.1.3-20150309 R-3.1.3
+
+# R 3.2.x
+## lndir /opt/R/R-3.2.0 . # BROKEN: Uses invalid directives when building packages with native code.
+lndir $SRC_CBC/R/R-3.2.1-20150618 R-3.2.1
+lndir $SRC_CBC/R/R-3.2.2-20150814 R-3.2.2
+lndir $SRC_CBC/R/R-3.2.3-20151210 R-3.2.3
+lndir $SRC_CBC/R/R-3.2.4-20160310 R-3.2.4
+lndir $SRC_CBC/R/R-3.2.5-20160415 R-3.2.5
+
+# R 3.3.x
+lndir $SRC_CBC/R/R-3.3.0-20160503 R-3.3.0
+lndir $SRC_CBC/R/R-3.3.1-20160703 R-3.3.1
+lndir $SRC_CBC/R/R-3.3.2-20161031 R-3.3.2
+lndir $SRC_CBC/R/R-3.3.3-20170307 R-3.3.3
+
+# R 3.4.x
+lndir $SRC_CBC/R/R-3.4.0-20170421 R-3.4.0
+lndir $SRC_CBC/R/R-3.4.1-20170630 R-3.4.1
+lndir $SRC_CBC/R/R-3.4.2-20170928 R-3.4.2
+
+# R 3.4.x patched
+dir=$SRC_CBC/R/
+what=R-3.4.2patched
+newest=`ls ${dir} | grep ${what}- | sort -ru | head -1`
+lndir ${dir}${newest} .
+rm -f ${what}
+lndir ${newest} ${what}
+
+# R 3.5.x devel
+what=R-3.5.0devel
+newest=`ls ${dir} | grep ${what}- | sort -ru | head -1`
+lndir ${dir}/${newest} .
+rm -f ${what}
+lndir ${newest} ${what}
+
+# R latest, patched and R devel
+lndir R-3.4.2 R-release
+lndir R-release R-latest
+lndir R-3.4.2patched R-patched
+lndir R-3.5.0devel R-devel
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Cloud tools
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Dropbox
+lndir $SRC_CBC/.dropbox-dist/ .
+lndir $SRC_CBC/dropbox-cli/ .
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Docker-ish tools
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+lndir $SRC_CBC/udocker-1.0.0/ .
+lndir udocker-1.0.0 udocker-latest
+
+
+## NOT SAFE WITH OUR CURRENT KERNEL! IT MAY GIVE "kernel panic"
+## and crash a machine. /Henrik 2016-12-22
+## lndir $SRC_CBC/singularity-2.2/ .
+## lndir $SRC_CBC/singularity-2.2-patch .
+## lndir singularity-2.2-patch singularity-latest
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Documentation tools
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+lndir $SRC_CBC/asciidoc-8.6.8/ .
+lndir asciidoc-8.6.8 asciidoc-latest
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Misc. tools
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Grace
+lndir /opt/local/grace grace-unknown
+lndir grace-unknown grace-latest
+
+# htop [http://hisham.hm/htop/]
+lndir $SRC_CBC/htop-1.0.3/ .
+lndir htop-1.0.3 htop-latest
+lndir htop-1.0.3 htop   ## Backward compatibility (TO REMOVE May 2017)
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Imaging tools
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Fiji / ImageJ
+lndir $SRC_CBC/Fiji-2.0.0-rc-54 .
+lndir Fiji-2.0.0-rc-54 Fiji-latest
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Genomic tools
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# IGV
+lndir $SRC_CBC/IGV_2.1.2 IGV-2.1.2
+lndir $SRC_CBC/IGV_2.3.31 IGV-2.3.31
+lndir $SRC_CBC/IGV_2.3.68 IGV-2.3.68
+lndir $SRC_CBC/IGV_2.3.92 IGV-2.3.92
+lndir $SRC_CBC/IGV_2.4.0 IGV-2.4.0
+lndir IGV-2.4.0 IGV-latest
+
+
+# IGVTools
+lndir $SRC_CBC/IGVTools-2.3.68 .
+lndir $SRC_CBC/IGVTools-2.3.91 .
+lndir $SRC_CBC/IGVTools-2.3.98 .
+lndir IGVTools-2.3.98 IGVTools-latest
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Sequencing tools
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# ANNOVAR
+#lndir /home/taylorbs/lbin/annovar/ annovar-unknown
+#lndir annovar-unknown annovar-latest
+
+# Atlas2
+lndir /opt/local/bin/Atlas2_v1.0 .
+lndir Atlas2_v1.0 Atlas2-latest
+
+# BEDOPS
+lndir $SRC_CBC/bedops-1.2.2c .
+lndir bedops-1.2.2c bedops-latest
+
+# BEDtools
+lndir /home/jocostello/tools/BEDTools-Version-2.13.4 bedtools2-2.13.4
+#lndir /opt/local/bin/BEDTools-Version-2.15.0 bedtools2-2.15.0
+lndir /opt/BEDTools/BEDTools-2.15.0 bedtools2-2.15.0
+lndir /opt/BEDTools/BEDTools-2.16.2 bedtools2-2.16.2
+lndir $SRC_CBC/bedtools2-2.26.0 .
+lndir bedtools2-2.26.0 bedtools2-latest
+
+# bismark
+lndir /opt/local/bin/bismark_v0.5.4 .
+lndir /opt/local/bin/bismark_v0.7.3 .
+lndir bismark_v0.7.3 bismark-latest
+
+# BLAST
+lndir /opt/local/bin/blast-2.2.26/ .
+lndir blast-2.2.26 blast-latest
+
+# bowtie
+lndir /opt/local/bin/ bowtie-0.12.7
+lndir $SRC_CBC/bowtie-1.2.0 .
+lndir bowtie-1.2.0 bowtie-latest
+
+# bowtie2
+lndir /opt/local/bin/bowtie2-2.0.0-beta6 .
+lndir $SRC_CBC/bowtie2-2.1.0 .
+lndir $SRC_CBC/bowtie2-2.2.6 .
+lndir $SRC_CBC/bowtie2-2.2.9 .
+lndir bowtie2-2.2.9 bowtie2-latest
+
+# bwa
+#lndir /home/taylorbs/lbin/bwa-0.5.8c .
+lndir /home/jocostello/tools/bwa-0.5.10 .
+lndir /opt/local/bin/bwa-0.6.1 .
+lndir $SRC_CBC/bwa-0.7.5a .
+lndir $SRC_CBC/bwa-0.7.12 .
+lndir bwa-0.7.12 bwa-latest
+
+# Control-FREEC
+lndir $SRC_CBC/Control-FREEC-2.5 .
+lndir $SRC_CBC/Control-FREEC-7.2-3 .
+lndir Control-FREEC-7.2-3 Control-FREEC-latest
+
+# cufflinks
+lndir /opt/local/bin/cufflinks-1.0.3.Linux_x86_64 .
+lndir /opt/local/bin/cufflinks-1.3.0.Linux_x86_64 .
+lndir cufflinks-1.3.0.Linux_x86_64 cufflinks-latest
+
+# FastQC [http://www.bioinformatics.babraham.ac.uk/projects/fastqc/]
+lndir $SRC_CBC/FastQC-0.10.1 .
+lndir $SRC_CBC/FastQC-0.11.2 .
+lndir FastQC-0.11.2 FastQC-latest
+
+# fastx_toolkit
+#lndir /home/taylorbs/lbin/fastx_toolkit fastx_toolkit-0.13
+#lndir /usr/local/bin fastx_toolkit-0.13.2
+#lndir fastx_toolkit-0.13.2 fastx_toolkit-latest
+
+# GATK
+#lndir /home/taylorbs/lbin/GATK/GenomeAnalysisTK-1.0.5315 .
+#lndir /home/taylorbs/lbin/GATK/GenomeAnalysisTK-1.0.5506 .
+lndir /home/jocostello/tools/GenomeAnalysisTK-1.1-37-ge63d9d8 .
+lndir /home/jocostello/tools/GenomeAnalysisTK-1.2-21-g6804ab6 .
+lndir /home/jocostello/shared/LG3_Pipeline/tools/GenomeAnalysisTK-1.5-12-gd0056d6 .
+lndir $SRC_CBC/GenomeAnalysisTK-1.6-2-gc2b74ec .
+lndir $SRC_CBC/GenomeAnalysisTK-3.0-0 .
+lndir $SRC_CBC/GenomeAnalysisTK-3.4-46 .
+lndir $SRC_CBC/GenomeAnalysisTK-3.6 .
+lndir GenomeAnalysisTK-3.6 GenomeAnalysisTK-latest
+lndir GenomeAnalysisTK-latest GATK-latest
+
+# GeneTorrent
+lndir $SRC_CBC/GeneTorrent-3.0.2 .
+lndir $SRC_CBC/GeneTorrent-3.8.5a-94 .
+lndir GeneTorrent-3.0.2 GeneTorrent-latest
+## Why is this commented away? /HB 2016-03-11
+#lndir GeneTorrent-3.8.5a-94 GeneTorrent-latest
+
+# HTSeq
+lndir $SRC_CBC/HTSeq-0.5.4p3 .
+lndir $SRC_CBC/HTSeq-0.6.1 .
+lndir HTSeq-0.5.4p3 HTSeq-latest
+## Why is this commented away? /HB 2016-03-11
+#lndir HTSeq-0.6.1 HTSeq-latest
+
+# muTect
+lndir /home/jocostello/tools/muTect muTect-r27783 .
+lndir muTect-r27783 muTect-latest
+
+# Picard
+lndir /opt/local/picard-tools-1.39 .
+#lndir /home/taylorbs/lbin/picard-tools-1.43 .
+lndir /home/jocostello/tools/picard-tools-1.51 .
+#lndir /home/taylorbs/lbin/picard-tools-1.62 .
+lndir /home/jocostello/tools/picard-tools-1.64 .
+lndir $SRC_CBC/picard-tools-1.67 .
+lndir picard-tools-1.67 picard-tools-latest
+
+# RNAstructure
+lndir /opt/local/RNAstructure RNAstructure-unknown
+lndir RNAstructure-unknown RNAstructure-latest
+
+# s3cmd
+lndir $SRC_CBC/s3cmd-1.5.0-alpha3 .
+lndir $SRC_CBC/s3cmd-1.5.0-alpha3 s3cmd-latest
+
+# HTSlib (http://www.htslib.org/download/)
+lndir $SRC_CBC/htslib-1.3.2 .
+lndir htslib-1.3.2 htslib-latest
+
+# SAMtools (http://www.htslib.org/download/)
+#lndir /home/taylorbs/lbin/samtools-0.1.9 .
+lndir /home/jocostello/tools/samtools-0.1.12a .
+lndir /home/jocostello/tools/samtools-0.1.17 .
+lndir /home/jocostello/tools/samtools-0.1.18 .
+lndir /opt/SAMtools/SAMTools-0.1.18 .
+lndir $SRC_CBC/samtools-0.1.19 .
+lndir $SRC_CBC/samtools-0.1.19-patched .
+lndir $SRC_CBC/samtools-1.2 .
+lndir $SRC_CBC/samtools-1.3.1 .
+lndir samtools-1.3.1 samtools-latest
+
+## BamUtil (https://github.com/statgen/bamUtil)
+lndir $SRC_CBC/BamUtil-1.0.14 .
+lndir BamUtil-1.0.14 BamUtil-latest
+
+# BCFtools
+lndir $SRC_CBC/bcftools-1.2 .
+lndir $SRC_CBC/bcftools-1.3.1 .
+lndir $SRC_CBC/bcftools-1.4 .
+lndir bcftools-1.4 bcftools-latest
+
+## bcl2fastq (Illumina)
+#lndir $SRC_CBC/bcl2fastq-2.17.1.14 .
+#lndir bcl2fastq-2.17.1.14 bcl2fastq-latest
+
+## GDC Client (https://gdc.cancer.gov/access-data/gdc-data-transfer-tool)
+lndir /opt/GDC/gdc-client-1.0.1 .
+lndir gdc-client-1.0.1 gdc-client-latest
+
+# snpEff
+lndir /home/jocostello/tools/snpEff_v2_0_2 snpEff-2.0.2
+lndir snpEff-2.0.2 snpEff_v2_0_2 ## Deprecated 2017-07-09
+lndir snpEff-2.0.2 snpEff-latest
+
+# SNVMix2
+lndir /opt/local/SNVMix2-0.11.8-r3 .
+lndir SNVMix2-0.11.8-r3 SNVMix2-latest
+
+# SRA Toolkit [http://trace.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?view=software]
+lndir $SRC_CBC/sratoolkit.2.3.4-2-centos_linux64 .
+lndir $SRC_CBC/sratoolkit.2.4.1-centos_linux64 .
+lndir $SRC_CBC/sratoolkit.2.5.7-centos_linux64 .
+lndir $SRC_CBC/sratoolkit.2.8.2-1-centos_linux64 .
+lndir sratoolkit.2.8.2-1-centos_linux64 sratoolkit-latest
+
+# STAR [https://github.com/alexdobin/STAR]
+lndir $SRC_CBC/STAR-2.5.3a .
+
+# TopHat
+#lndir /home/taylorbs/lbin/tophat-1.1.1.Linux_x86_64 .
+lndir /opt/local/bin/tophat-1.3.0.Linux_x86_64 .
+lndir /opt/local/bin/tophat-1.3.1.Linux_x86_64 .
+lndir /opt/local/bin/tophat-1.4.0.Linux_x86_64 .
+#lndir /home/taylorbs/lbin/tophat-1.4.1.Linux_x86_64 .
+lndir /opt/local/bin/tophat-2.0.3.Linux_x86_64/ .
+lndir $SRC_CBC/tophat-2.0.9.Linux_x86_64 .
+lndir $SRC_CBC/tophat-2.0.10.Linux_x86_64 .
+lndir $SRC_CBC/tophat-2.1.0.Linux_x86_64 .
+lndir $SRC_CBC/tophat-2.1.1.Linux_x86_64 .
+lndir tophat-2.1.1.Linux_x86_64 tophat-latest
+
+# VCFTools
+lndir /opt/vcftools/0.1.13/gcc.4.4.7 vcftools-0.1.13
+lndir vcftools-0.1.13 vcftools-latest
+
+# VarScan
+lndir /opt/local/VarScan VarScan-2.2.3
+lndir $SRC_CBC/VarScan-2.3.9 .
+lndir VarScan-2.3.9 VarScan-latest
+
+# Vienna RNA
+lndir /opt/local/share/ViennaRNA ViennaRNA-unknown
+lndir ViennaRNA-unknown ViennaRNA-latest
+
+# WordSpy [http://cic.cs.wustl.edu/wordspy/dltemp.htm]
+lndir /opt/local/bin/wordspy1.5 wordspy-1.5
+lndir wordspy-1.5 wordspy-latest
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# CBC utilities
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ln -fs $SHARED_SOFTWARE/asciidoc-latest/a2x.py $SHARED_BIN/a2x
+ln -fs $SHARED_SOFTWARE/asciidoc-latest/asciidoc.py $SHARED_BIN/asciidoc
