@@ -1,5 +1,5 @@
 help([[
-Burrows-Wheeler Aligner (BWA)
+BWA: Burrows-Wheeler Aligner
 ]])
 
 local name = myModuleName()
@@ -7,11 +7,14 @@ local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: sequencing")
 whatis("URL: http://bio-bwa.sourceforge.net/")
-whatis("Description: Burrows-Wheeler Aligner (BWA) is a software package for mapping low-divergent sequences against a large reference genome, such as the human genome.")
+whatis("Description: Burrows-Wheeler Aligner (BWA) is a software package for mapping low-divergent sequences against a large reference genome, such as the human genome. Example: `bwa`.")
 
 -- Local variables
-local cbc_shared = "/home/shared/cbc"
-local cbc_software = cbc_shared .. "/software"
-
-local home = cbc_software .. "/" .. name .. "-" .. version
+local path = "/home/shared/cbc/software_cbc"
+local home = path .. "/" .. name .. "-" .. version
 prepend_path("PATH", home)
+
+local manpath = home
+if isDir(manpath .. "/man1") then
+  prepend_path("MANPATH", manpath)
+end
