@@ -1,5 +1,5 @@
 help([[
-1;4205;0cGenome Analysis Toolkit (GATK) - Variant Discovery in High-Throughput Sequencing Data
+Genome Analysis Toolkit (GATK): Variant Discovery in High-Throughput Sequencing Data
 ]])
 
 local name = myModuleName()
