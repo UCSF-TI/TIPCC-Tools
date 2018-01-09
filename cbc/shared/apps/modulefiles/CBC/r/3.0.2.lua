@@ -1,5 +1,5 @@
 help([[
-The R Programming Language
+R: The R Programming Language
 ]])
 
 local name = myModuleName()
@@ -7,7 +7,7 @@ local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: Programming, Statistics")
 whatis("URL: https://www.r-project.org/")
-whatis("Description: The R programming language. Example: `R --version`.")
+whatis("Description: The R programming language. Example: `R --version` and `Rscript --version`.")
 
 -- Local variables
 local cbc_shared = "/home/shared/cbc"
