@@ -1,8 +1,8 @@
 #! /bin/env bash
 
 ## Identify all installed versions of R
-path=/cbc/shared/software
-versions=$(ls $path | grep "IGV[-][0-9]" | cut -c 5- | tr '\n' ' ')
+path=/home/shared/cbc/software_cbc
+versions=$(ls $path | grep "IGV[_][0-9]" | cut -c 5- | tr '\n' ' ')
 echo $versions
 
 for version in ${versions}; do
@@ -19,7 +19,7 @@ local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: ")
 whatis("URL: https://software.broadinstitute.org/software/igv/")
-whatis("Description: The Integrative Genomics Viewer (IGV) is a high-performance visualization tool for interactive exploration of large, integrated genomic datasets. It supports a wide variety of data types, including array-based and next-generation sequence data, and genomic annotations. Example: `igv`.")
+whatis("Description: The Integrative Genomics Viewer (IGV) is a high-performance visualization tool for interactive exploration of large, integrated genomic datasets. It supports a wide variety of data types, including array-based and next-generation sequence data, and genomic annotations. Example: \`igv\`.")
 
 local path = os.getenv("SOFTWARE_ROOT_CBC")
 local home = path .. "/" .. name .. "_" .. version
