@@ -1,5 +1,5 @@
 help([[
-ASCIIGenome: Text Only Genome Viewer!
+ASCIIGenome: Text Only Genome Viewer
 ]])
 
 local name = myModuleName()

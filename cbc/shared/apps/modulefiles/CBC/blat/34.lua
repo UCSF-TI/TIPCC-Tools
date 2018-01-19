@@ -1,5 +1,5 @@
 help([[
-BLAT: Standalone BLAT - Fast Sequence Search Command Line Tool
+BLAT: Fast Sequence Search Command Line Tool
 ]])
 
 local name = myModuleName()

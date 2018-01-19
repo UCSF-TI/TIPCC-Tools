@@ -1,5 +1,5 @@
 help([[
-Nextflow:- Data-driven Computational Pipelines
+Nextflow: Data-driven Computational Pipelines
 ]])
 
 local name = myModuleName()

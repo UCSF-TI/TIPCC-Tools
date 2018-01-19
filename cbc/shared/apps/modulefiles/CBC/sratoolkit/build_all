@@ -10,7 +10,7 @@ for version in ${versions}; do
 ## Here document for RSP template
 cat << EOF > ${version}.lua
 help([[
-SRA Toolkit
+SRA Toolkit: Tools and Libraries for Using Data in the INSDC Sequence Read Archives
 ]])
 
 local name = myModuleName()

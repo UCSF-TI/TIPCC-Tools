@@ -1,5 +1,5 @@
 help([[
-SRA Toolkit
+SRA Toolkit: Tools and Libraries for Using Data in the INSDC Sequence Read Archives
 ]])
 
 local name = myModuleName()
