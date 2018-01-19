@@ -79,7 +79,8 @@ load("udocker")
 
 load("ruby/2.2.0p0")
 
-setenv("PICARD_HOME", "/home/shared/cbc/software_cbc/picard-tools-1.67")
+local path=os.getenv("SOFTWARE_ROOT_CBC")
+setenv("PICARD_HOME", path .. "/picard-tools-1.67")
 load("gatk")
 setenv("LG3_HOME", "/home/henrik/projects/CostelloJ_2014-LG3-Exome-Pipeline/pbs")
 
