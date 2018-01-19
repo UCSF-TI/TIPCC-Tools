@@ -1,7 +1,7 @@
 #! /bin/env bash
 
 ## Identify all installed versions of R
-path=/cbc/shared/software
+path=/cbc/shared/software_cbc
 versions=$(ls $path | grep "IGVTools[-][0-9]" | cut -c 10- | tr '\n' ' ')
 echo $versions
 
@@ -10,7 +10,7 @@ for version in ${versions}; do
 ## Here document for RSP template
 cat << EOF > ${version}.lua
 help([[
-IGVTools
+IGVTools: Tools for Pre-processing HT-Seq Data Files
 ]])
 
 -- local name = myModuleName()
@@ -19,9 +19,10 @@ local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: ")
 whatis("URL: https://software.broadinstitute.org/software/igv/igvtools")
-whatis("Description: The igvtools utility provides a set of tools for pre-processing data files.")
+whatis("Description: The igvtools utility provides a set of tools for pre-processing data files. Example: \`igvtools help\`.")
 
-local path = "/home/shared/cbc/software_cbc"
-prepend_path("PATH", path .. "/" .. name .. "-" .. version)
+local path = os.getenv("SOFTWARE_ROOT_CBC")
+local home = path .. "/" .. name .. "-" .. version
+prepend_path("PATH", home)
 EOF
 done

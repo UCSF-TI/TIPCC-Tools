@@ -9,7 +9,7 @@ whatis("Keywords: programming, scripting")
 whatis("URL: https://www.lua.org/")
 whatis("Description: The Lua programming language. Example: `lua -v`.")
 
-local path = "/home/shared/cbc/software_cbc"
+local path = os.getenv("SOFTWARE_ROOT_CBC")
 local home = path .. "/" .. name .. "-" .. version
 prepend_path("PATH", home .. "/bin")
 prepend_path("MANPATH", home .. "/man")

@@ -11,7 +11,7 @@ whatis("Description: Links runs in text mode (mouse optional) on UN*X console, s
 
 load("cbc-devel")
 
-local path = "/home/shared/cbc/software_cbc"
+local path = os.getenv("SOFTWARE_ROOT_CBC")
 local home = path .. "/" .. name .. "-" .. version
 prepend_path("PATH", home .. "/bin")
 prepend_path("MANPATH", home .. "/man")

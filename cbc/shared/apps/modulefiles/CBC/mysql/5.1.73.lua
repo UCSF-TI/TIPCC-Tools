@@ -10,7 +10,7 @@ whatis("URL: https://www.mysql.com/")
 whatis("Description: MySQL is an open-source relational database management system (RDBMS). Example: `mysql --version`")
 
 
-local path = "/home/shared/cbc/software_cbc"
+local path = os.getenv("SOFTWARE_ROOT_CBC")
 local home = path .. "/" .. name .. "-v" .. version .. "-linux-x64"
 
 prepend_path("PATH",  "/usr/bin")

@@ -7,7 +7,8 @@ local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: ")
 whatis("URL: http://boevalab.com/FREEC/")
-whatis("Description: Prediction of copy numbers and allelic content using deep-sequencing data.")
+whatis("Description: Prediction of copy numbers and allelic content using deep-sequencing data. Example: `freec`.")
 
-local path = "/home/shared/cbc/software_cbc"
-prepend_path("PATH", path .. "/" .. name .. "-" .. version .. "/bin")
+local path = os.getenv("SOFTWARE_ROOT_CBC")
+local home = path .. "/" .. name .. "-" .. version
+prepend_path("PATH", home .. "/bin")

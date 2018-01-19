@@ -1,5 +1,5 @@
 help([[
-BCFtools: utilities for variant calling and manipulating VCFs and BCFs
+BCFtools: Utilities for Variant Calling and Manipulating VCFs and BCFs
 ]])
 
 local name = myModuleName()
@@ -11,8 +11,7 @@ whatis("Description: BCFtools is a set of utilities that manipulate variant call
 
 load("cbc-devel")
 
--- Local variables
-local path = "/home/shared/cbc/software_cbc"
+local path = os.getenv("SOFTWARE_ROOT_CBC")
 local home = path .. "/" .. name .. "-" .. version
 prepend_path("PATH", home)
 setenv("BCFTOOLS_PLUGINS", home .. "/" .. "plugins")

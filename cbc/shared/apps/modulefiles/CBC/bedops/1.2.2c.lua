@@ -1,5 +1,5 @@
 help([[
-BEDOPS: the fast, highly scalable and easily-parallelizable genome analysis toolkit
+BEDOPS: The Fast, Highly Scalable and Easily-Parallelizable Genome Analysis Toolkit
 ]])
 
 local name = myModuleName()
@@ -9,5 +9,6 @@ whatis("Keywords: ")
 whatis("URL: https://bedops.readthedocs.io/")
 whatis("Description: BEDOPS is an open-source command-line toolkit that performs highly efficient and scalable Boolean and other set operations, statistical calculations, archiving, conversion and other management of genomic data of arbitrary scale. Tasks can be easily split by chromosome for distributing whole-genome analyses across a computational cluster.")
 
-local path = "/home/shared/cbc/software_cbc"
-prepend_path("PATH", path .. "/" .. name .. "-" .. version .. "/bin")
+local path = os.getenv("SOFTWARE_ROOT_CBC")
+local home = path .. "/" .. name .. "-" .. version
+prepend_path("PATH", home .. "/bin")

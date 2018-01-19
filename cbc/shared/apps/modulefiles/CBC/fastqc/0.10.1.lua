@@ -9,6 +9,6 @@ whatis("Keywords: sequencing")
 whatis("URL: http://www.bioinformatics.babraham.ac.uk/projects/fastqc/")
 whatis("Description: A quality control tool for high throughput sequence data. Example: `fastqc --version`.")
 
-local path = "/home/shared/cbc/software_cbc"
+local path = os.getenv("SOFTWARE_ROOT_CBC")
 local home = path .. "/" .. name .. "-" .. version
 prepend_path("PATH", home)

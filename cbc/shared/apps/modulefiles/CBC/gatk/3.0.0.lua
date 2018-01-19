@@ -11,9 +11,7 @@ whatis("Description: Developed in the Data Sciences Platform at the Broad Instit
 
 load("jdk/7")
 
--- Local variables
-local cbc_shared = "/home/shared/cbc"
-local cbc_software = cbc_shared .. "/software_cbc"
+local path = os.getenv("SOFTWARE_ROOT_CBC")
+local home = path .. "/GenomeAnalysisTK-3.0-0"
+setenv("GATK_HOME", home)
 
-local path = cbc_software .. "/GenomeAnalysisTK-3.0-0"
-setenv("GATK_HOME", path)

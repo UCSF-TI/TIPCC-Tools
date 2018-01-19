@@ -11,7 +11,6 @@ whatis("Description: bcl2fastq Conversion Software both demultiplexes data and c
 
 load("cbc-devel")
 
--- Local variables
-local path = "/home/shared/cbc/software_cbc"
+local path = os.getenv("SOFTWARE_ROOT_CBC")
 local home = path .. "/" .. name .. "-" .. version
 prepend_path("PATH", home .. "/bin")

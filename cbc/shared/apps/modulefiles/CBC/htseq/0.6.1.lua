@@ -7,7 +7,8 @@ local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: programming, scripting")
 whatis("URL: http://www-huber.embl.de/users/anders/HTSeq/")
-whatis("Description: HTSeq is a Python package that provides infrastructure to process data from high-throughput sequencing assays.")
+whatis("Description: HTSeq is a Python package that provides infrastructure to process data from high-throughput sequencing assays. Example: `htseq-count` and `htseq-qa`.")
 
-local path = "/home/shared/cbc/software_cbc"
-prepend_path("PATH", path .. "/" .. name .. "-" .. version .. "/scripts")
+local path = os.getenv("SOFTWARE_ROOT_CBC")
+local home = path .. "/" .. name .. "-" .. version
+prepend_path("PATH", home .. "/scripts")

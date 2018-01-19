@@ -1,5 +1,5 @@
 help([[
-BLAT: Standalone BLAT - fast sequence search command line tool
+BLAT: Standalone BLAT - Fast Sequence Search Command Line Tool
 ]])
 
 local name = myModuleName()
@@ -9,8 +9,6 @@ whatis("Keywords: sequencing, alignment")
 whatis("URL: http://genome.ucsc.edu/goldenPath/help/blatSpec.html")
 whatis("Description: BLAT - client and server combined into a single program, first building the index, then using the index, and then exiting. Example: `blat`")
 
--- Local variables
-local cbc_shared = "/home/shared/cbc"
-local cbc_software = cbc_shared .. "/software_cbc"
-
-prepend_path("PATH", cbc_software .. "/" .. name .. "-" .. version)
+local path = os.getenv("SOFTWARE_ROOT_CBC")
+local home = path .. "/" .. name .. "-" .. version
+prepend_path("PATH", home)

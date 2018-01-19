@@ -11,6 +11,6 @@ whatis("Description: Picard is a set of command line tools for manipulating high
 
 load("jdk")
 
-local path = "/home/shared/cbc/software_cbc"
+local path = os.getenv("SOFTWARE_ROOT_CBC")
 local home = path .. "/" .. name .. "-" .. version
 setenv("PICARD", home .. "/picard.jar")

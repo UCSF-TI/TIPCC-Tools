@@ -1,5 +1,5 @@
 help([[
-LuaRocks - the Lua package manager
+LuaRocks: The Lua Package Manager
 ]])
 
 local name = myModuleName()
@@ -9,5 +9,6 @@ whatis("Keywords: programming, scripting")
 whatis("URL: https://luarocks.org/")
 whatis("Description: LuaRocks is the package manager for Lua modules.")
 
-local path = "/home/shared/cbc/software_cbc"
-prepend_path("PATH", path .. "/" .. name .. "-" .. version .. "/bin")
+local path = os.getenv("SOFTWARE_ROOT_CBC")
+local home = path .. "/" .. name .. "-" .. version
+prepend_path("PATH", home .. "/bin")
