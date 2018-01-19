@@ -1,7 +1,7 @@
 #! /bin/env bash
 
 ## Identify all installed versions of Sratoolkit
-path=/cbc/shared/software
+path=/cbc/shared/software_cbc
 versions=$(ls $path | grep "sratoolkit[.][0-9]" | sed -E 's/(sratoolkit.|-centos_linux64)//g' | tr '\n' ' ')
 echo $versions
 
@@ -19,9 +19,9 @@ whatis("Version: " .. version)
 whatis("Keywords: sequencing")
 whatis("URL: http://ncbi.github.io/sra-tools/")
 whatis("GitHub: https://github.com/ncbi/sra-tools")
-whatis("Description: The SRA Toolkit and SDK from NCBI is a collection of tools and libraries for using data in the INSDC Sequence Read Archives.")
+whatis("Description: The SRA Toolkit and SDK from NCBI is a collection of tools and libraries for using data in the INSDC Sequence Read Archives. Example: \`fastq-dump --help\`.")
 
-local path = "/home/shared/cbc/software_cbc"
+local path = os.getenv("SOFTWARE_ROOT_CBC")
 local home = path .. "/" .. name .. "." .. version .. "-centos_linux64"
 prepend_path("PATH", home .. "/bin")
 EOF

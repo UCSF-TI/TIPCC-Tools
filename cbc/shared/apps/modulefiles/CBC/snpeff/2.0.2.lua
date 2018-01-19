@@ -7,7 +7,7 @@ local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: high-throughput sequencing")
 whatis("URL: http://snpeff.sourceforge.net/")
-whatis("Description: SnpEff is a variant annotation and effect prediction tool. It annotates and predicts the effects of variants on genes (such as amino acid changes). Example: `java -jar $SNPEFF -help`")
+whatis("Description: SnpEff is a variant annotation and effect prediction tool. It annotates and predicts the effects of variants on genes (such as amino acid changes). Example: `java -jar $SNPEFF -help`.")
 
 load("jdk")
 

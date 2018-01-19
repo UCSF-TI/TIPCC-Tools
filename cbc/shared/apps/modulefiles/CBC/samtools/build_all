@@ -18,11 +18,11 @@ local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: sequencing")
 whatis("URL: http://www.htslib.org/")
-whatis("Description: SAMtools is a suite of programs for interacting with high-throughput sequencing data.  Example: \`samtools --version\`")
+whatis("Description: SAMtools is a suite of programs for interacting with high-throughput sequencing data.  Example: \`samtools --version\`.")
 
 load("cbc-devel")
 
-local path = "/home/shared/cbc/software_cbc"
+local path = os.getenv("SOFTWARE_ROOT_CBC")
 local home = path .. "/" .. name .. "-" .. version
 
 prepend_path("PATH", home .. "/bin")

@@ -9,7 +9,7 @@ whatis("Keywords: high-throughput sequencing")
 whatis("URL: https://dkoboldt.github.io/varscan/")
 whatis("Description: VarScan is a platform-independent mutation caller for targeted, exome, and whole-genome resequencing data generated on Illumina, SOLiD, Life/PGM, Roche/454, and similar instruments. Example: `java -jar $VARSCAN`.")
 
-local path = "/home/shared/cbc/software_cbc"
+local path = os.getenv("SOFTWARE_ROOT_CBC")
 name = "VarScan"
 local home = path .. "/" .. name .. "-" .. version
 local jarfile = home .. "/" .. name .. ".v" .. version .. ".jar"
