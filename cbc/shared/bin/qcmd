@@ -26,7 +26,7 @@ cmd_stdout=
 cmd_stderr=
 
 state=0
-while [[ $# > 0 ]]; do
+while [[ $# -gt 0 ]]; do
   arg=$1
   if [[ $state == 0 ]]; then
     if [[ $arg == "--help" ]]; then
@@ -58,7 +58,7 @@ while [[ $# > 0 ]]; do
     state=2
     shift
   elif [[ $state == 2 ]]; then
-    cmd_options+=($1)
+    cmd_options+=("$1")
     shift
   fi
 done
@@ -75,9 +75,9 @@ fi
 
 
 if [[ $action == "help" ]]; then
-  grep "^###" $0 | grep -v "^####" | cut -b 5-
+  grep "^###" "$0" | grep -v "^####" | cut -b 5-
 elif [[ $state == 1 || $state == 2 ]]; then
-  qsub_name="$(basename $cmd)_$(date +%H%M%S-%Y%m%d)"
+  qsub_name="$(basename "$cmd")_$(date +%H%M%S-%Y%m%d)"
   pwd=$(pwd)
   if [[ $pwd == *","* ]]; then
       if [[ $safe == "true" ]]; then
@@ -88,8 +88,8 @@ elif [[ $state == 1 || $state == 2 ]]; then
       ## The following does not work; qsub seems to resolve the soft link. /HB 2016-03-19
       ## See also https://github.com/UCSF-TI/TIPCC/issues/35
       auxpwd=~/qcmd/$(date +%Y%m%d/%H%M%S-%N)
-      mkdir -p $(dirname $auxpwd)
-      ln -s $pwd $auxpwd
+      mkdir -p $(dirname "$auxpwd")
+      ln -s "$pwd" "$auxpwd"
       echo "WORKAROUND: 'qsub -d <working path>' does not support paths with commas (https://github.com/adaptivecomputing/torque/issues/351). Will try to work around this bug by using an auxiliary soft-linked directory ($auxpwd -> $pwd) and will set a correct 'PBS_O_WORKDIR', but unfortunately any qsub output files will end up in $(echo "$pwd" | sed 's/,.*//g;'), iff it exists."
       pwd=$auxpwd
       cmd_prefix='export PBS_O_WORKDIR=`pwd`; '
@@ -100,7 +100,7 @@ elif [[ $state == 1 || $state == 2 ]]; then
   qsub_defaults="$qsub_defaults -N $qsub_name"
   qsub_defaults="$qsub_defaults -j oe"
 
-  if [[ ! -x "$cmd" && ! -x "$(which $cmd 2> /dev/null)" ]]; then
+  if [[ ! -x "$cmd" && ! -x "$(which "$cmd" 2> /dev/null)" ]]; then
     echo "ERROR: No such command: $cmd"
     exit
   fi
