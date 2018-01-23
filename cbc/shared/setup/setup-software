@@ -65,5 +65,5 @@ rm -f *-latest
 # Software used by Lmod
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Lua and LuaRocks
-lndir $SRC_CBC/lua-5.3.3 lua-latest
-lndir $SRC_CBC/luarocks-2.4.2 luarocks-latest
+lndir $SRC_CBC/lua-5.3.3 lua-latest_DEPRECATED
+lndir $SRC_CBC/luarocks-2.4.2 luarocks-latest_DEPRECATED
