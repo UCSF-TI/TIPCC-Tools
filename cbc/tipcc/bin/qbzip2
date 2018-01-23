@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+### USAGE:
+### qbzip2 [bzip2 options] [file] ...
+###
+### EXAMPLES:
+### qbzip2 *.sam
+### qbzip2 -9 /path/to/*.fastq
+### qbzip2 -d /path/to/*.fastq.bz2
+###
+### AUTHOR:
+### Henrik Bengtsson, 2016
+
+action=
+verbose=FALSE
+dryrun=FALSE
+
+
+## Use special job queue
+qcmd_options="-q secondary"
+
+options=
+for arg in $*; do
+  if [[ $arg == "--help" ]]; then
+    action=help
+    break
+  elif [[ $arg == "--verbose" ]]; then
+    qcmd_options="$qcmd_options --verbose"
+  elif [[ $arg == "--dryrun" ]]; then
+    qcmd_options="$qcmd_options --dryrun"
+  elif [[ $arg == "--unsafe" ]]; then
+    qcmd_options="$qcmd_options --unsafe"
+  else
+   options="$options $arg"
+   shift
+  fi
+done
+
+if [[ $action == "help" ]]; then
+  grep "^###" $0 | grep -v "^####" | cut -b 5-
+else
+  qcmd ${qcmd_options} --exec bzip2 ${options}
+fi
