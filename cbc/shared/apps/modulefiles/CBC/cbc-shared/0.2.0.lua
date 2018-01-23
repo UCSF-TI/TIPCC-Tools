@@ -35,7 +35,7 @@ if (os.getenv("CBC_DEVEL") ~= "false") then
 end
 
 load("git")
-load("gitflow")
+load("git-flow")
 
 load("bamutil")
 load("bedops")

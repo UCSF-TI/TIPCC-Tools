@@ -38,7 +38,7 @@ else
 end
 
 load("git")
-load("gitflow")
+load("git-flow")
 
 load("bamutil")
 load("bedops")
