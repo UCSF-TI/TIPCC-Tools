@@ -10,6 +10,6 @@ whatis("URL: https://www.r-project.org/")
 whatis("Description: The R programming language. Example: `R --version` and `Rscript --version`.")
 
 local path = os.getenv("SOFTWARE_ROOT_CBC")
-local home = path .. "/R/R-3.4.3patched-20180125"
+local home = path .. "/R/R-3.4.3patched-20180201"
 prepend_path("PATH", home .. "/bin")
 prepend_path("MANPATH", home .. "/share/man")
