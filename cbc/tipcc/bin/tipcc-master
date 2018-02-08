@@ -1,3 +1,4 @@
+
 #!/usr/bin/env bash
 ### UCSF HPC TIPCC:
 ### List user processes running on master (head node)
@@ -250,6 +251,12 @@ function filter_short() {
     printf '%s\n' "${res[@]}"
 }
 
+function filter_works_only_on_master() {
+    ## Some tools only work on the master node and not on the interactive (n6) node
+    res=$(printf '%s\n' "${res[@]}" | grep -v -E "ascp ")
+    printf '%s\n' "${res[@]}"
+}
+
 ## Query ps + bpstat for _all_ running master-node processes
 ## Note: master-node process are those without NODE information.
 res=$(ps uax | bpstat -P | grep -E "^  " | grep -E -v "^[ ]+root" | sed -E 's/^[ ]*//g' | grep -E -v "($USER|$UID) .* (ps uax|grep -E |.*tipcc head|sed -E)")
@@ -272,6 +279,7 @@ if [[ $filter == "user" ]]; then
     res=$(filter_vcs "${res[@]}")
     res=$(filter_utils "${res[@]}")
     res=$(filter_special "${res[@]}")
+    res=$(filter_works_only_on_master "${res[@]}")
 elif [[ $filter == "sysadm" ]]; then
     res=$(filter_zombies "${res[@]}")
     res=$(filter_system "${res[@]}")
@@ -287,6 +295,7 @@ elif [[ $filter == "sysadm" ]]; then
     res=$(filter_utils "${res[@]}")
     res=$(filter_special "${res[@]}")
     res=$(filter_builds "${res[@]}")
+    res=$(filter_works_only_on_master "${res[@]}")
 elif [[ $filter == "core" ]]; then
     res=$(filter_zombies "${res[@]}")
     res=$(filter_system "${res[@]}")
