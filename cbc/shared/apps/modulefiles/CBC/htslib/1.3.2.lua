@@ -13,5 +13,6 @@ load("cbc-devel")
 local path = os.getenv("SOFTWARE_ROOT_CBC")
 local home = path .. "/" .. name .. "-" .. version
 prepend_path("PATH", home .. "/bin")
+prepend_path("LIBRARY_PATH", home .. "/lib")
 prepend_path("LD_LIBRARY_PATH", home .. "/lib")
 prepend_path("MANPATH", home .. "/share/man")
