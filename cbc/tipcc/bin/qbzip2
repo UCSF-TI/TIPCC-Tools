@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+### Submit a gbzip2 task to the scheduler
+###
 ### USAGE:
 ### qbzip2 [bzip2 options] [file] ...
 ###
@@ -8,15 +10,15 @@
 ### qbzip2 -d /path/to/*.fastq.bz2
 ###
 ### AUTHOR:
-### Henrik Bengtsson, 2016
+### Henrik Bengtsson, 2016-2018
 
 action=
 verbose=FALSE
 dryrun=FALSE
 
 
-## Use special job queue
-qcmd_options="-q secondary"
+## Reserved for, say, "-q secondary"
+qcmd_options=""
 
 options=
 for arg in $*; do
