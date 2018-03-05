@@ -17,8 +17,3 @@ local home = path .. "/" .. name .. "-" .. version
 prepend_path("PATH", home .. "/bin")
 prepend_path("MANPATH", home .. "/share/man")
 
--- samtools (< 1.6):
-prepend_path("PATH", home)
-prepend_path("PATH", home .. "/bcftools")
-prepend_path("PATH", home .. "/misc")
-

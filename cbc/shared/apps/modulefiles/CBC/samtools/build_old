@@ -2,7 +2,7 @@
 
 ## Identify all installed versions
 path=/cbc/shared/software_cbc
-versions=$(ls $path | grep "samtools[-][0-9]" | sed 's/samtools-//g' | tr '\n' ' ')
+versions=$(ls $path | grep "samtools[-][0]" | sed 's/samtools-//g' | tr '\n' ' ')
 echo $versions
 
 for version in ${versions}; do
