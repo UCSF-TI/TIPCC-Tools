@@ -2,7 +2,7 @@ help([[
 STAR: Spliced Transcripts Alignment to a Reference
 ]])
 
-local name = myModuleVersion()
+local name = myModuleName()
 local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: sequencing")
