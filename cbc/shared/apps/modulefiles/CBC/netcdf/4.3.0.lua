@@ -13,7 +13,14 @@ local path = "/opt/NetCDF"
 local home = path .. "/NetCDF-" .. version
 prepend_path("PATH", home .. "/bin")
 prepend_path("MANPATH", home .. "/share/man")
-prepend_path("LIBRARY_PATH", home .. "/lib")
-prepend_path("PKG_CONFIG_PATH", home .. "/lib/pkgconfig")
 prepend_path("LD_LIBRARY_PATH", home .. "/lib")
+
+prepend_path("PKG_CONFIG_PATH", home .. "/lib/pkgconfig")
+
+-- used by ./configure
+prepend_path("CFLAGS", "-I" .. home .. "/include", " ")
+prepend_path("LDFLAGS", "-L" .. home .. "/lib", " ")
+
+-- used by GCC compiler/linker
 prepend_path("CPATH", home .. "/include")
+prepend_path("LIBRARY_PATH", home .. "/lib")

@@ -13,6 +13,12 @@ local path = os.getenv("SOFTWARE_ROOT_CBC")
 local home = path .. "/" .. name .. "-" .. version
 prepend_path("PATH", home .. "/bin")
 prepend_path("MANPATH", home .. "/man")
-prepend_path("LIBRARY_PATH", home .. "/lib")
 prepend_path("LD_LIBRARY_PATH", home .. "/lib")
+
+-- used by ./configure
+prepend_path("CFLAGS", "-I" .. home .. "/include", " ")
+prepend_path("LDFLAGS", "-L" .. home .. "/lib", " ")
+
+-- used by GCC compiler/linker
 prepend_path("CPATH", home .. "/include")
+prepend_path("LIBRARY_PATH", home .. "/lib")
