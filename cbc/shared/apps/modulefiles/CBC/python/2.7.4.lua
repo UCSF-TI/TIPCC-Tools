@@ -10,7 +10,7 @@ whatis("Keywords: Programming")
 whatis("URL: https://www.python.org/")
 whatis("Description: Python is a programming language that lets you work quickly and integrate systems more effectively.  Example: `python --version` and `pip install --user {module}`.")
 
-local path = os.getenv("SOFTWARE_ROOT_CBC")
+local path = "/opt/Python"
 local home = path .. "/" .. name .. "-" .. version
 
 prepend_path("PATH", home .. "/bin")
