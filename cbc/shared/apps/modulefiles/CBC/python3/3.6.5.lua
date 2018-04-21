@@ -18,4 +18,6 @@ local home = path .. "/" .. name .. "-" .. version
 prepend_path("PATH", home .. "/bin")
 prepend_path("LD_LIBRARY_PATH", home .. "/lib")
 prepend_path("MANPATH", home .. "/share/man")
-prepend_path("PYTHONPATH", home .. "/lib/python3.6")
+
+-- No need to set PYTHONPATH; take care of automatically
+-- prepend_path("PYTHONPATH", home .. "/lib/python3.6")
