@@ -242,6 +242,8 @@ function filter_special() {
 
 function filter_builds() {
     res=$(printf '%s\n' "${res[@]}" | grep -v -E "/R/R-.*_tmp/R-")
+    ## Build Python from source
+    res=$(printf '%s\n' "${res[@]}" | grep -v -E "python -m test.regrtest")
     printf '%s\n' "${res[@]}"
 }
 
