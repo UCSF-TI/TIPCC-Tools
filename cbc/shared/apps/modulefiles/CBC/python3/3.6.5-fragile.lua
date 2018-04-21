@@ -1,14 +1,15 @@
 help([[
-Python: The Python Programming Language
+Python 3: The Python Programming Language (WARNING: Does NOT pass all tests!)
 ]])
 
--- local name = myModuleName()
 local name = "Python"
-local version = myModuleVersion()
+local version = "3.6.5"
+-- local name = myModuleName()
+-- local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: Programming")
 whatis("URL: https://www.python.org/")
-whatis("Description: Python is a programming language that lets you work quickly and integrate systems more effectively.  Example: `python --version` as well as `virtualenv myproject`, `. myproject/bin/activate`, and `pip install cnvkit`.")
+whatis("Description: Python is a programming language that lets you work quickly and integrate systems more effectively.  Example: `python3 --version` as well as `virtualenv myproject`, `. myproject/bin/activate`, and `pip install cnvkit`.")
 
 depends_on("openssl", "libpng", "bzip2", "pcre", "xz", "zlib")
 
@@ -19,5 +20,5 @@ prepend_path("PATH", home .. "/bin")
 prepend_path("LD_LIBRARY_PATH", home .. "/lib")
 prepend_path("MANPATH", home .. "/share/man")
 
--- No need to set PYTHONPATH; take care of automatically
+-- No need to set PYTHONPATH; taken care of automatically
 -- prepend_path("PYTHONPATH", home .. "/lib/python3.6")

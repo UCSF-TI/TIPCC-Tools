@@ -19,5 +19,5 @@ prepend_path("PATH", home .. "/bin")
 prepend_path("LD_LIBRARY_PATH", home .. "/lib")
 prepend_path("MANPATH", home .. "/share/man")
 
--- No need to set PYTHONPATH; take care of automatically
+-- No need to set PYTHONPATH; taken care of automatically
 -- prepend_path("PYTHONPATH", home .. "/lib/python2.7")
