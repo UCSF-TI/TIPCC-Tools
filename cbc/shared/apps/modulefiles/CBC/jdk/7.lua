@@ -11,6 +11,6 @@ whatis("Description: The Java programming language. Examples: `java -version` an
 
 local path = "/opt/java"
 local home = path .. "/" .. name .. "1.7.0" .. "_latest"
-prepend_path("JAVA_HOME", home)
+setenv("JAVA_HOME", home)
 prepend_path("PATH", home .. "/bin")
 prepend_path("MANPATH", home .. "/man")
