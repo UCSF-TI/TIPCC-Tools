@@ -14,3 +14,4 @@ local home = path .. "/" .. name .. "1.8.0" .. "_latest"
 setenv("JAVA_HOME", home)
 prepend_path("PATH", home .. "/bin")
 prepend_path("MANPATH", home .. "/man")
+prepend_path("LD_LIBRARY_PATH", home .. "/jre/lib/amd64/server")
