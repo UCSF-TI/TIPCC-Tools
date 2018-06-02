@@ -24,4 +24,6 @@ prepend_path("MANPATH", home .. "/share/man")
 -- No need to set PYTHONPATH; taken care of automatically
 -- prepend_path("PYTHONPATH", home .. "/lib/python3.6")
 
-io.stderr:write("WARNING: The python3/3.6.5 module is fragile - the build does NOT pass all tests. Use at your own risk!\n")
+if (mode() == "load") then
+  io.stderr:write("WARNING: The python3/3.6.5 module is fragile - the build does NOT pass all tests. Use at your own risk!\n")
+end
