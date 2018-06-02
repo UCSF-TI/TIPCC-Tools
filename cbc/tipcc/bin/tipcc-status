@@ -83,7 +83,7 @@ while [[ $# > 0 ]]; do
 done
 
 
-echo "# Cluster status"
+echo "# Cluster status ($(date '+%Y-%m-%d %k:%M:%S %Z'))"
 echo
 echo "## Nodes"
 echo
