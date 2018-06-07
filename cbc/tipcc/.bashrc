@@ -36,13 +36,13 @@ if [[ -x /etc/bash-startup ]]; then
     master=false; [[ "$HOSTNAME" == "cclc01.som.ucsf.edu" ]] && master=true
     job=false; [[ -n ${PBS_QUEUE+x} ]] && job=true
     lmod=false; [[ $STARTUP_DONE == *"lmod"* ]] && lmod=true
-    . /etc/bash-startup
+    . /etc/bash-startup ---
 elif [[ -x /home/shared/cbc/tipcc/bash-startup/bash-startup ]]; then
     ## Predefined startup variables
     master=false; [[ "$HOSTNAME" == "cclc01.som.ucsf.edu" ]] && master=true
     job=false; [[ -n ${PBS_QUEUE+x} ]] && job=true
     lmod=false; [[ $STARTUP_DONE == *"lmod"* ]] && lmod=true
-    . /home/shared/cbc/tipcc/bash-startup/bash-startup
+    . /home/shared/cbc/tipcc/bash-startup/bash-startup ---
     [[ -n "${STARTUP_DEBUG}" ]] && _startup_warn "Using /home/shared/cbc/tipcc/bash-startup/bash-startup"
 fi
 if [[ -n "${STARTUP_DEBUG}" ]]; then debug_echo "Utilizing bash-startup $(bash_startup --version)"; fi
@@ -172,15 +172,15 @@ export CLUSTER=tipcc
 ## ---------------------------------------------------------------------------
 ## Source the different .bashrc.d/ files, unless already done previously
 ## ---------------------------------------------------------------------------
-if [[ $STARTUP_DONE != *"tipcc-startup"* ]]; then
+if [[ $STARTUP_DISABLE != "true" && $STARTUP_DONE != *"tipcc-startup"* ]]; then
     if [[ -n "${STARTUP_DEBUG}" ]]; then debug_echo "STARTUP_FLAVOR: '$STARTUP_FLAVOR'"; fi
     ## NOTE: Defensive approach in case /etc/... is not prestaged. /HB 2018-05-31
     if [[ "$STARTUP_FLAVOR" != "2018-05-31" && -d /etc/bashrc.d ]]; then
         STARTUP_DONE=tipcc-startup
-        startup_source_d /etc/bashrc.d
+        startup_source_d /etc/bashrc.d ---
     elif [[ -d /home/shared/cbc/tipcc/.bashrc.d ]]; then
         [[ ! -d /etc/bashrc.d ]] && [[ -n "${STARTUP_DEBUG}" ]] && _startup_warn "/etc/bashrc.d is not a directory on $HOSTNAME"
         STARTUP_DONE=tipcc-startup
-        startup_source_d /home/shared/cbc/tipcc/.bashrc.d
+        startup_source_d /home/shared/cbc/tipcc/.bashrc.d ---
     fi
 fi
