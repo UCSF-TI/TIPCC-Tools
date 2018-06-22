@@ -14,3 +14,6 @@ local home = path .. "/" .. name .. "-" .. version
 prepend_path("PATH", home .. "/bin")
 prepend_path("LD_LIBRARY_PATH", home .. "/lib64")
 prepend_path("MANPATH", home .. "/share/man")
+-- CMake needs these to find the correct version of GCC
+setenv("CC", pathJoin(home, "bin/gcc"))
+setenv("CXX", pathJoin(home, "bin/g++"))
