@@ -1,0 +1,188 @@
+#!/usr/bin/env bash
+###########################################################################
+# Script to download and install the most recent R-devel, R-patched 
+# or R-release versions
+#
+# Usage: One of the following:
+#  install_r devel
+#  install_r patched
+#  install_r latest
+#
+# Henrik Bengtsson, 2015-09-18 -- 2018-04-25
+###########################################################################
+
+## Early stopping on error
+set -e
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Setup
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+opwd=$(pwd)
+
+ROOT=/home/shared/cbc/software_cbc/R
+
+NAME=R
+VERSION=devel  # default
+
+if [[ -n "$1" ]]; then
+    VERSION="$1"
+fi
+
+if [[ -z "$TMPDIR" ]]; then
+    TMPDIR="/tmp/$USER"
+fi
+
+today=$(date +%Y%m%d)
+mkdir -p "$TMPDIR/$NAME-$VERSION-$today"
+cd "$TMPDIR/$NAME-$VERSION-$today"
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# DOWNLOADING
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+echo "Downloading: $NAME-$VERSION.tar.gz"
+
+if [[ ! -f "$NAME-$VERSION.tar.gz" ]]; then
+    if [[ -f "${opwd}/$NAME-$VERSION.tar.gz" ]]; then
+	cp "${opwd}/$NAME-$VERSION.tar.gz" .
+    fi
+fi
+
+## Already downloaded?
+if [[ -f "$NAME-$VERSION.tar.gz" ]]; then
+  ls -l "$NAME-$VERSION.tar.gz"
+else
+  # Download latest R build, iff not already done
+  if [[ "$VERSION" == "devel" ]]; then
+    urlpath=ftp://ftp.stat.math.ethz.ch/Software/R
+  elif [[ "$VERSION" == "patched" ]]; then
+    urlpath=ftp://ftp.stat.math.ethz.ch/Software/R
+  elif [[ "$VERSION" == "latest" ]]; then
+     urlpath=https://cran.r-project.org/src/base
+  else
+    urlpath=https://cran.r-project.org/src/base/R-3
+  fi
+  url="$urlpath/$NAME-$VERSION.tar.gz"
+  echo "URL: $url"
+  curl -O "$url"
+fi
+
+if [[ ! -f "$NAME-$VERSION.tar.gz" ]]; then
+  echo "ERROR: Failed to locate installation file: $NAME-$VERSION.tar.gz"
+  exit 1
+fi
+ls -l "$NAME-$VERSION.tar.gz"
+
+# Extract
+tar -xzf "$NAME-$VERSION.tar.gz"
+
+## if [[ ! -d "$NAME-$VERSION" ]]; then
+##   echo "ERROR: Expected folder after extraction not found: $NAME-$VERSION"
+##   exit 1
+## fi
+
+## cd R-* # because could be R-rc when flavor == "patched"
+cd ${NAME}-*
+
+
+## Infer the install version
+VERSION=$(tr '[:upper:]' '[:lower:]' < VERSION)
+VERSION=${VERSION/under development (unstable)/devel}
+VERSION=${VERSION/ /}
+
+echo "Installing: $NAME-$VERSION"
+PREFIX="$ROOT/$NAME-$VERSION"
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# CONFIGURATION
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+module purge
+module load CBC gcc/4.9.2 netcdf bzip2 pcre xz libpng curl zlib
+./configure --prefix="$PREFIX" --enable-memory-profiling
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# BUILDING
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+make -j 4 > make.log
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# CHECKING
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+make -j 4 check > make-check.log
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# INSTALLATION
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+if [[ -d "$PREFIX" ]]; then
+    mv "$PREFIX" "$PREFIX.bak"
+fi
+
+echo "*** Installing base R"
+make install
+
+echo "*** Installing 'recommended' packages"
+${PREFIX}/bin/Rscript --vanilla \
+	   -e ".libPaths(rev(.libPaths())[1])" \
+	   -e "print(.libPaths())" \
+	   -e "stopifnot(length(.libPaths()) == 1L)" \
+	   -e "options(repos = c('https://cran.r-project.org', 'http://cran.r-project.org'))" \
+	   -e "db <- available.packages()" \
+	   -e "pkgs <- names(which(db[, 'Priority'] == 'recommended'))" \
+	   -e "print(pkgs)" \
+	   -e "pkgs2 <- pkgs[!sapply(pkgs, require, character.only = TRUE, quietly = TRUE)]" \
+	   -e "print(pkgs2)" \
+	   -e "if (length(pkgs2) > 0) install.packages(pkgs2)" \
+	   -e "sapply(pkgs, FUN = library, character.only = TRUE, logical.return = TRUE)"
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# POST-PROCESSING
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Make package library read-only to prevent installing packages into
+# it by mistake; all packages should be installed either to:
+#   (i) a site library, or
+#  (ii) a user-specific library.
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+libpath="${PREFIX}/lib64/R/library"
+if [[ -d "${libpath}" ]] && [[ -w "${libpath}" ]]; then
+    echo " Disabled any write permissions to the R system-wide library path: ${libath}"
+    chmod -R ugo-w ${libpath}
+fi
+
+## Preserve logs
+cp config.log make.log make-check.log "$PREFIX/"
+grep -A 28 -F "R is now configured" config.log > "$PREFIX/config.summary"
+
+
+if [[ -d "$PREFIX.bak" ]]; then
+    chmod -R u+w "$PREFIX.bak/lib64/R/library"
+    rm -rf "$PREFIX.bak"
+fi
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# RESULTS
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+echo "*** R capabilities and session information"
+# Display version and capabilites of installed R binaries
+${PREFIX}/bin/R -e "capabilities()" -e "sessionInfo()"
+
+echo "*** R installation path: ${PREFIX}"
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Cleanup
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+echo "CLEANUP:"
+cd "$opwd"
+pwd
+rm -rf "$TMPDIR/$NAME-$VERSION"
+ls "$TMPDIR"
+ls "$TMPDIR/$NAME-$VERSION"
+
+echo "DONE"
