@@ -8,7 +8,7 @@ local version = myModuleVersion()
 whatis("Version: " .. version)
 whatis("Keywords: Programming")
 whatis("URL: https://www.python.org/")
-whatis("Description: Python is a programming language that lets you work quickly and integrate systems more effectively.  Example: `python --version` and `pip install --user {module}`.")
+whatis("Description: Python is a programming language that lets you work quickly and integrate systems more effectively.  Example: `python --version` as well as `virtualenv myproject`, `. myproject/bin/activate`, and `pip install cnvkit`.")
 
 local path = "/opt/Python"
 local home = path .. "/" .. name .. "-" .. version
