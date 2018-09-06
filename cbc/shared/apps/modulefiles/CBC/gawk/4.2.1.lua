@@ -14,6 +14,8 @@ local home = path .. "/" .. name .. "-" .. version
 prepend_path("PATH", home .. "/bin")
 prepend_path("MANPATH", home .. "/share/man")
 prepend_path("LD_LIBRARY_PATH", home .. "/lib/gawk")
+prepend_path("AWKPATH", home .. "/share/awk")
+prepend_path("AWKLIBPATH", home .. "/lib/gawk")
 
 -- used by GCC compiler/linker
 prepend_path("CPATH", home .. "/include")
