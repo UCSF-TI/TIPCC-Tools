@@ -180,7 +180,7 @@ function filter_transfer() {
 
 function filter_files() {
     local res=("${@}")
-    res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(ls|cp|mv|rm|chmod|chown)( |:|$)")
+    res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(ls|cp|du|mv|rm|chmod|chown)( |:|$)")
     printf '%s\n' "${res[@]}"
 }
 
