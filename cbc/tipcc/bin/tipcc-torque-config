@@ -6,7 +6,7 @@
 ### tipcc-torque-config <config-tmpl-file>
 ###
 ### Version: 0.0.9-9000
-### Copyright: Henrik Bengtsson (2017)
+### Copyright: Henrik Bengtsson (2017-2018)
 ### License: GPL (>= 2.1) [https://www.gnu.org/licenses/gpl.html]
 call="$0 $*"
 tool_name=$(basename $0)
@@ -67,11 +67,22 @@ fi
 
 tmpl=$(cat ${tmpl_file})
 
-for node in {0..30}; do
-    printf "Node %d: /scratch = " ${node}  
-    
-    scratch_size=$(bpsh -s ${node} df -k /scratch/ | grep -F /scratch  | awk '{ print int($2 / 1024^2) }')
-    printf '%d' ${scratch_size}
+FIRST_NODE=${FIRST_NODE:-0}
+LAST_NODE=${LAST_NODE:-32}
+for node in $(seq $FIRST_NODE $LAST_NODE); do
+    printf "Node %d: " ${node}  
+
+    scratch_size=$(bpsh -s ${node} df -P -k /scratch/ 2> /dev/null)
+    if [ ! $? -eq 0 ]; then
+      node_name=n${node}
+      scratch_size=$(ssh ${node_name} df -P -k /scratch/ 2> /dev/null)
+      if [ ! $? -eq 0 ]; then
+	  echo "down; skipping"
+	  continue
+      fi
+    fi
+    scratch_size=$(echo "${scratch_size}" | grep -F /scratch  | awk '{ print int($2 / 1024^2) }')
+    printf '/scratch = %d (GiB)' ${scratch_size}
 
     ## Inject into template
     out=("${tmpl[@]/\{\{scratch\}\}/${scratch_size}}")
