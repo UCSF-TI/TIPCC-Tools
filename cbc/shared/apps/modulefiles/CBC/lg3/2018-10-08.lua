@@ -15,5 +15,4 @@ local path = os.getenv("SOFTWARE_ROOT_CBC")
 local home = path .. "/" .. "LG3_Pipeline" .. "-" .. version
 
 setenv("LG3_HOME", home)
-setenv("LG3_OUTPUT_ROOT", "output")
 prepend_path("PATH", pathJoin(home, "bin"))
