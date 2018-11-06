@@ -1,4 +1,3 @@
-
 #!/usr/bin/env bash
 ### UCSF HPC TIPCC:
 ### List user processes running on master (head node)
@@ -180,7 +179,7 @@ function filter_transfer() {
 
 function filter_files() {
     local res=("${@}")
-    res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(ls|cp|du|mv|rm|chmod|chown)( |:|$)")
+    res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(ls|cp|du|mv|rm|chmod|chown|tar|gzip|gunzip|bzip2|bunzip2)( |:|$)")
     printf '%s\n' "${res[@]}"
 }
 
