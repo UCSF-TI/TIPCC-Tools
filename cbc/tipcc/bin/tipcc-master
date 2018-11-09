@@ -185,7 +185,7 @@ function filter_files() {
 
 function filter_editors() {
     local res=("${@}")
-    res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(emacs|nano|pico|vim)( |:|$)")
+    res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(emacs|gedit|nano|pico|vim)( |:|$)")
     printf '%s\n' "${res[@]}"
 }
 
