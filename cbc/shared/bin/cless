@@ -12,12 +12,15 @@ for arg in $*; do
     sed_cmds="$sed_cmds -e s/\t/\x1B[1;45m<TAB>\x1B[m/g"
     sed_cmds="$sed_cmds -e s/\x20/\x1B[1;43m<SPACE>\x1B[m/g"
     sed_cmds="$sed_cmds -e s/,/\x1C[1;43m<COMMA>\x1B[m/g"
+    sed_cmds="$sed_cmds -e s/\x0d/\x1B[1;43m<CR>\x1B[m/g"
   elif test $arg == "--tabs" || test $arg == "-t"; then
     sed_cmds="$sed_cmds -e s/\t/\x1B[1;45m<TAB>\x1B[m/g"
   elif test $arg == "--space" || test $arg == "-s"; then
     sed_cmds="$sed_cmds -e s/\x20/\x1B[1;43m<SPACE>\x1B[m/g"
   elif test $arg == "--comma" || test $arg == "-c"; then
     sed_cmds="$sed_cmds -e s/,/\x1C[1;43m<COMMA>\x1B[m/g"
+  elif test $arg == "--newline" || test $arg == "-l"; then
+    sed_cmds="$sed_cmds -e s/\x0d/\x1B[1;43m<CR>\x1B[m/g"
   elif test $arg == "--debug" || test $arg == "-d"; then
     cmd=debug
   else
