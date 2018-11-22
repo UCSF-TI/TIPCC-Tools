@@ -93,13 +93,14 @@ VERSION=${VERSION/ /}
 echo "Installing: $NAME-$VERSION"
 PREFIX="$ROOT/$NAME-$VERSION"
 
+echo "Build directory: $PWD"
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # CONFIGURATION
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 module purge
 module load CBC gcc/4.9.2 netcdf bzip2 pcre xz libpng curl zlib
-./configure --prefix="$PREFIX" --enable-memory-profiling
+./configure --prefix="$PREFIX" --enable-memory-profiling --enable-R-shlib
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
