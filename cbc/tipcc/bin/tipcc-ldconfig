@@ -1,0 +1,95 @@
+#!/usr/bin/env bash
+### UCSF HPC TIPCC:
+### List ldconfig processes running on compute nodes
+###
+### Usage:
+###  tipcc-ldconfig [options]
+###
+### Options:
+###  --help                       This help
+###
+### Example:
+###  tipcc-ldconfig
+###
+### Version: 0.1.0-9000
+### Copyright: Henrik Bengtsson (2018)
+### License: GPL (>= 2.1) [https://www.gnu.org/licenses/gpl.html]
+call="$0 $*"
+tool_name=$(basename $0)
+if [[ ${TIPCC_TOOLS} -ne 0 ]]; then
+    tool_name=${tool_name/-/ }
+fi
+
+
+function mecho() { echo "$@" 1>&2; }
+
+function merror() {
+    mecho "ERROR in '${tool_name}': $*"
+    exit 1
+}
+
+function as_logical() {
+    if [[ $1 == "false" || $1 == "0" ]]; then echo 0; else echo 1; fi
+}
+
+function help() {
+    local res=$(grep -E "^###( .*|)$" $0 | cut -b 5-)
+    local search=$(basename $0)
+    if [[ "${search}" != "${tool_name}" ]]; then
+        res=$(printf '%s\n' "${res[@]}" | sed "s/${search}/${tool_name}/g")
+    fi
+    printf '%s\n' "${res[@]}"
+}
+
+function whatis() {
+    local res=$(grep "^### .*[^:][[:space:]]*$" $0 | head -1 | cut -b 5-)
+    printf '%s\n' "${res[@]}"
+}
+
+function version() {
+    grep -E "^###[ ]*Version:[ ]*" $0 | sed 's/###[ ]*Version:[ ]*//g'
+}
+
+## Cluster functions
+function on_compute_node() {
+    pbsnodes ${HOSTNAME} &> /dev/null
+    if [[ $? -eq 0 ]]; then echo 1; else echo 0; fi
+}
+
+# Parse command-line options
+while [[ $# > 0 ]]; do
+    if [[ "$1" == "--help" ]]; then
+        help
+        exit 0
+    elif [[ "$1" == "--whatis" ]]; then
+        whatis
+        exit 0
+    elif [[ "$1" == "--version" ]]; then
+        version
+        exit 0
+    else
+        extras="$extras $1"
+    fi
+    shift
+done
+
+
+## Assert running on master
+if [[ $(on_compute_node) -ne 0 ]]; then
+    merror "This command only works on master: ${HOSTNAME}"
+fi
+
+
+## Query ps + bpstat for _all_ running master-node processes
+## Note: master-node process are those without NODE information.
+res=$(ps uax | bpstat -P | grep -F "ldconfig" | grep -vE "^  ")
+
+## Nothing to do?
+if [[ -z "${res[@]}" ]]; then exit 0; fi
+
+ps uax | bpstat -P | head -1
+pids=$(echo "$res" | awk '{ print $3 }')
+for pid in ${pids}; do
+    echo "$res" | grep -F $pid
+    pstree -hp | grep ldconfig | grep $pid
+done
