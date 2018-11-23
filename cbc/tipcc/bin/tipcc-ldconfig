@@ -74,15 +74,9 @@ while [[ $# > 0 ]]; do
 done
 
 
-## Assert running on master
-if [[ $(on_compute_node) -ne 0 ]]; then
-    merror "This command only works on master: ${HOSTNAME}"
-fi
-
-
 ## Query ps + bpstat for _all_ running master-node processes
 ## Note: master-node process are those without NODE information.
-res=$(ps uax | bpstat -P | grep -F "ldconfig" | grep -vE "^  ")
+res=$(ps uax | bpstat -P | grep -F "ldconfig" | grep -vE "^  " | grep -vE "tipcc(-| )ldconfig" | grep -vF "grep")
 
 ## Nothing to do?
 if [[ -z "${res[@]}" ]]; then exit 0; fi
