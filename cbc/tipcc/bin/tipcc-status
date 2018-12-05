@@ -106,7 +106,7 @@ echo "## Disk space"
 df -h /home /data /work
 echo
 echo "## Local /scratch usage (free space and percent full)"
-sed '/NODES:/h;//!H;$!d;x' ~monitor/logs/today/nodes/disk_space-scratch.log | grep -E "(^NODE |/scratch$)" | tr $'\n' ':' | sed 's| /scratch|\n|g' | grep -v -E "^:$" | sed -E 's/^(|:)NODE //g' | sed -E 's/::[^ ]+[ ]+/ /g' | awk '{ avail=$4/1024; printf("%3s: %7.1f GiB (%4s)\n",$1,avail,$5) }'
+sed '/NODES:/h;//!H;$!d;x' ~monitor/logs/today/nodes/disk_space-scratch.log | grep -E "(^NODE |/scratch$)" | tr $'\n' ':' | sed 's| /scratch|\n|g' | grep -v -E "^:$" | sed -E 's/^(|:)NODE //g' | sed -E 's/::[^ ]+[ ]+/ /g' | sed -E 's/::[ ]+/ /g' | awk '{ avail=$4/1024; printf("%3s: %7.1f GiB (%4s)\n",$1,avail,$5) }'
 echo
 #echo "## Local /tmp usage (free space and percent full)"
 #sed '/NODES:/h;//!H;$!d;x' ~monitor/logs/today/nodes/disk_space-tmp.log | grep -E "(^NODE |% /$)" | tr $'\n' ':' | sed 's| /|\n|g' | grep -v -E "^:$" | sed -E 's/^(|:)NODE //g' | sed -E 's/::[^ ]+[ ]+/ /g' | awk '{ avail=$4/1024; printf("%3s: %7.1f GiB (%4s)\n",$1,avail,$5) }'
