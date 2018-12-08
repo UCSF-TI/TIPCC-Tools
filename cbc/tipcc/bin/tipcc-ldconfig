@@ -56,6 +56,8 @@ function on_compute_node() {
     if [[ $? -eq 0 ]]; then echo 1; else echo 0; fi
 }
 
+on_node=false
+
 # Parse command-line options
 while [[ $# > 0 ]]; do
     if [[ "$1" == "--help" ]]; then
@@ -67,6 +69,8 @@ while [[ $# > 0 ]]; do
     elif [[ "$1" == "--version" ]]; then
         version
         exit 0
+    elif [[ "$1" == "--on-node" ]]; then
+        on_node=true
     else
         extras="$extras $1"
     fi
@@ -81,9 +85,32 @@ res=$(ps uax | bpstat -P | grep -F "ldconfig" | grep -vE "^  " | grep -vE "tipcc
 ## Nothing to do?
 if [[ -z "${res[@]}" ]]; then exit 0; fi
 
-ps uax | bpstat -P | head -1
+header=$(ps uax | bpstat -P | head -1)
+
+## For each process, output further details...
 pids=$(echo "$res" | awk '{ print $3 }')
 for pid in ${pids}; do
-    echo "$res" | grep -F $pid
-    pstree -hp | grep ldconfig | grep $pid
+    echo "Stalled process:"
+    echo "$header"
+    process=$(echo "$res" | grep -F $pid)
+    echo "$process"
+    echo
+    echo "Process tree:"
+    tree=$(pstree -hp | grep ldconfig | grep $pid)
+    echo "$tree"
+    echo
+
+    echo "Process tree details:"
+    tree_pids=$(echo "$tree" | sed -E 's/[^0-9]+/ /g' | sed -E 's/(^ | $)//g')
+    if $on_node; then
+	node=$(echo "$process" | sed -E 's/ .*//g')
+	[[ -n "$node" ]] || on_node=false
+    fi
+    if $on_node; then
+	node="n${node}"
+        bpsh "$node" ps -f -p "$tree_pids"
+    else
+        ps -f -p "$tree_pids"
+    fi
+    echo
 done
