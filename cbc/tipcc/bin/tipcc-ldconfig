@@ -98,7 +98,7 @@ for pid in ${pids}; do
     echo "$process"
     echo
     echo "Process tree:"
-    tree=$(pstree -hp | grep ldconfig | grep $pid)
+    tree=$(pstree -hlp | grep ldconfig | grep $pid)
     echo "$tree"
     echo
 
