@@ -81,16 +81,16 @@ done
 
 ## Query ps + bpstat for _all_ running master-node processes
 ## Note: master-node process are those without NODE information.
-res=$(ps -eo pid,ppid,state,%cpu,lstart,args | bpstat -P | grep -F "ldconfig" | grep -vE "^  " | grep -vE "tipcc(-| )ldconfig" | grep -vF "grep")
+res=$(ps -eo user,pid,ppid,state,%cpu,lstart,args | bpstat -P | grep -F "ldconfig" | grep -vE "^  " | grep -vE "tipcc(-| )ldconfig" | grep -vF "grep")
 #res=$(ps uax | bpstat -P | grep -F "ldconfig" | grep -vE "^  " | grep -vE "tipcc(-| )ldconfig" | grep -vF "grep")
 
 ## Nothing to do?
 if [[ -z "${res[@]}" ]]; then exit 0; fi
 
-header=$(ps -eo pid,ppid,state,%cpu,lstart,args | bpstat -P | head -1) # | sed 's/NODE/NODE\tUSER/')
+header=$(ps -eo user,pid,ppid,state,%cpu,lstart,args | bpstat -P | head -1) # | sed 's/NODE/NODE\tUSER/')
 
 ## For each process, output further details...
-pids=$(echo "$res" | awk '{ print $3 }')
+pids=$(echo "$res" | awk '{ print $4 }')
 for pid in ${pids}; do
     echo "Stalled process:"
     echo "$header"
@@ -116,3 +116,12 @@ for pid in ${pids}; do
     fi
     echo
 done
+
+
+## Find info for all users
+echo "User contact information:"
+users=$(echo "$res" | awk '{ print $2 }' | sort -u)
+for user in $users; do
+    tipcc user "$user" | grep -E "(Username|Name|Groups|Email)"
+    echo
+done    
