@@ -141,8 +141,8 @@ fi
 
 if test "$#" == "0"; then
   if test "$njobs" != "0"; then
-    echo "Job ID  Job name         PID      NDS    TSK    RAM      Time S     Since   Nodes/cores"
-    echo "------- ---------------- ------ ----- ------ ------ --------- - ---------   -----------"
+    echo "Job ID  Job name         PID      NDS    TSK    RAM      Time S     Since   Nodes/Slot ID"
+    echo "------- ---------------- ------ ----- ------ ------ --------- - ---------   -------------"
     ##### 269203  async1262705617- 476252     1      1    --   99:23:59 R  00:10:56   n9/6
     echo "$jobs"
   fi
