@@ -9,7 +9,7 @@ local version = "3.6.5"
 whatis("Version: " .. version)
 whatis("Keywords: Programming")
 whatis("URL: https://www.python.org/")
-whatis("Description: Python is a programming language that lets you work quickly and integrate systems more effectively.  Example: `python3 --version` as well as `virtualenv myproject`, `. myproject/bin/activate`, and `pip install cnvkit`.")
+whatis("Description: Python is a programming language that lets you work quickly and integrate systems more effectively.  Example: `python3 --version` as well as `virtualenv myproject`, `. myproject/bin/activate`, and `pip install cnvkit`.  WARNING: The python3/3.6.5 module is fragile - the build does NOT pass all tests. Use at your own risk! See https://github.com/UCSF-TI/TIPCC/issues/259 for details.")
 
 -- "openssl" not available
 depends_on("libpng", "bzip2", "pcre", "xz", "zlib")
@@ -25,5 +25,5 @@ prepend_path("MANPATH", home .. "/share/man")
 -- prepend_path("PYTHONPATH", home .. "/lib/python3.6")
 
 if (mode() == "load") then
-  io.stderr:write("WARNING: The python3/3.6.5 module is fragile - the build does NOT pass all tests. Use at your own risk!\n")
+  io.stderr:write("WARNING: The python3/3.6.5 module is fragile - the build does NOT pass all tests. Use at your own risk! See https://github.com/UCSF-TI/TIPCC/issues/259 for details.\n")
 end
