@@ -22,6 +22,9 @@ prepend_path("LD_LIBRARY_PATH", pathJoin(home, "lib"))
 prepend_path("LD_RUN_PATH", pathJoin(home, "lib"))
 -- building
 prepend_path("PKG_CONFIG_PATH", pathJoin(home, "lib", "pkgconfig"))
--- prepend_path("CPATH",  pathJoin(home, "include"))
--- prepend_path("CFLAGS", "-I" .. pathJoin(home, "include"), " ")
--- prepend_path("LDFLAGS", "-L" .. pathJoin(home, "lib"), " ")
+prepend_path("CPATH",  pathJoin(home, "include"))
+prepend_path("CFLAGS", "-I" .. pathJoin(home, "include"), " ")
+prepend_path("LDFLAGS", "-L" .. pathJoin(home, "lib"), " ")
+prepend_path("LIBS", "-L" .. pathJoin(home, "lib"), " ")
+-- AD HOC: Needed by install.packages("rgdal") in R
+prepend_path("PKG_LIBS", "-L" .. pathJoin(home, "lib"), " ")
