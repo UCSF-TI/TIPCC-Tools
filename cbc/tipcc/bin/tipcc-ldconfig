@@ -6,14 +6,16 @@
 ###  tipcc-ldconfig [options]
 ###
 ### Options:
-###  --help      This help
-###  --on-node   Logs into node for detailed process information
+###  --help         This help
+###  --on-node      Logs into node for detailed process information
+###  --user <user>  Specify user (default: _all_)
 ###
 ### Example:
 ###  tipcc-ldconfig
+###  tipcc-ldconfig --user alice
 ###
 ### Version: 0.1.0-9000
-### Copyright: Henrik Bengtsson (2018)
+### Copyright: Henrik Bengtsson (2018-2019)
 ### License: GPL (>= 2.1) [https://www.gnu.org/licenses/gpl.html]
 call="$0 $*"
 tool_name=$(basename $0)
@@ -52,12 +54,17 @@ function version() {
 }
 
 ## Cluster functions
+function all_users() {
+  cat /etc/passwd | grep -F "/home/" | grep -E "(@|inactive)" | cut -d':' -f1 | sort -u
+}
+
 function on_compute_node() {
     pbsnodes ${HOSTNAME} &> /dev/null
     if [[ $? -eq 0 ]]; then echo 1; else echo 0; fi
 }
 
 on_node=false
+user=_all_
 
 # Parse command-line options
 while [[ $# > 0 ]]; do
@@ -72,6 +79,9 @@ while [[ $# > 0 ]]; do
         exit 0
     elif [[ "$1" == "--on-node" ]]; then
         on_node=true
+    elif [[ "$1" == "--user" ]]; then
+        shift
+        user=$1
     else
         extras="$extras $1"
     fi
@@ -89,39 +99,68 @@ if [[ -z "${res[@]}" ]]; then exit 0; fi
 
 header=$(ps -eo user,pid,ppid,state,%cpu,lstart,args | bpstat -P | head -1) # | sed 's/NODE/NODE\tUSER/')
 
-## For each process, output further details...
-pids=$(echo "$res" | awk '{ print $4 }')
-for pid in ${pids}; do
-    echo "Stalled process:"
-    echo "$header"
-    process=$(echo "$res" | grep -F $pid)
-    echo "$process"
-    echo
-    echo "Process tree:"
-    tree=$(pstree -hlp | grep ldconfig | grep $pid)
-    echo "$tree"
-    echo
 
-    echo "Process tree details:"
-    tree_pids=$(echo "$tree" | sed -E 's/[^0-9]+/ /g' | sed -E 's/(^ | $)//g')
-    if $on_node; then
-	node=$(echo "$process" | sed -E 's/ .*//g')
-	[[ -n "$node" ]] || on_node=false
-    fi
-    if $on_node; then
-	node="n${node}"
-        bpsh "$node" ps -f -p "$tree_pids"
-    else
-        ps -f -p "$tree_pids"
-    fi
-    echo
+## Check all users?
+if [[ $user == *","* ]]; then
+    mecho "Multiple users: $user"
+    users=$(echo ${user} | sed 's/,/ /')
+elif [[ $user == *" "* ]]; then
+    mecho "Multiple users: $user"
+elif [[ ${user} == "_all_" ]]; then
+    users=$(printf '%s\n' "${res[@]}" | sed -E 's/^[0-9]*[[:space:]]+([a-zA-Z0-9]+)[[:space:]].*/\1/g' | sort -u)
+else
+    users=${user}
+fi
+
+
+## For each user
+for user in ${users[@]}; do
+  ## Identify user
+  uid=$(id -u $user 2> /dev/null)
+  if [[ $? -ne 0 ]]; then
+      merror "No such user: $user"
+  fi
+  
+  ## Keep only those for the user of interest
+  res_ii=$(printf '%s\n' "${res[@]}" | grep -E "[[:space:]]($user|$uid)[[:space:]]")
+
+  ## Nothing to do?
+  if [[ -z "${res_ii[@]}" ]]; then continue; fi
+
+  ## For each process, output further details...
+  pids=$(echo "$res_ii" | awk '{ print $4 }')
+  for pid in ${pids}; do
+      echo "Stalled process:"
+      echo "$header"
+      process=$(echo "$res_ii" | grep -F $pid)
+      echo "$process"
+      echo
+      echo "Process tree:"
+      tree=$(pstree -hlp | grep ldconfig | grep $pid)
+      echo "$tree"
+      echo
+  
+      echo "Process tree details:"
+      tree_pids=$(echo "$tree" | sed -E 's/[^0-9]+/ /g' | sed -E 's/(^ | $)//g')
+      if $on_node; then
+          node=$(echo "$process" | sed -E 's/ .*//g')
+          [[ -n "$node" ]] || on_node=false
+      fi
+      if $on_node; then
+          node="n${node}"
+          bpsh "$node" ps -f -p "$tree_pids"
+      else
+          ps -f -p "$tree_pids"
+      fi
+      echo
+  done
+  
+  
+  ## Find info for all users
+  echo "User contact information:"
+  users=$(echo "$res_ii" | awk '{ print $2 }' | sort -u)
+  for user in $users; do
+      tipcc user "$user" | grep -E "(Username|Name|Groups|Email)"
+      echo
+  done    
 done
-
-
-## Find info for all users
-echo "User contact information:"
-users=$(echo "$res" | awk '{ print $2 }' | sort -u)
-for user in $users; do
-    tipcc user "$user" | grep -E "(Username|Name|Groups|Email)"
-    echo
-done    
