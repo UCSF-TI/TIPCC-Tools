@@ -83,6 +83,7 @@ while [[ $# > 0 ]]; do
 done
 
 
+
 echo "# Cluster status ($(date '+%Y-%m-%d %k:%M:%S %Z'))"
 echo
 echo "## Nodes"
@@ -154,3 +155,23 @@ if [[ $(on_compute_node) -ne 0 ]]; then
     TIPCC_TOOLS=0 tipcc-master --hicpu
     echo
 fi
+
+
+echo "## Backup"
+echo
+echo "### Weekly rsync"
+backup_log=/backup/home/home_backup.log
+status_line=$(grep -F status "$backup_log" | sed 's/.*Job/Job/g')
+status=$(echo $status_line | sed -E 's/.*status[[:space:]]*=[[:space:]]*([[:digit:]]+).*/\1/g')
+too_old=$(find $backup_log -mtime +7 | wc -l)
+if [ $status -eq 0 ] && [ $too_old -eq 0 ]; then
+  stat --printf="Last run: %y (%n %s bytes)\n" "$backup_log"
+  echo "Status: $status_line"
+else
+  tput setaf 1 2> /dev/null ## red
+  stat --printf="Last run: %y (%n %s bytes)\n" "$backup_log"
+  echo "Status: $status_line"
+  tput sgr0 2> /dev/null    ## reset
+fi
+df -P -h /backup
+echo
