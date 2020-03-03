@@ -1,25 +1,20 @@
 #!/usr/bin/env bash
-### UCSF HPC TIPCC:
-### The UCSF Cancer Center Compute Cluster
+### TIPCC: The UCSF Cancer Center Compute Cluster
 ###
 ### Usage:
 ###  tipcc <command> [options]
 ###
+### Commands:
+### {{table_of_tools}}
+###
 ### Examples:
-###  tipcc status              - Cluster status
-###  tipcc nodes               - List nodes that are up
-###  tipcc user                - Detailed user information
-###  tipcc users               - List all users
-###  tipcc ps --node master    - List all processes on master
-###  tipcc ps --node n6        - List all processes on node n6
-###  tipcc master              - List process usage of master
-###  tipcc disk_usage          - Summarize a user's disk usage
-###  tipcc delete_sam_with_bam - Delete SAM files with existing (newer) BAM file
-###  tipcc ganglia             - Download Ganglia graphs (as image files)
-###  tipcc pm                  - Post-mortem analysis
+###  tipcc user --help
+###  tipcc user alice
+###  tipcc ps --node master
+###  tipcc ps --node n6
 ###
 ### Version: 0.1.0-9000
-### Copyright: Henrik Bengtsson (2017)
+### Copyright: Henrik Bengtsson (2017-2020)
 ### License: GPL (>= 2.1) [https://www.gnu.org/licenses/gpl.html]
 call="$0 $*"
 args="$*"
@@ -36,26 +31,50 @@ function as_logical() {
     if [[ $1 == "false" || $1 == "0" ]]; then echo 0; else echo 1; fi
 }
 
-function help() {
-    local res=$(grep -E "^###( .*|)$" $0 | cut -b 5-)
-
-    ## Substitutions
-    res=$(printf '%s\n' "${res[@]}" | sed -e "s#\${SHARED_ROOT}#$SHARED_ROOT#g")
-
-#    local search=$(basename $0)
-#    if [[ "${search}" != "${tool_name}" ]]; then
-#        res=$(printf '%s\n' "${res[@]}" | sed "s/${search}/${tool_name}/g")
-#    fi
-    printf '%s\n' "${res[@]}"
-}
-
-function whatis() {
-    local res=$(grep "^### .*[^:][[:space:]]*$" $0 | head -1 | cut -b 5-)
-    printf '%s\n' "${res[@]}"
-}
-
 function version() {
     grep -E "^###[ ]*Version:[ ]*" $0 | sed 's/###[ ]*Version:[ ]*//g'
+}
+
+function list_tools {
+    tools=
+    for path in $(echo -e "${PATH//:/\\n}" | sort -u); do
+	# shellcheck disable=SC2010,SC2086
+	tools="$tools $(ls $path/tipcc-* 2> /dev/null | grep -vE '(^#|~$|#$)' | sed 's|.*/tipcc-||')"
+    done
+    echo -e "${tools// /\\n}" | sort -u | grep -vE "^$"
+}
+
+function whatis {
+    local pathname
+    pathname="$(command -v "tipcc-$1")"
+    local res
+    res=$(grep -E "^### whatis: " "$pathname" | sed 's/^### whatis: //')
+    if [[ -z "${res}" ]]; then
+        res=$(grep -E "^### " "$pathname" | head -1 | sed 's/^### //')
+    fi
+    echo "$res"
+}
+
+function table_of_tools {
+    local cmd
+    for cmd in $(list_tools); do
+        printf " %-8s  %s\\n" "$cmd" "$(whatis "$cmd")"
+    done
+}
+
+function help() {
+    local t
+    res=$(grep "^###" "$0" | cut -b 5-)
+    ## Substitutions
+    res=$(printf '%s\n' "${res[@]}" | sed -e "s#\${SHARED_ROOT}#$SHARED_ROOT#g")
+    t=$(table_of_tools)
+    t=${t//$'\n'/\\n}
+    printf 'TOOLS:\n'
+    printf '%s\n' "${t[@]}"
+    echo '--------------'
+    res=$(printf '%s\n' "${res[@]}" | sed "s|{{table_of_tools}}|$t|")
+    echo '--------------'
+    printf '%s\n' "${res[@]}"
 }
 
 function on_compute_node() {

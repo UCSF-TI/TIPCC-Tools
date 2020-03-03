@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-### UCSF HPC TIPCC:
 ### Scan for potential security leaks by user
 ###
 ### Usage:

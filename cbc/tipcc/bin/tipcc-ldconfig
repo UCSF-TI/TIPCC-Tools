@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-### UCSF HPC TIPCC:
 ### List ldconfig processes running on compute nodes
 ###
 ### Usage:

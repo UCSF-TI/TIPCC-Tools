@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-### UCSF HPC TIPCC:
-### Creates mom_priv/config.${node} files from template
+### Creates mom_priv/config.{{node}} files from template
 ###
 ### Usage:
 ### tipcc-torque-config <config-tmpl-file>
