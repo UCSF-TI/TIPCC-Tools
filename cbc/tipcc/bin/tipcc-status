@@ -6,8 +6,12 @@
 ###
 ### Options:
 ###  --backup            Report on backup status
-###  --local-disk        Report on nodes' local disk usage
-###  --full              Output more details
+###  --disk-space        Report on disk usage on /data, /home, and /work
+###  --local-scratch     Report on local disk usage on compute nodes
+###  --master            Report on processes on the master node
+###  --nodes             Report on statuses on compute nodes
+###  --scheduler         Report on job scheduler status
+###  --uptime            Report on uptime and vm stats
 ###  --help              This help
 ###
 ### Example:
@@ -57,7 +61,7 @@ function on_compute_node() {
     echo $?
 }
 
-sections_default="nodes disk_space scheduler uptime processes_on_master backup"
+sections_default="nodes disk_space local_scratch scheduler uptime processes_on_master backup"
 sections=
 local_disk=false
 full=0
@@ -81,6 +85,16 @@ while [[ $# > 0 ]]; do
         sections="$sections backup"
     elif [[ "$1" == "--disk-space" ]]; then
         sections="$sections disk_space"
+    elif [[ "$1" == "--local-scratch" ]]; then
+        sections="$sections local_scratch"
+    elif [[ "$1" == "--master" ]]; then
+        sections="$sections processes_on_master"
+    elif [[ "$1" == "--nodes" ]]; then
+        sections="$sections nodes"
+    elif [[ "$1" == "--scheduler" ]]; then
+        sections="$sections scheduler"
+    elif [[ "$1" == "--uptime" ]]; then
+        sections="$sections uptime"
     else
         extras="$extras $1"
     fi
@@ -118,6 +132,9 @@ if [[ "$sections" == *disk_space* ]]; then
   echo "## Disk space"
   df -h /home /data /work
   echo
+fi
+
+if [[ "$sections" == *local_scratch* ]]; then
   echo "## Local /scratch usage (free space and percent full)"
   disk_log=~monitor/logs/today/nodes/disk_space-scratch.log
   if [ -f "$disk_log" ]; then
