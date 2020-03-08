@@ -213,17 +213,25 @@ if [[ "$sections" == *backup* ]]; then
   echo "### Weekly rsync"
   echo
   for backup_log in /backup/home/home_backup.log /cbc2/data1/cclc01/backup/home_backup_copy.log; do
-    status_line=$(grep -F status "$backup_log" | sed 's/.*Job/Job/g')
-    status=$(echo $status_line | sed -E 's/.*status[[:space:]]*=[[:space:]]*([[:digit:]]+).*/\1/g')
-    too_old=$(find $backup_log -mtime +7 | wc -l)
-    if [ $status -eq 0 ] && [ $too_old -eq 0 ]; then
-      stat --printf="Last run: %y (%n %s bytes)\n" "$backup_log"
-      echo "Status: $status_line"
+    ## Completed?
+    if grep -q -F status "$backup_log"; then  
+        status_line=$(grep -F status "$backup_log" | sed 's/.*Job/Job/g')
+        status=$(echo $status_line | sed -E 's/.*status[[:space:]]*=[[:space:]]*([[:digit:]]+).*/\1/g')
+        too_old=$(find $backup_log -mtime +7 | wc -l)
+        if [ $status -eq 0 ] && [ $too_old -eq 0 ]; then
+            stat --printf="Last run: %y (%n %s bytes)\n" "$backup_log"
+            echo "Status: $status_line"
+        else
+            tput setaf 1 2> /dev/null ## red
+            stat --printf="Last run: %y (%n %s bytes)\n" "$backup_log"
+            echo "Status: $status_line"
+            tput sgr0 2> /dev/null    ## reset
+        fi
     else
-      tput setaf 1 2> /dev/null ## red
-      stat --printf="Last run: %y (%n %s bytes)\n" "$backup_log"
-      echo "Status: $status_line"
-      tput sgr0 2> /dev/null    ## reset
+        tput setaf 3 2> /dev/null ## yellow
+        stat --printf="Currently running: %y (%n %s bytes)\n" "$backup_log"
+	tail -n 1 "$backup_log"
+        tput sgr0 2> /dev/null    ## reset
     fi
   done
   echo
