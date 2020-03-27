@@ -101,7 +101,6 @@ while [[ $# > 0 ]]; do
     shift
 done
 
-
 if [[ -z "$sections" ]]; then
     sections=$sections_default
 fi
@@ -163,7 +162,15 @@ if [[ "$sections" == *scheduler* ]]; then
       echo "Moab status: <only available from master, not from ${HOSTNAME}>"
   else
       PATH="/sbin:$PATH"  ## AD HOC: 'service' might not be on PATH
-      echo "Moab status: $(service moab status)"
+      status=$(service moab status)
+      res=$?
+      if [[ $res -eq 0 ]]; then
+          echo "Moab status: $status (exit code $res)"
+      else
+          tput setaf 1 2> /dev/null ## red
+          echo "Moab status: $status (exit code $res)"
+          tput sgr0 2> /dev/null    ## reset
+      fi
   fi
   echo
   echo "### TORQUE / PBS"
