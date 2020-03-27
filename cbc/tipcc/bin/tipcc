@@ -123,10 +123,10 @@ users=($(cat /etc/passwd | grep -F "/home/" | grep -E "(@|inactive)" | cut -d':'
 
 extras=
 while [[ $# > 0 ]]; do
-    if [[ "$1" == "--nodes" ]]; then
-        shift
-        nodes=$1
-    elif [[ "$1" == "--node" ]]; then
+#    if [[ "$1" == "--nodes" ]]; then
+#        shift
+#        nodes=$1
+    if [[ "$1" == "--node" ]]; then
         shift
         nodes=$1
     elif [[ "$1" == "--users" ]]; then
