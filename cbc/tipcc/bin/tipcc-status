@@ -219,7 +219,7 @@ if [[ "$sections" == *backup* ]]; then
   echo
   echo "### Weekly rsync"
   echo
-  for backup_log in /backup/home/home_backup.log /cbc2/data1/cclc01/backup/home_backup_copy.log; do
+  for backup_log in /cbc2/data1/cclc01/backup/home_backup_copy.log; do
     ## Completed?
     if grep -q -F status "$backup_log"; then  
         status_line=$(grep -F status "$backup_log" | sed 's/.*Job/Job/g')
