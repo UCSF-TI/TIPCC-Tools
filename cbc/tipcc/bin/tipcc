@@ -69,11 +69,7 @@ function help() {
     res=$(printf '%s\n' "${res[@]}" | sed -e "s#\${SHARED_ROOT}#$SHARED_ROOT#g")
     t=$(table_of_tools)
     t=${t//$'\n'/\\n}
-    printf 'TOOLS:\n'
-    printf '%s\n' "${t[@]}"
-    echo '--------------'
     res=$(printf '%s\n' "${res[@]}" | sed "s|{{table_of_tools}}|$t|")
-    echo '--------------'
     printf '%s\n' "${res[@]}"
 }
 
