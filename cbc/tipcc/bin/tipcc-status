@@ -134,25 +134,15 @@ if [[ "$sections" == *disk_space* ]]; then
 fi
 
 if [[ "$sections" == *local_scratch* ]]; then
-  echo "## Local /scratch usage (free space and percent full)"
+  echo "## Local /scratch usage (amount of free space)"
   disk_log=~monitor/logs/today/nodes/disk_space-scratch.log
   if [ -f "$disk_log" ]; then
-      sed '/NODES:/h;//!H;$!d;x' "$disk_log" | grep -E "(^NODE |/scratch$)" | tr $'\n' ':' | sed 's| /scratch|\n|g' | grep -v -E "^:$" | sed -E 's/^(|:)NODE //g' | sed -E 's/::[^ ]+[ ]+/ /g' | sed -E 's/::[ ]+/ /g' | awk '{ avail=$4/1024; printf("%3s: %7.1f GiB (%4s)\n",$1,avail,$5) }'
+      sed '/NODES:/h;//!H;$!d;x' "$disk_log" | grep -E "(^NODE |/scratch$)" | tr $'\n' ':' | sed 's| /scratch|\n|g' | grep -v -E "^:$" | sed -E 's/^(|:)NODE //g' | sed -E 's/::[^ ]+[ ]+/ /g' | sed -E 's/::[ ]+/ /g' | awk '{ avail=$4/1024; printf("%3s: %7.1f GiB (%3s%%)\n",$1,avail,100-$5) }'
   else
       echo "Not available"
   fi
   echo
 fi
-
-# echo "## Local /tmp usage (free space and percent full)"
-# disk_log=~monitor/logs/today/nodes/disk_space-tmp.log
-# if [ -f "$disk_log" ]; then
-#     echo "## Local /tmp usage (free space and percent full)"
-#     sed '/NODES:/h;//!H;$!d;x' "$disk_log" | grep -E "(^NODE |/scratch$)" | tr $'\n' ':' | sed 's| /scratch|\n|g' | grep -v -E "^:$" | sed -E 's/^(|:)NODE //g' | sed -E 's/::[^ ]+[ ]+/ /g' | sed -E 's/::[ ]+/ /g' | awk '{ avail=$4/1024; printf("%3s: %7.1f GiB (%4s)\n",$1,avail,$5) }'
-# else
-#     echo "Not available"
-# fi
-# echo
 
 if [[ "$sections" == *scheduler* ]]; then
   echo "## Job scheduler"
