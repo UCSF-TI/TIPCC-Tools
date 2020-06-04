@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-### UCSF HPC TIPCC:
 ### List processes running on the cluster
 ###
 ### Usage:

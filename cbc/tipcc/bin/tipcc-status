@@ -1,17 +1,21 @@
 #!/usr/bin/env bash
-### UCSF HPC TIPCC:
 ### Cluster status summary
 ###
 ### Usage:
 ###  tipcc-status [options]
 ###
 ### Options:
-###  --local-disk        Report on nodes' local disk usage
-###  --full              Output more details
+###  --backup            Report on backup status
+###  --disk-space        Report on disk usage on /data, /home, and /work
+###  --local-scratch     Report on local disk usage on compute nodes
+###  --master            Report on processes on the master node
+###  --nodes             Report on statuses on compute nodes
+###  --scheduler         Report on job scheduler status
+###  --uptime            Report on uptime and vm stats
 ###  --help              This help
 ###
 ### Example:
-###  tipcc-status
+###  tipcc-status        # all sections by default
 ###
 ### Version: 0.1.0-9000
 ### Copyright: Henrik Bengtsson (2016-2017)
@@ -57,7 +61,8 @@ function on_compute_node() {
     echo $?
 }
 
-
+sections_default="nodes disk_space local_scratch scheduler uptime processes_on_master backup"
+sections=
 local_disk=false
 full=0
 
@@ -76,102 +81,158 @@ while [[ $# > 0 ]]; do
         local_disk=true
     elif [[ "$1" == "--full" ]]; then
         full=1
+    elif [[ "$1" == "--backup" ]]; then
+        sections="$sections backup"
+    elif [[ "$1" == "--disk-space" ]]; then
+        sections="$sections disk_space"
+    elif [[ "$1" == "--local-scratch" ]]; then
+        sections="$sections local_scratch"
+    elif [[ "$1" == "--master" ]]; then
+        sections="$sections processes_on_master"
+    elif [[ "$1" == "--nodes" ]]; then
+        sections="$sections nodes"
+    elif [[ "$1" == "--scheduler" ]]; then
+        sections="$sections scheduler"
+    elif [[ "$1" == "--uptime" ]]; then
+        sections="$sections uptime"
     else
         extras="$extras $1"
     fi
     shift
 done
 
-
+if [[ -z "$sections" ]]; then
+    sections=$sections_default
+fi
 
 echo "# Cluster status ($(date '+%Y-%m-%d %k:%M:%S %Z'))"
 echo
-echo "## Nodes"
-echo
-echo "### According to 'bpstat' (Scyld)"
-bpstat
-echo
-echo "### According to 'pbsnodes' (TORQUE)"
-pbsnodes -l
-echo
-pbsnodes | grep -q -F "ERROR" > /dev/null
-if [[ $? -eq 0 ]]; then
-  tput setaf 1 2> /dev/null ## red
-  echo "## ERROR: Problematic nodes"
-  pbsnodes | grep -B 7 -A 2 -F "ERROR" | grep -E "^(n[0-9]+|[[:space:]]+status = )"
-  tput sgr0 2> /dev/null    ## reset
+
+if [[ "$sections" == *nodes* ]]; then
+  echo "## Nodes"
+  echo
+  echo "### According to 'bpstat' (Scyld)"
+  bpstat
+  echo
+  echo "### According to 'pbsnodes' (TORQUE)"
+  pbsnodes -l
+  echo
+  pbsnodes | grep -q -F "ERROR" > /dev/null
+  if [[ $? -eq 0 ]]; then
+    tput setaf 1 2> /dev/null ## red
+    echo "## ERROR: Problematic nodes"
+    pbsnodes | grep -B 7 -A 2 -F "ERROR" | grep -E "^(n[0-9]+|[[:space:]]+status = )"
+    tput sgr0 2> /dev/null    ## reset
+    echo
+  fi
+fi
+
+if [[ "$sections" == *disk_space* ]]; then
+  echo "## Disk space"
+  df -h /home /data /work
   echo
 fi
 
-echo "## Disk space"
-df -h /home /data /work
-echo
-echo "## Local /scratch usage (free space and percent full)"
-sed '/NODES:/h;//!H;$!d;x' ~monitor/logs/today/nodes/disk_space-scratch.log | grep -E "(^NODE |/scratch$)" | tr $'\n' ':' | sed 's| /scratch|\n|g' | grep -v -E "^:$" | sed -E 's/^(|:)NODE //g' | sed -E 's/::[^ ]+[ ]+/ /g' | sed -E 's/::[ ]+/ /g' | awk '{ avail=$4/1024; printf("%3s: %7.1f GiB (%4s)\n",$1,avail,$5) }'
-echo
-#echo "## Local /tmp usage (free space and percent full)"
-#sed '/NODES:/h;//!H;$!d;x' ~monitor/logs/today/nodes/disk_space-tmp.log | grep -E "(^NODE |% /$)" | tr $'\n' ':' | sed 's| /|\n|g' | grep -v -E "^:$" | sed -E 's/^(|:)NODE //g' | sed -E 's/::[^ ]+[ ]+/ /g' | awk '{ avail=$4/1024; printf("%3s: %7.1f GiB (%4s)\n",$1,avail,$5) }'
-echo
-echo "## Job scheduler"
-echo
-echo "### Moab"
-if [[ $(on_compute_node) -eq 0 ]]; then
-    echo "Moab status: <only available from master, not from ${HOSTNAME}>"
-else
-    PATH="/sbin:$PATH"  ## AD HOC: 'service' might not be on PATH
-    echo "Moab status: $(service moab status)"
+if [[ "$sections" == *local_scratch* ]]; then
+  echo "## Local /scratch usage (amount of free space)"
+  disk_log=~monitor/logs/today/nodes/disk_space-scratch.log
+  if [ -f "$disk_log" ]; then
+      sed '/NODES:/h;//!H;$!d;x' "$disk_log" | grep -E "(^NODE |/scratch$)" | tr $'\n' ':' | sed 's| /scratch|\n|g' | grep -v -E "^:$" | sed -E 's/^(|:)NODE //g' | sed -E 's/::[^ ]+[ ]+/ /g' | sed -E 's/::[ ]+/ /g' | awk '{ avail=$4/1024; printf("%3s: %7.1f GiB (%3s%%)\n",$1,avail,100-$5) }'
+  else
+      echo "Not available"
+  fi
+  echo
 fi
-echo
-echo "### TORQUE / PBS"
-if [[ $(on_compute_node) -eq 0 ]]; then
-  echo "PBS Server: <only available from master, not from ${HOSTNAME}>"
-  echo "PBS Authentication Daemon: <only available from master, not from ${HOSTNAME}>"
-else
-  echo "PBS Server: $(service pbs_server status)"
-  echo "PBS Authentication Daemon (on master & compute nodes): $(service pbs_trqauthd status)"
-fi
-echo "PBS Queue:"
-jobs=$(qstat | grep -E "^[0-9]+")
-jobsx=$(qstat -t | grep -E "^[0-9]+")
-echo "Number of jobs: $(echo "${jobs[0]}" | wc -l) ($(echo "${jobs[0]}" | grep -F ' R ' | wc -l) running, $(echo "${jobs[0]}" | grep -F ' Q ' | wc -l) queued)"
-echo "Number of individual jobs: $(echo "${jobsx[0]}" | wc -l) ($(echo "${jobsx[0]}" | grep -F ' R ' | wc -l) running, $(echo "${jobsx[0]}" | grep -F ' Q ' | wc -l) queued)"
-echo "Users: [$(echo "${jobs[0]}" | awk '{ print $3 }' | sort -u | wc -l)] $(echo "${jobs[0]}" | awk '{ print $3 }' | sort -u | tr $'\n' ' ')"
 
-echo
-echo "## Uptime and vmstat"
-echo "$HOSTNAME: $(uptime)"
-vmstat | sed 's/free/ free/' | sed 's/cache/   cache/' | sed 's/-memory-/---memory---/'
-if [[ "$full" != "0" ]]; then
-  vmstat -s -S M
+if [[ "$sections" == *scheduler* ]]; then
+  echo "## Job scheduler"
+  echo
+  echo "### Moab"
+  if [[ $(on_compute_node) -eq 0 ]]; then
+      echo "Moab status: <only available from master, not from ${HOSTNAME}>"
+  else
+      PATH="/sbin:$PATH"  ## AD HOC: 'service' might not be on PATH
+      status=$(service moab status)
+      res=$?
+      if [[ $res -eq 0 ]]; then
+          echo "Moab status: $status (exit code $res)"
+      else
+          tput setaf 1 2> /dev/null ## red
+          echo "Moab status: $status (exit code $res)"
+          tput sgr0 2> /dev/null    ## reset
+      fi
+  fi
+  echo
+  echo "### TORQUE / PBS"
+  if [[ $(on_compute_node) -eq 0 ]]; then
+    echo "PBS Server: <only available from master, not from ${HOSTNAME}>"
+    echo "PBS Authentication Daemon: <only available from master, not from ${HOSTNAME}>"
+  else
+    echo "PBS Server: $(service pbs_server status)"
+    echo "PBS Authentication Daemon (on master & compute nodes): $(service pbs_trqauthd status)"
+  fi
+  echo "PBS Queue:"
+  jobs=$(qstat | grep -E "^[0-9]+")
+  jobsx=$(qstat -t | grep -E "^[0-9]+")
+  echo "Number of jobs: $(echo "${jobs[0]}" | wc -l) ($(echo "${jobs[0]}" | grep -F ' R ' | wc -l) running, $(echo "${jobs[0]}" | grep -F ' Q ' | wc -l) queued)"
+  echo "Number of individual jobs: $(echo "${jobsx[0]}" | wc -l) ($(echo "${jobsx[0]}" | grep -F ' R ' | wc -l) running, $(echo "${jobsx[0]}" | grep -F ' Q ' | wc -l) queued)"
+  echo "Users: [$(echo "${jobs[0]}" | awk '{ print $3 }' | sort -u | wc -l)] $(echo "${jobs[0]}" | awk '{ print $3 }' | sort -u | tr $'\n' ' ')"
+  
+  echo
+fi
+
+if [[ "$sections" == *uptime* ]]; then
+  echo "## Uptime and vmstat"
+  echo "$HOSTNAME: $(uptime)"
+  vmstat | sed 's/free/ free/' | sed 's/cache/   cache/' | sed 's/-memory-/---memory---/'
+  if [[ "$full" != "0" ]]; then
+    vmstat -s -S M
+  fi
 fi
  
     
-if [[ $(on_compute_node) -ne 0 ]]; then
-    echo
-    echo "### High-memory processes"
-    TIPCC_TOOLS=0 tipcc-master --himem
-    echo
-    echo "### High-CPU processes"
-    TIPCC_TOOLS=0 tipcc-master --hicpu
-    echo
+if [[ "$sections" == *processes_on_master* ]]; then
+  if [[ $(on_compute_node) -ne 0 ]]; then
+      echo
+      echo "### High-memory processes"
+      TIPCC_TOOLS=0 tipcc-master --himem
+      echo
+      echo "### High-CPU processes"
+      TIPCC_TOOLS=0 tipcc-master --hicpu
+      echo
+  fi
 fi
 
 
-echo "## Backup"
-echo
-echo "### Weekly rsync"
-backup_log=/backup/home/home_backup.log
-status_line=$(grep -F status "$backup_log" | sed 's/.*Job/Job/g')
-status=$(echo $status_line | sed -E 's/.*status[[:space:]]*=[[:space:]]*([[:digit:]]+).*/\1/g')
-too_old=$(find $backup_log -mtime +7 | wc -l)
-if [ $status -eq 0 ] && [ $too_old -eq 0 ]; then
-  stat --printf="Last run: %y (%n %s bytes)\n" "$backup_log"
-  echo "Status: $status_line"
-else
-  tput setaf 1 2> /dev/null ## red
-  stat --printf="Last run: %y (%n %s bytes)\n" "$backup_log"
-  echo "Status: $status_line"
-  tput sgr0 2> /dev/null    ## reset
+if [[ "$sections" == *backup* ]]; then
+  echo "## Backup"
+  echo
+  echo "### Weekly rsync"
+  echo
+  for backup_log in /backup/home/home_backup.log; do
+    ## Completed?
+    if grep -q -F status "$backup_log"; then  
+        status_line=$(grep -F status "$backup_log" | sed 's/.*Job/Job/g')
+        status=$(echo $status_line | sed -E 's/.*status[[:space:]]*=[[:space:]]*([[:digit:]]+).*/\1/g')
+        too_old=$(find $backup_log -mtime +7 | wc -l)
+        if [ $status -eq 0 ] && [ $too_old -eq 0 ]; then
+            stat --printf="Last run: %y (%n %s bytes)\n" "$backup_log"
+            echo "Status: $status_line"
+        else
+            tput setaf 1 2> /dev/null ## red
+            stat --printf="Last run: %y (%n %s bytes)\n" "$backup_log"
+            echo "Status: $status_line"
+            tput sgr0 2> /dev/null    ## reset
+        fi
+    else
+        tput setaf 3 2> /dev/null ## yellow
+        stat --printf="Currently running: %y (%n %s bytes)\n" "$backup_log"
+	tail -n 1 "$backup_log"
+        tput sgr0 2> /dev/null    ## reset
+    fi
+  done
+  echo
+  ## Rsync backup storage
+  df -P -h /backup
+  echo
 fi
-df -P -h /backup
-echo

@@ -1,0 +1,136 @@
+#!/usr/bin/env bash
+### Working with user and group information
+###
+### Usage:
+###  tipcc-userdb [options]
+###
+### Options:
+###  --from <int>        First GID/UID to include (default is 1/500)
+###  --to <int>          Last GID/UID to include (default is 65535)
+###  --list              List all user names
+###  --groupadd          Reverse engineer 'groupadd' commands
+###  --useradd           Reverse engineer 'useradd' commands
+###  --help              This help
+###
+### Example:
+###  tipcc-userdb --list
+###  tipcc-userdb --groupadd
+###  tipcc-userdb --useradd
+###
+### Version: 0.1.0-9000
+### Copyright: Henrik Bengtsson (2020-)
+### License: GPL (>= 2.1) [https://www.gnu.org/licenses/gpl.html]
+call="$0 $*"
+tool_name=$(basename $0)
+if [[ ${TIPCC_TOOLS} -ne 0 ]]; then
+    tool_name=${tool_name/-/ }
+fi
+
+function mecho() { echo "$@" 1>&2; }
+
+function merror() {
+    mecho "ERROR in '${tool_name}': $*"
+    exit 1
+}
+function mwarn() {
+    mecho "WARNING in '${tool_name}': $*"
+}
+
+function as_logical() {
+    if [[ $1 == "false" || $1 == "0" ]]; then echo 0; else echo 1; fi
+}
+
+function help() {
+    local res=$(grep -E "^###( .*|)$" $0 | cut -b 5-)
+    local search=$(basename $0)
+    if [[ "${search}" != "${tool_name}" ]]; then
+        res=$(printf '%s\n' "${res[@]}" | sed "s/${search}/${tool_name}/g")
+    fi
+    printf '%s\n' "${res[@]}"
+}
+
+function whatis() {
+    local res=$(grep "^### .*[^:][[:space:]]*$" $0 | head -1 | cut -b 5-)
+    printf '%s\n' "${res[@]}"
+}
+
+function version() {
+    grep -E "^###[ ]*Version:[ ]*" $0 | sed 's/###[ ]*Version:[ ]*//g'
+}
+
+function filter_with_home() {
+  grep -F "/home/"
+}
+
+function filter_non_deprecated() {
+  grep -v -F "/deprecated"
+}
+
+function filter_non_system() {
+  grep -v -F "/system"
+}
+
+function filter_with_email_or_inactive() {
+  grep -E "(@|inactive)" 
+}
+
+function filter_real_users() {
+  filter_with_home | filter_non_deprecated | filter_non_system | filter_with_email_or_inactive
+}
+
+action="help"
+from=1
+to=65535
+
+# Parse command-line options
+while [[ $# > 0 ]]; do
+    if [[ "$1" == "--help" ]]; then
+        help
+        exit 0
+    elif [[ "$1" == "--whatis" ]]; then
+        whatis
+        exit 0
+    elif [[ "$1" == "--version" ]]; then
+        version
+        exit 0
+    elif [[ "$1" == "--from" ]]; then
+	shift
+        from="$1"
+    elif [[ "$1" == "--to" ]]; then
+	shift
+        to="$1"
+    elif [[ "$1" == "--list" ]]; then
+        action="list"
+    elif [[ "$1" == "--groupadd" ]]; then
+        action="groupadd"
+	from=500
+    elif [[ "$1" == "--useradd" ]]; then
+        action="useradd"
+    fi
+    shift
+done
+
+
+if [[ $action == "help" ]]; then
+    help
+    exit 0
+fi
+
+if [[ $action == "list" ]]; then
+    cat /etc/passwd | filter_real_users | cut -d ':' -f 1 | sort -u
+    exit 0
+fi
+
+
+if [[ $action == "groupadd" ]]; then
+    echo "## All groups with $from <= GID <= $to"
+    awk -F: '($3 >= '$from' && $3 <= '$to') { printf "groupadd --gid %5s %s\n", $3, $1 }' /etc/group | sort -n -k 3
+    exit 0
+fi
+
+
+if [[ $action == "useradd" ]]; then
+    echo "## All users with $from <= UID <= $to"
+    cat /etc/passwd | filter_real_users | awk -F: '($3 >= '$from' && $3 <= '$to') { printf "useradd -M %-17s --uid %4s --home %-24s --shell %-13s --comment \"%s\"\n",$1,$3,$6,$7,$5 }' | sort -n -k 5
+    exit 0
+fi

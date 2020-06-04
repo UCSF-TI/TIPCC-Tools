@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-### UCSF HPC TIPCC:
-### Information on a job
+### Display information on a job
 ###
 ### Usage:
 ###  tipcc-job <id> [options]

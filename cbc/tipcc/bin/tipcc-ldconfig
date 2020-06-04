@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-### UCSF HPC TIPCC:
 ### List ldconfig processes running on compute nodes
 ###
 ### Usage:
@@ -15,7 +14,7 @@
 ###  tipcc-ldconfig --user alice
 ###
 ### Version: 0.1.0-9000
-### Copyright: Henrik Bengtsson (2018-2019)
+### Copyright: Henrik Bengtsson (2018-2020)
 ### License: GPL (>= 2.1) [https://www.gnu.org/licenses/gpl.html]
 call="$0 $*"
 tool_name=$(basename $0)
@@ -115,11 +114,15 @@ fi
 
 ## For each user
 for user in ${users[@]}; do
-  ## Identify user
-  uid=$(id -u $user 2> /dev/null)
-  if [[ $? -ne 0 ]]; then
-      merror "No such user: $user"
-  fi
+  ## Identify UID
+  if [[ "$user" =~ ^[0-9]+$ ]]; then
+    uid=$user	
+  else
+    uid=$(id -u $user 2> /dev/null)
+    if [[ $? -ne 0 ]]; then
+      merror "No such user: '$user'"
+    fi
+  fi  
   
   ## Keep only those for the user of interest
   res_ii=$(printf '%s\n' "${res[@]}" | grep -E "[[:space:]]($user|$uid)[[:space:]]")
