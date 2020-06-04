@@ -36,7 +36,7 @@ echo "Time limit     : $days days"
 files=$(mktemp)
 printf "Scanning for old files ..."
 t0=$(date +%s)
-find /scratch/ -type f -atime "+$days" -ctime "+$days" -mtime "+$days" -exec ls -lat {} \; > "$files"
+find /scratch/ -type f -atime "+$days" -ctime "+$days" -mtime "+$days" -exec ls -l -a -u -t {} \; > "$files"
 t1=$(date +%s)
 printf " done [%d seconds]\\n" "$((t1 - t0))"
 nfiles=$(wc -l "$files" | sed 's/[[:space:]].*//g')
@@ -47,17 +47,17 @@ echo "Total file size: $(( total_size/1000000000 )) GB"
 if [[ $nfiles -gt 0 ]]; then
     file=$(head -1 "$files" | sed 's/.* \//\//g')
     access=$(stat --format="%x" "$file")
-    echo "Oldest file    : $access"
+    echo "Oldest access  : $access"
     file=$(tail -1 "$files" | sed 's/.* \//\//g')
     access=$(stat --format="%x" "$file")
-    echo "Newest file    : $access"
+    echo "Newest access  : $access"
     if [[ $nfiles -gt 6 ]]; then
-        echo "Files to be removed:"
+        echo "Files to be removed (sorted by access time):"
         head -3 "$files"
         echo "..."
         tail -3 "$files"
     else
-        echo "Files to be removed:"
+        echo "Files to be removed (sorted by access time):"
         cat "$files"
     fi
 fi
