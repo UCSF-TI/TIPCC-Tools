@@ -34,12 +34,11 @@ echo "Time limit     : $days days"
 
 ## Identify files to be deleted
 files=$(mktemp)
-files=/tmp/files.tmp
 printf "Scanning for old files ..."
 t0=$(date +%s)
-#find /scratch/ -type f -atime "+$days" -ctime "+$days" -mtime "+$days" -exec ls -lat {} \; > "$files"
+find /scratch/ -type f -atime "+$days" -ctime "+$days" -mtime "+$days" -exec ls -lat {} \; > "$files"
 t1=$(date +%s)
-printf " done [%d seconds]\n" "$((t1 - t0))"
+printf " done [%d seconds]\\n" "$((t1 - t0))"
 nfiles=$(wc -l "$files" | sed 's/[[:space:]].*//g')
 total_size=$(awk '{ total+=$5 } END { print total }' "$files")
 
@@ -62,8 +61,8 @@ if [[ $nfiles -gt 0 ]]; then
         cat "$files"
     fi
 fi
+rm "$files"
 
-#rm "$tf"
 
 echo "Disk usage before cleanup:"
 df -P /scratch
@@ -73,7 +72,7 @@ if ! $dryrun; then
     t0=$(date +%s)
     find /scratch/ -type f -atime "+$days" -ctime "+$days" -mtime "+$days" -exec rm {} \;
     t1=$(date +%s)
-    printf " done [%d seconds]\n" "$((t1 - t0))"
+    printf " done [%d seconds]\\n" "$((t1 - t0))"
     echo "Disk usage after cleanup:"
     df -P /scratch
 fi
