@@ -22,15 +22,17 @@ error() {
 
 
 # Configuration
-days=60
-debug=true
-dryrun=false
-
-[[ days -lt 60 ]] && { error "Option 'days' is less than 60 days, which is too short: $days"; }
+days=${CLEANUP_DAYS:-60}
+debug=${CLEANUP_DEBUG:-true}
+dryrun=${CLEANUP_DRYRUN:-true}
 
 echo "Hostname       : $HOSTNAME"
 echo "Timestamp      : $(date --rfc-3339=seconds)"
 echo "Time limit     : $days days"
+echo "Dry run        : $dryrun"
+
+[[ days -lt 40 ]] && { error "Option 'days' is less than 40 days, which is too short: $days"; }
+[[ -d /scratch ]] || { error "No such folder: /scratch"; }
 
 ## Identify files to be deleted
 files=$(mktemp)
