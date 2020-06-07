@@ -26,7 +26,7 @@ days=${CLEANUP_DAYS:-60}
 debug=${CLEANUP_DEBUG:-true}
 dryrun=${CLEANUP_DRYRUN:-true}
 
-echo "Hostname       : $HOSTNAME"
+echo "Hostname       : $(hostname)"
 echo "Timestamp      : $(date --rfc-3339=seconds)"
 echo "Time limit     : $days days"
 echo "Dry run        : $dryrun"
