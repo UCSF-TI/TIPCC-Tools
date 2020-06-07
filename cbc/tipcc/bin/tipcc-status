@@ -147,7 +147,7 @@ if [[ "$sections" == *local_scratch* ]]; then
   disk_log=~monitor/logs/today/nodes/disk_space-scratch.log
   if [ -f "$disk_log" ]; then
       bfr=$(sed '/NODES:/h;//!H;$!d;x' "$disk_log" | grep -E "(^NODE |/scratch$)" | tr $'\n' ':' | sed 's| /scratch|\n|g' | grep -v -E "^:$" | sed -E 's/^(|:)NODE //g' | sed -E 's/::[^ ]+[ ]+/ /g' | sed -E 's/::[ ]+/ /g' | awk '{ avail=$4/1024; printf("%3s: %7.1f GiB (%4s)\n",$1,avail,$5) }')
-      bfr=$(echo "$bfr" | sed -E 's/(.*)\(( 9[5-9]|100)%\)/'$red'\1(\2%)'$reset'/g')
+      bfr=$(echo "$bfr" | sed -E 's/(.*)\(( 9[0-9]|100)%\)/'$red'\1(\2%)'$reset'/g')
       echo "$bfr"
   else
       echo "Not available"
@@ -160,7 +160,7 @@ if [[ "$sections" == *local_tmp* ]]; then
   disk_log=~monitor/logs/today/nodes/disk_space-tmp.log
   if [ -f "$disk_log" ]; then
       bfr=$(sed '/NODES:/h;//!H;$!d;x' "$disk_log" | grep -E "(^NODE |/$)" | tr $'\n' ':' | sed 's| /|\n|g' | grep -v -E "^:$" | sed -E 's/^(|:)NODE //g' | sed -E 's/::[^ ]+[ ]+/ /g' | sed -E 's/::[ ]+/ /g' | awk '{ avail=$4/1024; printf("%3s: %7.1f GiB (%4s)\n",$1,avail,$5) }')
-      bfr=$(echo "$bfr" | sed -E 's/(.*)\(( 9[5-9]|100)%\)/'$red'\1(\2%)'$reset'/g')
+      bfr=$(echo "$bfr" | sed -E 's/(.*)\(( 9[0-9]|100)%\)/'$red'\1(\2%)'$reset'/g')
       echo "$bfr"
   else
       echo "Not available"
