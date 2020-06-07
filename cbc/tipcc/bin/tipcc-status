@@ -7,7 +7,8 @@
 ### Options:
 ###  --backup            Report on backup status
 ###  --disk-space        Report on disk usage on /data, /home, and /work
-###  --local-scratch     Report on local disk usage on compute nodes
+###  --local-scratch     Report on local /scratch usage on compute nodes
+###  --local-tmp         Report on local /tmp usage on compute nodes
 ###  --master            Report on processes on the master node
 ###  --nodes             Report on statuses on compute nodes
 ###  --scheduler         Report on job scheduler status
@@ -18,13 +19,17 @@
 ###  tipcc-status        # all sections by default
 ###
 ### Version: 0.1.0-9000
-### Copyright: Henrik Bengtsson (2016-2017)
+### Copyright: Henrik Bengtsson (2016-2020)
 ### License: GPL (>= 2.1) [https://www.gnu.org/licenses/gpl.html]
 call="$0 $*"
 tool_name=$(basename $0)
 if [[ ${TIPCC_TOOLS} -ne 0 ]]; then
     tool_name=${tool_name/-/ }
 fi
+
+red=$(tput setaf 1 2> /dev/null)
+yellow=$(tput setaf 3 2> /dev/null)
+reset=$(tput sgr0 2> /dev/null)
 
 function mecho() { echo "$@" 1>&2; }
 
@@ -61,7 +66,7 @@ function on_compute_node() {
     echo $?
 }
 
-sections_default="nodes disk_space local_scratch scheduler uptime processes_on_master backup"
+sections_default="nodes disk_space local_scratch local_tmp scheduler uptime processes_on_master backup"
 sections=
 local_disk=false
 full=0
@@ -87,6 +92,8 @@ while [[ $# > 0 ]]; do
         sections="$sections disk_space"
     elif [[ "$1" == "--local-scratch" ]]; then
         sections="$sections local_scratch"
+    elif [[ "$1" == "--local-tmp" ]]; then
+        sections="$sections local_tmp"
     elif [[ "$1" == "--master" ]]; then
         sections="$sections processes_on_master"
     elif [[ "$1" == "--nodes" ]]; then
@@ -114,15 +121,17 @@ if [[ "$sections" == *nodes* ]]; then
   echo "### According to 'bpstat' (Scyld)"
   bpstat
   echo
-  echo "### According to 'pbsnodes' (TORQUE)"
-  pbsnodes -l
+  echo "### According to 'pbsnodes -l' (TORQUE)"
+  bfr=$(pbsnodes -l)
+  bfr=$(echo "$bfr" | sed -E 's/(.*)down$/'$red'\1down'$reset'/g')
+  echo "$bfr"
   echo
   pbsnodes | grep -q -F "ERROR" > /dev/null
   if [[ $? -eq 0 ]]; then
-    tput setaf 1 2> /dev/null ## red
     echo "## ERROR: Problematic nodes"
+    printf "%s" "$red"
     pbsnodes | grep -B 7 -A 2 -F "ERROR" | grep -E "^(n[0-9]+|[[:space:]]+status = )"
-    tput sgr0 2> /dev/null    ## reset
+    printf "%s" "$reset"
     echo
   fi
 fi
@@ -134,10 +143,25 @@ if [[ "$sections" == *disk_space* ]]; then
 fi
 
 if [[ "$sections" == *local_scratch* ]]; then
-  echo "## Local /scratch usage (amount of free space)"
+  echo "## Local /scratch usage (and percent free)"
   disk_log=~monitor/logs/today/nodes/disk_space-scratch.log
   if [ -f "$disk_log" ]; then
-      sed '/NODES:/h;//!H;$!d;x' "$disk_log" | grep -E "(^NODE |/scratch$)" | tr $'\n' ':' | sed 's| /scratch|\n|g' | grep -v -E "^:$" | sed -E 's/^(|:)NODE //g' | sed -E 's/::[^ ]+[ ]+/ /g' | sed -E 's/::[ ]+/ /g' | awk '{ avail=$4/1024; printf("%3s: %7.1f GiB (%3s%%)\n",$1,avail,100-$5) }'
+      bfr=$(sed '/NODES:/h;//!H;$!d;x' "$disk_log" | grep -E "(^NODE |/scratch$)" | tr $'\n' ':' | sed 's| /scratch|\n|g' | grep -v -E "^:$" | sed -E 's/^(|:)NODE //g' | sed -E 's/::[^ ]+[ ]+/ /g' | sed -E 's/::[ ]+/ /g' | awk '{ avail=$4/1024; printf("%3s: %7.1f GiB (%4s)\n",$1,avail,$5) }')
+      bfr=$(echo "$bfr" | sed -E 's/(.*)\(( 9[5-9]|100)%\)/'$red'\1(\2%)'$reset'/g')
+      echo "$bfr"
+  else
+      echo "Not available"
+  fi
+  echo
+fi
+
+if [[ "$sections" == *local_tmp* ]]; then
+  echo "## Local /tmp usage (and percent free)"
+  disk_log=~monitor/logs/today/nodes/disk_space-tmp.log
+  if [ -f "$disk_log" ]; then
+      bfr=$(sed '/NODES:/h;//!H;$!d;x' "$disk_log" | grep -E "(^NODE |/$)" | tr $'\n' ':' | sed 's| /|\n|g' | grep -v -E "^:$" | sed -E 's/^(|:)NODE //g' | sed -E 's/::[^ ]+[ ]+/ /g' | sed -E 's/::[ ]+/ /g' | awk '{ avail=$4/1024; printf("%3s: %7.1f GiB (%4s)\n",$1,avail,$5) }')
+      bfr=$(echo "$bfr" | sed -E 's/(.*)\(( 9[5-9]|100)%\)/'$red'\1(\2%)'$reset'/g')
+      echo "$bfr"
   else
       echo "Not available"
   fi
@@ -157,9 +181,9 @@ if [[ "$sections" == *scheduler* ]]; then
       if [[ $res -eq 0 ]]; then
           echo "Moab status: $status (exit code $res)"
       else
-          tput setaf 1 2> /dev/null ## red
+          printf "%s" "$red"
           echo "Moab status: $status (exit code $res)"
-          tput sgr0 2> /dev/null    ## reset
+          printf "%s" "$reset"
       fi
   fi
   echo
@@ -219,16 +243,16 @@ if [[ "$sections" == *backup* ]]; then
             stat --printf="Last run: %y (%n %s bytes)\n" "$backup_log"
             echo "Status: $status_line"
         else
-            tput setaf 1 2> /dev/null ## red
+            printf "%s" "$red"
             stat --printf="Last run: %y (%n %s bytes)\n" "$backup_log"
             echo "Status: $status_line"
-            tput sgr0 2> /dev/null    ## reset
+            printf "%s" "$reset"
         fi
     else
-        tput setaf 3 2> /dev/null ## yellow
+        printf "$yellow"
         stat --printf="Currently running: %y (%n %s bytes)\n" "$backup_log"
 	tail -n 1 "$backup_log"
-        tput sgr0 2> /dev/null    ## reset
+        printf "%s" "$reset"
     fi
   done
   echo
