@@ -22,15 +22,16 @@ error() {
 
 
 # Configuration
-days=60
-debug=true
-dryrun=false
+days=${CLEANUP_DAYS:-60}
+debug=${CLEANUP_DEBUG:-true}
+dryrun=${CLEANUP_DRYRUN:-true}
 
-[[ days -lt 60 ]] && { error "Option 'days' is less than 60 days, which is too short: $days"; }
-
-echo "Hostname       : $HOSTNAME"
+echo "Hostname       : $(hostname)"
 echo "Timestamp      : $(date --rfc-3339=seconds)"
 echo "Time limit     : $days days"
+echo "Dry run        : $dryrun"
+
+[[ -d /scratch ]] || { error "No such folder: /scratch"; }
 
 ## Identify files to be deleted
 files=$(mktemp)
@@ -68,6 +69,8 @@ echo "Disk usage before cleanup:"
 df -P /scratch
 
 if ! $dryrun; then
+    [[ days -lt 40 ]] && { error "Option 'days' is less than 40 days, which is too short: $days"; }
+    
     printf "Removing old files ..."
     t0=$(date +%s)
     find /scratch/ -type f -atime "+$days" -ctime "+$days" -mtime "+$days" -exec rm {} \;
