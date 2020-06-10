@@ -138,14 +138,14 @@ fi
 
 if [[ "$sections" == *disk_space* ]]; then
   echo "## Disk space"
-  df -h /home /data /work
+  df -P -h /home /data /work
   echo
 fi
 
 if [[ "$sections" == *local_scratch* ]]; then
   echo "## Local /scratch usage"
   disk_log=~monitor/logs/today/nodes/disk_space-scratch.log
-  if [ -f "$disk_log" ]; then bfr=$(sed '/NODES:/h;//!H;$!d;x' "$disk_log" | grep -E "(^NODE |/scratch$)" | tr $'\n' ':' | sed 's| /scratch|\n|g' | grep -v -E "^:$" | sed -E 's/^(|:)NODE //g' | sed -E 's/::[^ ]+[ ]+/ /g' | sed -E 's/::[ ]+/ /g' | awk '{ use=$3/1024; avail=$4/1024; total=$2/1024; printf("%3s: %6.1f GiB (%4s) of %6.1f GiB\n", $1, use, $5, total) }')
+  if [ -f "$disk_log" ]; then bfr=$(sed '/NODES:/h;//!H;$!d;x' "$disk_log" | grep -E "(^NODE |/scratch$)" | tr $'\n' ':' | sed 's| /scratch|\n|g' | grep -v -E "^:$" | sed -E 's/^(|:)NODE //g' | sed -E 's/::[^ ]+[ ]+/ /g' | sed -E 's/::[ ]+/ /g' | awk '{ use=$3/1024; avail=$4/1024; total=$2/1024; printf("%3s: %7.1f GiB (%4s) of %7.1f GiB\n", $1, use, $5, total) }')
       bfr=$(echo "$bfr" | sed -E 's/(.*)\(( 9[0-9]|100)%\)(.*)/'$red'\1(\2%)\3'$reset'/g')
       echo "$bfr"
   else
@@ -158,7 +158,7 @@ if [[ "$sections" == *local_tmp* ]]; then
   echo "## Local /tmp usage"
   disk_log=~monitor/logs/today/nodes/disk_space-tmp.log
   if [ -f "$disk_log" ]; then
-      bfr=$(sed '/NODES:/h;//!H;$!d;x' "$disk_log" | grep -E "(^NODE |/$)" | tr $'\n' ':' | sed 's| /|\n|g' | grep -v -E "^:$" | sed -E 's/^(|:)NODE //g' | sed -E 's/::[^ ]+[ ]+/ /g' | sed -E 's/::[ ]+/ /g' | awk '{ use=$3/1024; avail=$4/1024; total=$2/1024; printf("%3s: %6.1f GiB (%4s) of %6.1f GiB\n", $1, use, $5, total) }')
+      bfr=$(sed '/NODES:/h;//!H;$!d;x' "$disk_log" | grep -E "(^NODE |/$)" | tr $'\n' ':' | sed 's| /|\n|g' | grep -v -E "^:$" | sed -E 's/^(|:)NODE //g' | sed -E 's/::[^ ]+[ ]+/ /g' | sed -E 's/::[ ]+/ /g' | awk '{ use=$3/1024; avail=$4/1024; total=$2/1024; printf("%3s: %7.1f GiB (%4s) of %7.1f GiB\n", $1, use, $5, total) }')
       bfr=$(echo "$bfr" | sed -E 's/(.*)\(( 9[0-9]|100)%\)(.*)/'$red'\1(\2%)\3'$reset'/g')
       echo "$bfr"
   else
