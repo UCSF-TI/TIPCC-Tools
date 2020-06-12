@@ -202,6 +202,7 @@ function assert_ping() {
 }
 
 function assert_no_jobs() {
+    mdebug "Running job on $node_label:"
     if qstat -n -t -1 | grep -q -E "$node_label/"; then
 	return 1
     else
@@ -346,7 +347,7 @@ verbose=false
 force=false
 
 # Parse command-line options
-while [[ $# -ge 0 ]]; do
+while [[ $# -gt 0 ]]; do
     if [[ "$1" == "--dryrun" ]]; then
         dryrun=true
     elif [[ "$1" == "--force" ]]; then
@@ -388,6 +389,7 @@ date +"on %Y-%m-%d %H:%M:%S"
 echo
 
 
+## Checking if it safe to reboot a node
 assert_no_jobs || merror "Cannot reboot node: there are jobs running on $node_label according to qstat"
 mok "There are no jobs running on $node_label"
 assert_no_processes_via_scyld || merror "Cannot reboot node: Scyld reports there are user processes running on $node_label"
@@ -396,13 +398,8 @@ mok "There are no user processes running on $node_label"
 
 ## Use IPMI?
 if $ipmi; then
-    echo " - Method: IPMI"
     ipmi_reboot
 else    
-    if ! $dryrun; then
-        assert_sudo
-    fi    
     assert_ping || merror "Cannot reboot node: Node $node_label does not answer to pings"
-mok "Node $node_label answers to pings"
+    mok "Node $node_label answers to pings"
 fi
-
