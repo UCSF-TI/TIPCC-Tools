@@ -232,6 +232,7 @@ if [[ "$sections" == *backup* ]]; then
   echo
   echo "### Weekly rsync"
   echo
+  if ping -c 1 -W 1 ccls04 > /dev/null; then
   for backup_log in /backup/home/home_backup.log; do
     ## Completed?
     if grep -q -F status "$backup_log"; then  
@@ -258,4 +259,7 @@ if [[ "$sections" == *backup* ]]; then
   ## Rsync backup storage
   df -P -h /backup
   echo
+  else
+      echo "${red}ERROR: /backup file server ccls04 is not responding${reset}"
+  fi
 fi
