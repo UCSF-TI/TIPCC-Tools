@@ -138,7 +138,7 @@ fi
 
 if [[ "$sections" == *disk_space* ]]; then
   echo "## Disk space"
-  df -P -h /home /data /work
+  df -P -h /home /data /work /tmp | sed 's/ [/]$/ \/C     (=\/tmp)/g'
   echo
 fi
 
