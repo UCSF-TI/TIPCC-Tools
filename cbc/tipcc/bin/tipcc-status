@@ -138,16 +138,17 @@ fi
 
 if [[ "$sections" == *disk_space* ]]; then
   echo "## Disk space"
-  df -h /home /data /work
+  bfr=$(df -P -h /home /data /work /tmp | sed 's/ [/]$/ \/     (=\/tmp)/g')
+  bfr=$(echo "$bfr" | sed -E 's/(.*) (9[5-9]|100)% (.*)/'$red'\1(\2%)\3'$reset'/g')
+  echo "$bfr"
   echo
 fi
 
 if [[ "$sections" == *local_scratch* ]]; then
-  echo "## Local /scratch usage (and percent free)"
+  echo "## Local /scratch usage"
   disk_log=~monitor/logs/today/nodes/disk_space-scratch.log
-  if [ -f "$disk_log" ]; then
-      bfr=$(sed '/NODES:/h;//!H;$!d;x' "$disk_log" | grep -E "(^NODE |/scratch$)" | tr $'\n' ':' | sed 's| /scratch|\n|g' | grep -v -E "^:$" | sed -E 's/^(|:)NODE //g' | sed -E 's/::[^ ]+[ ]+/ /g' | sed -E 's/::[ ]+/ /g' | awk '{ avail=$4/1024; printf("%3s: %7.1f GiB (%4s)\n",$1,avail,$5) }')
-      bfr=$(echo "$bfr" | sed -E 's/(.*)\(( 9[5-9]|100)%\)/'$red'\1(\2%)'$reset'/g')
+  if [ -f "$disk_log" ]; then bfr=$(sed '/NODES:/h;//!H;$!d;x' "$disk_log" | grep -E "(^NODE |/scratch$)" | tr $'\n' ':' | sed 's| /scratch|\n|g' | grep -v -E "^:$" | sed -E 's/^(|:)NODE //g' | sed -E 's/::[^ ]+[ ]+/ /g' | sed -E 's/::[ ]+/ /g' | awk '{ use=$3/1024; avail=$4/1024; total=$2/1024; printf("%3s: %7.1f GiB (%4s) of %7.1f GiB\n", $1, use, $5, total) }')
+      bfr=$(echo "$bfr" | sed -E 's/(.*)\(( 9[0-9]|100)%\)(.*)/'$red'\1(\2%)\3'$reset'/g')
       echo "$bfr"
   else
       echo "Not available"
@@ -156,11 +157,11 @@ if [[ "$sections" == *local_scratch* ]]; then
 fi
 
 if [[ "$sections" == *local_tmp* ]]; then
-  echo "## Local /tmp usage (and percent free)"
+  echo "## Local /tmp usage"
   disk_log=~monitor/logs/today/nodes/disk_space-tmp.log
   if [ -f "$disk_log" ]; then
-      bfr=$(sed '/NODES:/h;//!H;$!d;x' "$disk_log" | grep -E "(^NODE |/$)" | tr $'\n' ':' | sed 's| /|\n|g' | grep -v -E "^:$" | sed -E 's/^(|:)NODE //g' | sed -E 's/::[^ ]+[ ]+/ /g' | sed -E 's/::[ ]+/ /g' | awk '{ avail=$4/1024; printf("%3s: %7.1f GiB (%4s)\n",$1,avail,$5) }')
-      bfr=$(echo "$bfr" | sed -E 's/(.*)\(( 9[5-9]|100)%\)/'$red'\1(\2%)'$reset'/g')
+      bfr=$(sed '/NODES:/h;//!H;$!d;x' "$disk_log" | grep -E "(^NODE |/$)" | tr $'\n' ':' | sed 's| /|\n|g' | grep -v -E "^:$" | sed -E 's/^(|:)NODE //g' | sed -E 's/::[^ ]+[ ]+/ /g' | sed -E 's/::[ ]+/ /g' | awk '{ use=$3/1024; avail=$4/1024; total=$2/1024; printf("%3s: %7.1f GiB (%4s) of %7.1f GiB\n", $1, use, $5, total) }')
+      bfr=$(echo "$bfr" | sed -E 's/(.*)\(( 9[0-9]|100)%\)(.*)/'$red'\1(\2%)\3'$reset'/g')
       echo "$bfr"
   else
       echo "Not available"
@@ -233,6 +234,7 @@ if [[ "$sections" == *backup* ]]; then
   echo
   echo "### Weekly rsync"
   echo
+  if ping -c 1 -W 1 ccls04 > /dev/null; then
   for backup_log in /backup/home/home_backup.log; do
     ## Completed?
     if grep -q -F status "$backup_log"; then  
@@ -259,4 +261,7 @@ if [[ "$sections" == *backup* ]]; then
   ## Rsync backup storage
   df -P -h /backup
   echo
+  else
+      echo "${red}ERROR: /backup file server ccls04 is not responding${reset}"
+  fi
 fi

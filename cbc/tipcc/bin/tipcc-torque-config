@@ -67,7 +67,7 @@ fi
 tmpl=$(cat ${tmpl_file})
 
 FIRST_NODE=${FIRST_NODE:-0}
-LAST_NODE=${LAST_NODE:-32}
+LAST_NODE=${LAST_NODE:-38}
 for node in $(seq $FIRST_NODE $LAST_NODE); do
     printf "Node %d: " ${node}  
 
