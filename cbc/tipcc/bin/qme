@@ -87,7 +87,7 @@ done
 
 
 ## Collect
-jobs=$(qstat -t -n -1 -u $user | grep $user)
+jobs=$(qstat -t -n -1 -u $user | grep -E "^[0-9]")
 if test $all == "false"; then
   jobs=$(echo "$jobs" | grep -v ' C ' | grep -v ' E ')
 fi
