@@ -168,6 +168,9 @@ function fix_permissions_to_user_only() {
 
 
 export CLUSTER=tipcc
+if [[ "$HOSTNAME" == c4-* ]]; then
+    export CLUSTER=c4
+fi
 
 ## ---------------------------------------------------------------------------
 ## Source the different .bashrc.d/ files, unless already done previously
