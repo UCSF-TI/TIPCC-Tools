@@ -112,7 +112,7 @@ if [[ -z "$sections" ]]; then
     sections=$sections_default
 fi
 
-echo "# Cluster status ($(date '+%Y-%m-%d %k:%M:%S %Z'))"
+echo "${reset}# Cluster status ($(date '+%Y-%m-%d %k:%M:%S %Z'))"
 echo
 
 if [[ "$sections" == *nodes* ]]; then
