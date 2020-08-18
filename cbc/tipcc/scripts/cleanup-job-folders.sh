@@ -10,8 +10,12 @@ jobs_path=/var/spool/torque/mom_priv/jobs
 [[ -d "${jobs_path}" ]] || { echo "ERROR: Job folder not found: ${jobs_path}"; exit 1; }
 
 ## Find all folders that could possibly be above job folders (>= 1 day old)
-paths=$(find "$dir" -type d -name "*.cclc01.som.ucsf.edu" -ctime 1 -mtime 1 -atime 1)
+# paths=$(find "$dir" -type d -name "*.cclc01.som.ucsf.edu" -ctime 1 -mtime 1 -atime 1)
+## Find all folders that could possibly be above job folders (>= 1 hour old)
+paths=$(find "$dir" -type d -name "*.cclc01.som.ucsf.edu" -cmin +60 -mmin +60 -amin +60)
 paths=$(echo "$paths" | grep -E "/scratch/(|[^/]+/|[^/]+/job/)[0-9]+(|[[][0-9]+[]])[.]cclc01[.]som[.]ucsf[.]edu$")
+echo "Job folders older than 1 hour:"
+echo "$paths"
 
 ## For each of them, identify the job and see if it exists
 for path in $paths; do
