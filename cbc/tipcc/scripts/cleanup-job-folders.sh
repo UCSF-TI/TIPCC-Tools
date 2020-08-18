@@ -15,8 +15,9 @@ jobs_path=/var/spool/torque/mom_priv/jobs
 paths=$(find "$dir" -type d -name "*.cclc01.som.ucsf.edu" -cmin +1440 -mmin +1440 -amin +1440)
 paths=$(find "$dir" -type d -name "*.cclc01.som.ucsf.edu" -cmin +720 -mmin +720 -amin +720)
 paths=$(find "$dir" -type d -name "*.cclc01.som.ucsf.edu" -cmin +240 -mmin +240 -amin +240)
+paths=$(find "$dir" -type d -name "*.cclc01.som.ucsf.edu" -cmin +60 -mmin +60 -amin +60)
 paths=$(echo "$paths" | grep -E "/scratch/(|[^/]+/|[^/]+/job/)[0-9]+(|[[][0-9]+[]])[.]cclc01[.]som[.]ucsf[.]edu$")
-echo "Job folders older than 4 hours:"
+echo "Job folders older than 1 hour:"
 echo "$paths"
 
 ## For each of them, identify the job and see if it exists
