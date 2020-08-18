@@ -11,10 +11,12 @@ jobs_path=/var/spool/torque/mom_priv/jobs
 
 ## Find all folders that could possibly be above job folders (>= 1 day old)
 # paths=$(find "$dir" -type d -name "*.cclc01.som.ucsf.edu" -ctime 1 -mtime 1 -atime 1)
-## Find all folders that could possibly be above job folders (>= 1 hour old)
-paths=$(find "$dir" -type d -name "*.cclc01.som.ucsf.edu" -cmin +60 -mmin +60 -amin +60)
+## Find all folders that could possibly be above job folders (>= 24 hours old)
+paths=$(find "$dir" -type d -name "*.cclc01.som.ucsf.edu" -cmin +1440 -mmin +1440 -amin +1440)
+paths=$(find "$dir" -type d -name "*.cclc01.som.ucsf.edu" -cmin +720 -mmin +720 -amin +720)
+paths=$(find "$dir" -type d -name "*.cclc01.som.ucsf.edu" -cmin +240 -mmin +240 -amin +240)
 paths=$(echo "$paths" | grep -E "/scratch/(|[^/]+/|[^/]+/job/)[0-9]+(|[[][0-9]+[]])[.]cclc01[.]som[.]ucsf[.]edu$")
-echo "Job folders older than 1 hour:"
+echo "Job folders older than 4 hours:"
 echo "$paths"
 
 ## For each of them, identify the job and see if it exists
