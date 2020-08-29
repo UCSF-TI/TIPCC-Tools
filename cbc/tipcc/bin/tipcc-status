@@ -138,8 +138,8 @@ fi
 
 if [[ "$sections" == *disk_space* ]]; then
   echo "## Disk space"
-  bfr=$(df -P -h /home /data /work /tmp | sed 's/ [/]$/ \/     (=\/tmp)/g')
-  bfr=$(echo "$bfr" | sed -E 's/(.*) (9[5-9]|100)% (.*)/'$red'\1(\2%)\3'$reset'/g')
+  bfr=$(df -P -h /home /data /work /tmp /backup | sed 's/ [/]$/ \/     (=\/tmp)/g')
+  bfr=$(echo "$bfr" | sed -E 's/(.*) (9[5-9]|100)% (.*)/'$red'\1 \2% \3'$reset'/g')
   echo "$bfr"
   echo
 fi
