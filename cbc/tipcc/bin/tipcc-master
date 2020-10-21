@@ -178,7 +178,7 @@ function filter_transfer() {
 
 function filter_files() {
     local res=("${@}")
-    res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(ls|cp|du|mv|rm|chgrp|chmod|chown|tar|gzip|gunzip|bzip2|bunzip2|unzip|find)( |:|$)")
+    res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(ls|cp|du|mv|rm|chgrp|chmod|chown|tar|gzip|gunzip|bzip2|bunzip2|unzip|find|md5sum)( |:|$)")
     printf '%s\n' "${res[@]}"
 }
 
