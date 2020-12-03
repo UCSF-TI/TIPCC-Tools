@@ -169,7 +169,7 @@ function filter_shells() {
 
 function filter_transfer() {
     local res=("${@}")
-    res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(curl|ftp|lftp|rsync|scp|wget)( |:|$)")  
+    res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(curl|ftp|lftp|rsync|scp|sftp|wget)( |:|$)")  
     res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)(sftp-server)( |:|$)")
     ## Thomas Hoffman uses fish:// transfers /HB 2018-08-18
     res=$(printf '%s\n' "${res[@]}" | grep -v -E "( |-|/)([.]fishsrv.pl)( |:|$)")
